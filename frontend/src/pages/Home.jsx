@@ -4,11 +4,11 @@ import { Search, MapPin, Calendar, ArrowRight, Loader2 } from 'lucide-react';
 import getApiUrl from '../utils/api';
 
 const categories = [
-  { name: 'Music', icon: '🎵', color: 'from-purple-500/20 to-purple-500/5', border: 'border-purple-500/30' },
-  { name: 'Tech', icon: '💻', color: 'from-blue-500/20 to-blue-500/5', border: 'border-blue-500/30' },
-  { name: 'Sports', icon: '⚽', color: 'from-green-500/20 to-green-500/5', border: 'border-green-500/30' },
-  { name: 'Food', icon: '🍕', color: 'from-orange-500/20 to-orange-500/5', border: 'border-orange-500/30' },
-  { name: 'Business', icon: '💼', color: 'from-pink-500/20 to-pink-500/5', border: 'border-pink-500/30' },
+  { name: 'Music', icon: '🎵', color: 'from-purple-500/20 to-purple-500/5', border: 'border-purple-500/30', fallback: 'https://images.unsplash.com/photo-1459749411177-042180ce673c?w=800&q=80' },
+  { name: 'Tech', icon: '💻', color: 'from-blue-500/20 to-blue-500/5', border: 'border-blue-500/30', fallback: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80' },
+  { name: 'Sports', icon: '⚽', color: 'from-green-500/20 to-green-500/5', border: 'border-green-500/30', fallback: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80' },
+  { name: 'Food', icon: '🍕', color: 'from-orange-500/20 to-orange-500/5', border: 'border-orange-500/30', fallback: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80' },
+  { name: 'Business', icon: '💼', color: 'from-pink-500/20 to-pink-500/5', border: 'border-pink-500/30', fallback: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80' },
 ];
 
 const Home = () => {
@@ -22,7 +22,6 @@ const Home = () => {
     const fetchEvents = async () => {
       try {
         const url = getApiUrl('/events');
-        console.log('Home fetching from:', url);
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Failed to fetch from ${url}`);
         const data = await response.json();
@@ -46,6 +45,11 @@ const Home = () => {
 
   const handleCategoryClick = (categoryName) => {
     navigate(`/events?category=${categoryName}`);
+  };
+
+  const getFallback = (catName) => {
+    const cat = categories.find(c => c.name === catName);
+    return cat ? cat.fallback : 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80';
   };
 
   return (
@@ -135,11 +139,11 @@ const Home = () => {
                       <div className="glass-card overflow-hidden h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-glow-primary border-white/5">
                         <div className="relative h-56 overflow-hidden">
                           <img 
-                            src={event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'} 
+                            src={event.imageUrl || getFallback(event.category)} 
                             alt={event.title} 
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                             onError={(e) => {
-                              e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80';
+                              e.target.src = getFallback(event.category);
                             }}
                           />
                           <div className="absolute top-4 left-4 glass rounded-full px-3 py-1 text-xs font-bold text-white backdrop-blur-md">

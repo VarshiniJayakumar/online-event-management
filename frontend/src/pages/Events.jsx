@@ -4,6 +4,17 @@ import { Search, MapPin, Calendar, Filter, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import getApiUrl from '../utils/api';
 
+const categoryFallbacks = {
+  'Tech': 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80',
+  'Music': 'https://images.unsplash.com/photo-1459749411177-042180ce673c?w=800&q=80',
+  'Sports': 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80',
+  'Food': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80',
+  'Business': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',
+  'Art': 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=800&q=80',
+  'Wellness': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
+  'Default': 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80'
+};
+
 const Events = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -16,7 +27,6 @@ const Events = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Update state if URL changes (e.g. clicking category in navbar or home)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     setSearchTerm(params.get('search') || '');
@@ -34,8 +44,6 @@ const Events = () => {
         if (locationFilter) query.append('location', locationFilter);
 
         const url = getApiUrl(`/events?${query.toString()}`);
-        console.log('Fetching from:', url);
-        
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Failed to fetch from ${url}. Status: ${response.status}`);
         const data = await response.json();
@@ -50,6 +58,8 @@ const Events = () => {
     const debounceTimer = setTimeout(fetchEvents, 300);
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, categoryFilter, locationFilter]);
+
+  const getFallback = (cat) => categoryFallbacks[cat] || categoryFallbacks['Default'];
 
   return (
     <div className="py-12 md:py-20">
@@ -124,11 +134,11 @@ const Events = () => {
                   <div className="glass-card overflow-hidden h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-glow-primary border-white/5">
                     <div className="relative h-60 overflow-hidden">
                       <img 
-                        src={event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'} 
+                        src={event.imageUrl || getFallback(event.category)} 
                         alt={event.title} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         onError={(e) => {
-                          e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80';
+                          e.target.src = getFallback(event.category);
                         }}
                       />
                       <div className="absolute top-4 left-4 glass rounded-full px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
