@@ -38,7 +38,11 @@ app.get('/api/health', async (req, res) => {
       message: 'Backend is connected to MongoDB'
     });
   } catch (err) {
-    res.status(500).json({ status: 'error', message: err.message });
+    res.status(500).json({ 
+      status: 'error', 
+      message: err.message,
+      error_detail: err.name
+    });
   }
 });
 

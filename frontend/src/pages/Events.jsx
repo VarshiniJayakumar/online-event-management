@@ -167,9 +167,13 @@ const Events = () => {
                       try {
                         const res = await fetch(getApiUrl('/health'));
                         const data = await res.json();
-                        alert(`Backend Health:\nStatus: ${data.status}\nEvents in DB: ${data.events}\nDatabase: ${data.database}`);
+                        if (data.status === 'ok') {
+                          alert(`Backend Health:\nStatus: ${data.status}\nEvents in DB: ${data.events}\nDatabase: ${data.database}`);
+                        } else {
+                          alert(`Backend Error:\n${data.message}\nDetail: ${data.error_detail}`);
+                        }
                       } catch (err) {
-                        alert(`Connection Failed: ${err.message}`);
+                        alert(`Network Error: Could not reach backend at ${getApiUrl('/health')}`);
                       }
                     }}
                     className="px-6 py-2.5 bg-primary/20 hover:bg-primary/30 text-primary rounded-lg font-medium transition-colors border border-primary/30"
