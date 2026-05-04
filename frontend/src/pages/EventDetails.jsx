@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { CalendarDays, MapPin, Clock, Share2, Heart, ArrowLeft, Ticket, Loader2 } from 'lucide-react';
+import getApiUrl from '../utils/api';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_TYooMQauvdEDq54NiTphI7jx');
 
@@ -17,7 +18,7 @@ const EventDetails = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${id}`);
+        const response = await fetch(getApiUrl(`/events/${id}`));
         if (!response.ok) throw new Error('Event not found');
         const data = await response.json();
         setEvent(data);
@@ -33,7 +34,7 @@ const EventDetails = () => {
   const handleCheckout = async () => {
     setCheckoutLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/payment/create-checkout-session`, {
+      const response = await fetch(getApiUrl('/payment/create-checkout-session'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ eventId: id, ticketQuantity: ticketCount }),

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Search, MapPin, Calendar, Filter, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import getApiUrl from '../utils/api';
 
 const Events = () => {
   const location = useLocation();
@@ -32,7 +33,7 @@ const Events = () => {
         if (categoryFilter) query.append('category', categoryFilter);
         if (locationFilter) query.append('location', locationFilter);
 
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events?${query.toString()}`);
+        const response = await fetch(getApiUrl(`/events?${query.toString()}`));
         if (!response.ok) throw new Error('Failed to fetch events');
         const data = await response.json();
         setEvents(data);

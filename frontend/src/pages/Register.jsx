@@ -1,5 +1,6 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { User, Mail, Lock, Loader2 } from 'lucide-react';
+import getApiUrl from '../utils/api';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -15,10 +16,9 @@ const Register = () => {
     setError('');
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/register`, {
+      const response = await fetch(getApiUrl('/auth/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Defaulting to user role, can be adjusted later if needed
         body: JSON.stringify({ name, email, password, role: 'organizer' }), 
       });
 

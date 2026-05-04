@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, MapPin, Calendar, ArrowRight, Loader2 } from 'lucide-react';
+import getApiUrl from '../utils/api';
 
 const categories = [
   { name: 'Music', icon: '🎵', color: 'from-purple-500/20 to-purple-500/5', border: 'border-purple-500/30' },
@@ -20,7 +21,7 @@ const Home = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events`);
+        const response = await fetch(getApiUrl('/events'));
         if (!response.ok) throw new Error('Failed to fetch events');
         const data = await response.json();
         setEvents(data.slice(0, 6)); // Show first 6 as trending

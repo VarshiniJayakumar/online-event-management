@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, Calendar, MapPin, Clock, Tag, DollarSign, Plus, X } from 'lucide-react';
+import getApiUrl from '../utils/api';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ const CreateEvent = () => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events`, {
+      const response = await fetch(getApiUrl('/events'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
