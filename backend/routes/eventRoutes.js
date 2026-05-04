@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
     const { search, category, location } = req.query;
     let query = {};
     if (search) query.title = { $regex: search, $options: 'i' };
-    if (category) query.category = category;
+    if (category) query.category = { $regex: `^${category}$`, $options: 'i' };
     if (location) query.location = { $regex: location, $options: 'i' };
 
     const events = await Event.find(query).populate('organizer', 'name email');
