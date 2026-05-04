@@ -98,6 +98,7 @@ const Events = () => {
               <option value="">All Categories</option>
               <option value="Tech">Tech</option>
               <option value="Music">Music</option>
+              <option value="Sports">Sports</option>
               <option value="Business">Business</option>
               <option value="Food">Food</option>
               <option value="Art">Art</option>
