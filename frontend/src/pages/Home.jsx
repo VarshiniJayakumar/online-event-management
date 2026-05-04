@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, MapPin, Calendar, ArrowRight, Loader2 } from 'lucide-react';
 
 const categories = [
@@ -11,8 +11,11 @@ const categories = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [locationQuery, setLocationQuery] = useState('');
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -22,13 +25,25 @@ const Home = () => {
         const data = await response.json();
         setEvents(data.slice(0, 6)); // Show first 6 as trending
       } catch (err) {
-        console.error(err);
+        console.error('Fetch error:', err);
       } finally {
         setLoading(false);
       }
     };
     fetchEvents();
   }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (searchQuery) params.append('search', searchQuery);
+    if (locationQuery) params.append('location', locationQuery);
+    navigate(`/events?${params.toString()}`);
+  };
+
+  const handleCategoryClick = (categoryName) => {
+    navigate(`/events?category=${categoryName}`);
+  };
 
   return (
     <div className="flex flex-col">
@@ -52,23 +67,39 @@ const Home = () => {
             The world's most vibrant platform for discovering, creating, and experiencing the moments that matter.
           </p>
 
-          <div className="max-w-3xl mx-auto glass rounded-2xl p-2 flex flex-col sm:flex-row shadow-2xl shadow-primary/10">
+          <form onSubmit={handleSearch} className="max-w-3xl mx-auto glass rounded-2xl p-2 flex flex-col sm:flex-row shadow-2xl shadow-primary/10">
             <div className="flex-1 flex items-center px-4 py-3 border-b sm:border-b-0 sm:border-r border-white/10">
               <Search className="h-5 w-5 text-gray-400 mr-3 shrink-0" />
-              <input type="text" placeholder="Search events, creators, or topics" className="w-full bg-transparent border-none focus:outline-none text-white placeholder-gray-500" />
+              <input 
+                type="text" 
+                placeholder="Search events, creators, or topics" 
+                className="w-full bg-transparent border-none focus:outline-none text-white placeholder-gray-500" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
             <div className="flex-1 flex items-center px-4 py-3">
               <MapPin className="h-5 w-5 text-gray-400 mr-3 shrink-0" />
-              <input type="text" placeholder="Location" className="w-full bg-transparent border-none focus:outline-none text-white placeholder-gray-500" />
+              <input 
+                type="text" 
+                placeholder="Location" 
+                className="w-full bg-transparent border-none focus:outline-none text-white placeholder-gray-500" 
+                value={locationQuery}
+                onChange={(e) => setLocationQuery(e.target.value)}
+              />
             </div>
-            <Link to="/events" className="mt-2 sm:mt-0 px-8 py-3.5 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center shrink-0">
+            <button type="submit" className="mt-2 sm:mt-0 px-8 py-3.5 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center shrink-0">
               Search
-            </Link>
-          </div>
+            </button>
+          </form>
 
           <div className="mt-16 flex flex-wrap justify-center gap-4">
             {categories.map((cat, idx) => (
-              <button key={idx} className={`px-5 py-2.5 rounded-full bg-gradient-to-b ${cat.color} border ${cat.border} flex items-center space-x-2 hover:-translate-y-1 transition-transform backdrop-blur-md`}>
+              <button 
+                key={idx} 
+                onClick={() => handleCategoryClick(cat.name)}
+                className={`px-5 py-2.5 rounded-full bg-gradient-to-b ${cat.color} border ${cat.border} flex items-center space-x-2 hover:-translate-y-1 transition-transform backdrop-blur-md`}
+              >
                 <span className="text-lg">{cat.icon}</span>
                 <span className="font-medium text-white">{cat.name}</span>
               </button>
@@ -93,37 +124,45 @@ const Home = () => {
           {loading ? (
             <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div>
           ) : (
-            <div className="flex space-x-6 overflow-x-auto pb-8 hide-scrollbar snap-x">
-              {events.map((event) => (
-                <div key={event._id} className="min-w-[320px] md:min-w-[380px] snap-start shrink-0 group">
-                  <div className="glass-card overflow-hidden h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-glow-primary border-white/5">
-                    <div className="relative h-56 overflow-hidden">
-                      <img src={event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                      <div className="absolute top-4 left-4 glass rounded-full px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
-                        {event.category}
-                      </div>
-                      <div className="absolute top-4 right-4 bg-white text-black rounded-full px-3 py-1 text-xs font-extrabold shadow-lg">
-                        {event.price === 0 ? 'FREE' : `$${event.price}`}
+            <>
+              {events.length > 0 ? (
+                <div className="flex space-x-6 overflow-x-auto pb-8 hide-scrollbar snap-x">
+                  {events.map((event) => (
+                    <div key={event._id} className="min-w-[320px] md:min-w-[380px] snap-start shrink-0 group">
+                      <div className="glass-card overflow-hidden h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-glow-primary border-white/5">
+                        <div className="relative h-56 overflow-hidden">
+                          <img src={event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                          <div className="absolute top-4 left-4 glass rounded-full px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
+                            {event.category}
+                          </div>
+                          <div className="absolute top-4 right-4 bg-white text-black rounded-full px-3 py-1 text-xs font-extrabold shadow-lg">
+                            {event.price === 0 ? 'FREE' : `$${event.price}`}
+                          </div>
+                        </div>
+                        <div className="p-6 flex flex-col flex-1">
+                          <h3 className="text-xl font-display font-bold text-white mb-4 line-clamp-1 group-hover:text-primary transition-colors">{event.title}</h3>
+                          <div className="space-y-2 mt-auto">
+                            <div className="flex items-center text-gray-400 text-sm">
+                              <Calendar className="h-4 w-4 mr-2 text-primary" /> {new Date(event.date).toLocaleDateString()}
+                            </div>
+                            <div className="flex items-center text-gray-400 text-sm">
+                              <MapPin className="h-4 w-4 mr-2 text-primary" /> {event.location}
+                            </div>
+                          </div>
+                          <Link to={`/events/${event._id}`} className="mt-6 w-full py-3 bg-dark-bg border border-white/10 rounded-xl text-center font-semibold text-white hover:bg-white/5 transition-colors">
+                            Get Tickets
+                          </Link>
+                        </div>
                       </div>
                     </div>
-                    <div className="p-6 flex flex-col flex-1">
-                      <h3 className="text-xl font-display font-bold text-white mb-4 line-clamp-1 group-hover:text-primary transition-colors">{event.title}</h3>
-                      <div className="space-y-2 mt-auto">
-                        <div className="flex items-center text-gray-400 text-sm">
-                          <Calendar className="h-4 w-4 mr-2 text-primary" /> {new Date(event.date).toLocaleDateString()}
-                        </div>
-                        <div className="flex items-center text-gray-400 text-sm">
-                          <MapPin className="h-4 w-4 mr-2 text-primary" /> {event.location}
-                        </div>
-                      </div>
-                      <Link to={`/events/${event._id}`} className="mt-6 w-full py-3 bg-dark-bg border border-white/10 rounded-xl text-center font-semibold text-white hover:bg-white/5 transition-colors">
-                        Get Tickets
-                      </Link>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              ) : (
+                <div className="text-center py-12 glass rounded-2xl border-white/5">
+                  <p className="text-gray-400">No trending events available right now.</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>

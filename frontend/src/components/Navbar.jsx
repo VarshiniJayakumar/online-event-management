@@ -1,13 +1,13 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { CalendarDays, User, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState('');
 
-  // Check auth status on mount and when local storage might change
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
@@ -21,7 +21,7 @@ const Navbar = () => {
         console.error(e);
       }
     }
-  }, []);
+  }, [location]); // Re-check on location change
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -30,8 +30,10 @@ const Navbar = () => {
     navigate('/');
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <nav className="glass sticky top-0 z-50 border-b-0 border-white/5">
+    <nav className="glass sticky top-0 z-50 border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center">
@@ -43,10 +45,18 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="flex items-center space-x-6 md:space-x-8">
-            <Link to="/events" className="text-gray-300 hover:text-white font-medium transition-colors text-sm">Discover</Link>
+            <Link 
+              to="/events" 
+              className={`font-medium transition-colors text-sm ${isActive('/events') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
+            >
+              Discover
+            </Link>
             {isAuthenticated ? (
               <>
-                <Link to="/dashboard" className="text-gray-300 hover:text-white font-medium transition-colors text-sm flex items-center space-x-1">
+                <Link 
+                  to="/dashboard" 
+                  className={`font-medium transition-colors text-sm flex items-center space-x-1 ${isActive('/dashboard') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
+                >
                   <User className="h-4 w-4" />
                   <span className="hidden sm:inline">{userName || 'Dashboard'}</span>
                 </Link>

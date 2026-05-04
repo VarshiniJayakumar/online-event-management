@@ -1,20 +1,36 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Search, MapPin, Calendar, Filter, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Events = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  
+  const [searchTerm, setSearchTerm] = useState(queryParams.get('search') || '');
+  const [categoryFilter, setCategoryFilter] = useState(queryParams.get('category') || '');
+  const [locationFilter, setLocationFilter] = useState(queryParams.get('location') || '');
+  
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Update state if URL changes (e.g. clicking category in navbar or home)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setSearchTerm(params.get('search') || '');
+    setCategoryFilter(params.get('category') || '');
+    setLocationFilter(params.get('location') || '');
+  }, [location.search]);
+
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true);
       try {
         const query = new URLSearchParams();
         if (searchTerm) query.append('search', searchTerm);
         if (categoryFilter) query.append('category', categoryFilter);
+        if (locationFilter) query.append('location', locationFilter);
 
         const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events?${query.toString()}`);
         if (!response.ok) throw new Error('Failed to fetch events');
@@ -27,9 +43,9 @@ const Events = () => {
       }
     };
 
-    const debounceTimer = setTimeout(fetchEvents, 500);
+    const debounceTimer = setTimeout(fetchEvents, 300);
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, categoryFilter]);
+  }, [searchTerm, categoryFilter, locationFilter]);
 
   return (
     <div className="py-12 md:py-20">
@@ -42,7 +58,7 @@ const Events = () => {
 
         {/* Filters */}
         <div className="glass rounded-2xl p-4 mb-12 flex flex-col md:flex-row gap-4 border-white/10 shadow-lg shadow-black/50">
-          <div className="flex-1 relative">
+          <div className="flex-[2] relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-gray-500" />
             </div>
@@ -54,7 +70,19 @@ const Events = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="md:w-64 relative">
+          <div className="flex-1 relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <MapPin className="h-5 w-5 text-gray-500" />
+            </div>
+            <input
+              type="text"
+              className="block w-full pl-12 pr-4 py-3.5 bg-[#1a1a24] border border-white/5 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+              placeholder="City (e.g. Chennai)"
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
+            />
+          </div>
+          <div className="md:w-56 relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Filter className="h-5 w-5 text-gray-500" />
             </div>
@@ -124,7 +152,7 @@ const Events = () => {
                 <h3 className="text-2xl font-display font-bold text-white mb-2">No events found</h3>
                 <p className="text-gray-400 mb-6">Try adjusting your search or filter criteria.</p>
                 <button 
-                  onClick={() => {setSearchTerm(''); setCategoryFilter('');}}
+                  onClick={() => {setSearchTerm(''); setCategoryFilter(''); setLocationFilter('');}}
                   className="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg font-medium transition-colors"
                 >
                   Clear filters
