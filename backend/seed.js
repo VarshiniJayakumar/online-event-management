@@ -11,41 +11,41 @@ const cities = ['Chennai', 'Bangalore', 'Hyderabad', 'Mumbai', 'Pune', 'Delhi'];
 
 const seedEvents = [
   // TECH (4)
-  { title: 'AI & Quantum Computing Expo', description: 'Explore the intersection of artificial intelligence and quantum mechanics.', category: 'Tech', price: 999, imageUrl: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Full Stack Bootcamp', description: 'A 2-day intensive bootcamp covering React, Node, and System Architecture.', category: 'Tech', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Cyber Defense Challenge', description: 'Test your security skills in this 24-hour capture the flag challenge.', category: 'Tech', price: 0, imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Blockchain Revolution', description: 'Deep dive into decentralized finance and the future of smart contracts.', category: 'Tech', price: 2500, imageUrl: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=800&q=80' },
+  { title: 'AI Frontier Summit', description: 'Deep dive into Generative AI and Neural Networks.', category: 'Tech', price: 999, imageUrl: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80' },
+  { title: 'Web3 & Crypto Expo', description: 'The future of decentralized finance and blockchain.', category: 'Tech', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&q=80' },
+  { title: 'Robotics Workshop', description: 'Build and program your first autonomous robot.', category: 'Tech', price: 1200, imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80' },
+  { title: 'DevOps Conference', description: 'Scaling infrastructure with modern cloud tools.', category: 'Tech', price: 0, imageUrl: 'https://images.unsplash.com/photo-1618401471353-b98aadebc25a?w=800&q=80' },
 
   // MUSIC (4)
-  { title: 'Neon Pulse EDM Night', description: 'Get lost in the lasers and bass with the top international DJs.', category: 'Music', price: 2000, imageUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Classical Ragas Evening', description: 'A meditative evening of traditional Indian classical music.', category: 'Music', price: 800, imageUrl: 'https://images.unsplash.com/photo-1582733754228-22073d60da1a?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Retro Rock Legends', description: 'Relive the 80s with tributes to the greatest rock bands of all time.', category: 'Music', price: 1200, imageUrl: 'https://images.unsplash.com/photo-1501386761578-e95c33bd014b?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Soulful Jazz Brunch', description: 'Sunday morning jazz vibes accompanied by a world-class brunch menu.', category: 'Music', price: 2500, imageUrl: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&w=800&q=80' },
+  { title: 'Electronic Beats Festival', description: 'International DJs performing live on 3 stages.', category: 'Music', price: 2000, imageUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80' },
+  { title: 'Jazz & Wine Night', description: 'Sophisticated jazz in an intimate rooftop setting.', category: 'Music', price: 2500, imageUrl: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=800&q=80' },
+  { title: 'Rock Anthems Live', description: 'Classic rock hits performed by the best tribute bands.', category: 'Music', price: 800, imageUrl: 'https://images.unsplash.com/photo-1459749411177-042180ce673c?w=800&q=80' },
+  { title: 'Sitar Melody Evening', description: 'Traditional Indian classical music by moonlight.', category: 'Music', price: 500, imageUrl: 'https://images.unsplash.com/photo-1526218626217-dc65a29bb444?w=800&q=80' },
 
   // SPORTS (4)
-  { title: 'Corporate T20 Cricket', description: 'The ultimate cricket tournament for the tech world.', category: 'Sports', price: 500, imageUrl: 'https://images.unsplash.com/photo-1531415074941-6ef21368a594?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Midnight City Marathon', description: 'Run for a cause under the city lights. 5K and 10K options.', category: 'Sports', price: 400, imageUrl: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Football League Final', description: 'Witness history in the making as the top two clubs battle for glory.', category: 'Sports', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Tennis Masters Cup', description: 'Elite level tennis featuring the best national talent.', category: 'Sports', price: 3000, imageUrl: 'https://images.unsplash.com/photo-1595435066961-260195a63908?auto=format&fit=crop&w=800&q=80' },
+  { title: 'Corporate T20 Cricket', description: 'The ultimate cricket tournament for the tech world.', category: 'Sports', price: 500, imageUrl: 'https://images.unsplash.com/photo-1531415074941-6ef21368a594?w=800&q=80' },
+  { title: 'City Half Marathon', description: 'Run for health and a better future.', category: 'Sports', price: 300, imageUrl: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&q=80' },
+  { title: 'Elite Football Cup', description: 'Witness the local clubs battle for the trophy.', category: 'Sports', price: 1000, imageUrl: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80' },
+  { title: 'Tennis Open 2026', description: 'Grand slam style tournament for all age groups.', category: 'Sports', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1622279457486-62dcc4a4bd13?w=800&q=80' },
 
   // FOOD (4)
-  { title: 'Indian Biryani Expo', description: 'Taste 100+ varieties of Biryani from every corner of India.', category: 'Food', price: 600, imageUrl: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Coffee Brewing Workshop', description: 'Learn the science of brewing, latte art, and bean selection.', category: 'Food', price: 1200, imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Vegan Dessert Class', description: 'Create delicious, guilt-free pastries with award-winning chefs.', category: 'Food', price: 1800, imageUrl: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Wine & Cheese Evening', description: 'An elegant evening of international wine pairings.', category: 'Food', price: 3500, imageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80' },
+  { title: 'Biryani Food Street', description: 'Every type of biryani you can imagine in one place.', category: 'Food', price: 600, imageUrl: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&q=80' },
+  { title: 'Coffee Art Workshop', description: 'Master the art of espresso and latte patterns.', category: 'Food', price: 1200, imageUrl: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80' },
+  { title: 'Italian Pasta Night', description: 'Handmade pasta and authentic sauces by guest chefs.', category: 'Food', price: 1800, imageUrl: 'https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=800&q=80' },
+  { title: 'Baking Masterclass', description: 'Learn to bake professional level cakes and pastries.', category: 'Food', price: 2000, imageUrl: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&q=80' },
 
   // BUSINESS (4)
-  { title: 'E-commerce Summit', description: 'Scaling your online business to 10M+ in revenue.', category: 'Business', price: 4000, imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Startup Pitch Night', description: 'Watch the next big unicorns pitch to top venture capitalists.', category: 'Business', price: 0, imageUrl: 'https://images.unsplash.com/photo-1559564484-e48b3e040ff4?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Digital Marketing Pro', description: 'Advanced strategies for SEO and Meta Ads.', category: 'Business', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1432888622747-4eb9a8f2c205?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Leadership Forum', description: 'Leading with empathy and innovation in the modern workplace.', category: 'Business', price: 2000, imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80' },
+  { title: 'Startup Founders Summit', description: 'Networking and pitches with top VCs.', category: 'Business', price: 0, imageUrl: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80' },
+  { title: 'Marketing Strategy 2026', description: 'Advanced digital growth and brand building.', category: 'Business', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1432888622747-4eb9a8f2c205?w=800&q=80' },
+  { title: 'E-commerce Mastery', description: 'Scaling your D2C brand to new heights.', category: 'Business', price: 3000, imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80' },
+  { title: 'Creative Leadership', description: 'Leading teams with empathy and innovation.', category: 'Business', price: 1200, imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80' },
 
   // ART & WELLNESS (5)
-  { title: 'Modern Mural Festival', description: 'Watch as world-class artists transform the city walls.', category: 'Art', price: 0, imageUrl: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Pottery Studio Day', description: 'Get your hands dirty and learn the ancient art of pottery.', category: 'Art', price: 900, imageUrl: 'https://images.unsplash.com/photo-1565191999001-551c187427bb?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Sound Healing Session', description: 'Reset your nervous system with frequency therapy.', category: 'Wellness', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Sunrise Yoga Flow', description: 'Align your body and mind with expert gurus.', category: 'Wellness', price: 0, imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80' },
-  { title: 'Landscape Painting', description: 'Artistic immersion in nature. Capture the beauty on canvas.', category: 'Art', price: 5000, imageUrl: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80' },
+  { title: 'Modern Art Auction', description: 'Exhibition and bidding on contemporary pieces.', category: 'Art', price: 5000, imageUrl: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=800&q=80' },
+  { title: 'Pottery Experience', description: 'Relaxing day at the wheel creating clay art.', category: 'Art', price: 900, imageUrl: 'https://images.unsplash.com/photo-1565191999001-551c187427bb?w=800&q=80' },
+  { title: 'Zen Meditation Retreat', description: 'A day of silence, breathing, and inner peace.', category: 'Wellness', price: 0, imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80' },
+  { title: 'Power Yoga Intensive', description: 'Strength and flexibility focused yoga workshop.', category: 'Wellness', price: 500, imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80' },
+  { title: 'Landscape Photography', description: 'Capture the city and nature with expert guidance.', category: 'Art', price: 3000, imageUrl: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80' },
 ];
 
 const seedDB = async () => {
@@ -79,7 +79,7 @@ const seedDB = async () => {
     });
 
     await Event.insertMany(finalEvents);
-    console.log(`Successfully seeded exactly ${finalEvents.length} premium events!`);
+    console.log(`Successfully seeded ${finalEvents.length} unique events!`);
     
     mongoose.connection.close();
   } catch (error) {
