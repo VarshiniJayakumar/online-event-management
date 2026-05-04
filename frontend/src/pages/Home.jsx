@@ -21,8 +21,10 @@ const Home = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(getApiUrl('/events'));
-        if (!response.ok) throw new Error('Failed to fetch events');
+        const url = getApiUrl('/events');
+        console.log('Home fetching from:', url);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Failed to fetch from ${url}`);
         const data = await response.json();
         setEvents(data.slice(0, 6)); // Show first 6 as trending
       } catch (err) {

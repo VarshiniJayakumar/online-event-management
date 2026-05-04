@@ -33,8 +33,11 @@ const Events = () => {
         if (categoryFilter) query.append('category', categoryFilter);
         if (locationFilter) query.append('location', locationFilter);
 
-        const response = await fetch(getApiUrl(`/events?${query.toString()}`));
-        if (!response.ok) throw new Error('Failed to fetch events');
+        const url = getApiUrl(`/events?${query.toString()}`);
+        console.log('Fetching from:', url);
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Failed to fetch from ${url}. Status: ${response.status}`);
         const data = await response.json();
         setEvents(data);
       } catch (err) {
