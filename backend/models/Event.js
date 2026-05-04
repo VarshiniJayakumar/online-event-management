@@ -15,6 +15,7 @@ const eventSchema = new mongoose.Schema({
   location: { type: String, required: true },
   category: { type: String, required: true },
   imageUrl: { type: String },
+  price: { type: Number, default: 0 },
   organizer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   tickets: [ticketSchema],
   status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'approved' }, // Admin approval
