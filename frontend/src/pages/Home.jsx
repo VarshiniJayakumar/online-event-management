@@ -6,7 +6,7 @@ import getApiUrl from '../utils/api';
 const categories = [
   { name: 'Music', icon: '🎵', color: 'from-purple-500/20 to-purple-500/5', border: 'border-purple-500/30', fallback: 'https://images.unsplash.com/photo-1459749411177-042180ce673c?w=800&q=80' },
   { name: 'Tech', icon: '💻', color: 'from-blue-500/20 to-blue-500/5', border: 'border-blue-500/30', fallback: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80' },
-  { name: 'Sports', icon: '⚽', color: 'from-green-500/20 to-green-500/5', border: 'border-green-500/30', fallback: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=80' },
+  { name: 'Sports', icon: '⚽', color: 'from-green-500/20 to-green-500/5', border: 'border-green-500/30', fallback: 'https://images.unsplash.com/photo-1461896646984-80ae6218e1d1?w=800&q=80' },
   { name: 'Food', icon: '🍕', color: 'from-orange-500/20 to-orange-500/5', border: 'border-orange-500/30', fallback: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80' },
   { name: 'Business', icon: '💼', color: 'from-pink-500/20 to-pink-500/5', border: 'border-pink-500/30', fallback: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80' },
 ];
@@ -137,13 +137,16 @@ const Home = () => {
                   {events.map((event) => (
                     <div key={event._id} className="min-w-[320px] md:min-w-[380px] snap-start shrink-0 group">
                       <div className="glass-card overflow-hidden h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-glow-primary border-white/5">
-                        <div className="relative h-56 overflow-hidden">
+                        <div className="relative h-56 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
                           <img 
                             src={event.imageUrl || getFallback(event.category)} 
                             alt={event.title} 
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                             onError={(e) => {
-                              e.target.src = getFallback(event.category);
+                              const fb = getFallback(event.category);
+                              if (e.target.src !== fb) {
+                                e.target.src = fb;
+                              }
                             }}
                           />
                           <div className="absolute top-4 left-4 glass rounded-full px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
