@@ -27,6 +27,21 @@ app.get('/', (req, res) => {
   res.send('Event Management API is Running');
 });
 
+// Health check endpoint
+app.get('/api/health', async (req, res) => {
+  try {
+    const eventCount = await Event.countDocuments();
+    res.json({ 
+      status: 'ok', 
+      database: mongoose.connection.name,
+      events: eventCount,
+      message: 'Backend is connected to MongoDB'
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
+});
+
 // Port handling for Render
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;

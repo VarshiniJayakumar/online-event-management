@@ -155,12 +155,28 @@ const Events = () => {
               <div className="text-center py-24 glass rounded-2xl border-dashed border-white/20 mt-8">
                 <h3 className="text-2xl font-display font-bold text-white mb-2">No events found</h3>
                 <p className="text-gray-400 mb-6">Try adjusting your search or filter criteria.</p>
-                <button 
-                  onClick={() => {setSearchTerm(''); setCategoryFilter(''); setLocationFilter('');}}
-                  className="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg font-medium transition-colors"
-                >
-                  Clear filters
-                </button>
+                <div className="flex justify-center gap-4">
+                  <button 
+                    onClick={() => {setSearchTerm(''); setCategoryFilter(''); setLocationFilter('');}}
+                    className="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg font-medium transition-colors"
+                  >
+                    Clear filters
+                  </button>
+                  <button 
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(getApiUrl('/health'));
+                        const data = await res.json();
+                        alert(`Backend Health:\nStatus: ${data.status}\nEvents in DB: ${data.events}\nDatabase: ${data.database}`);
+                      } catch (err) {
+                        alert(`Connection Failed: ${err.message}`);
+                      }
+                    }}
+                    className="px-6 py-2.5 bg-primary/20 hover:bg-primary/30 text-primary rounded-lg font-medium transition-colors border border-primary/30"
+                  >
+                    Check Connection
+                  </button>
+                </div>
               </div>
             )}
           </>
