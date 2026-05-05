@@ -14,19 +14,19 @@ const seedEvents = [
   { title: 'AI Frontier Summit', description: 'Deep dive into Generative AI and Neural Networks.', category: 'Tech', price: 999, imageUrl: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80' },
   { title: 'Web3 & Crypto Expo', description: 'The future of decentralized finance and blockchain.', category: 'Tech', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&q=80' },
   { title: 'Robotics Workshop', description: 'Build and program your first autonomous robot.', category: 'Tech', price: 1200, imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80' },
-  { title: 'DevOps Conference', description: 'Scaling infrastructure with modern cloud tools.', category: 'Tech', price: 0, imageUrl: 'https://images.unsplash.com/photo-1618401471353-b98aadebc25a?w=800&q=80' },
+  { title: 'DevOps Conference', description: 'Scaling infrastructure with modern cloud tools.', category: 'Tech', price: 0, imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80' },
 
   // MUSIC (4)
   { title: 'Electronic Beats Festival', description: 'International DJs performing live on 3 stages.', category: 'Music', price: 2000, imageUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80' },
   { title: 'Jazz & Wine Night', description: 'Sophisticated jazz in an intimate rooftop setting.', category: 'Music', price: 2500, imageUrl: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=800&q=80' },
-  { title: 'Rock Anthems Live', description: 'Classic rock hits performed by the best tribute bands.', category: 'Music', price: 800, imageUrl: 'https://images.unsplash.com/photo-1459749411177-042180ce673c?w=800&q=80' },
+  { title: 'Rock Anthems Live', description: 'Classic rock hits performed by the best tribute bands.', category: 'Music', price: 800, imageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&q=80' },
   { title: 'Sitar Melody Evening', description: 'Traditional Indian classical music by moonlight.', category: 'Music', price: 500, imageUrl: 'https://images.unsplash.com/photo-1526218626217-dc65a29bb444?w=800&q=80' },
 
   // SPORTS (4)
-  { title: 'Corporate T20 Cricket', description: 'The ultimate cricket tournament for the tech world.', category: 'Sports', price: 500, imageUrl: 'https://images.unsplash.com/photo-1531415074941-6ef21368a594?w=800&q=80' },
+  { title: 'Corporate T20 Cricket', description: 'The ultimate cricket tournament for the tech world.', category: 'Sports', price: 500, imageUrl: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80' },
   { title: 'City Half Marathon', description: 'Run for health and a better future.', category: 'Sports', price: 300, imageUrl: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&q=80' },
   { title: 'Elite Football Cup', description: 'Witness the local clubs battle for the trophy.', category: 'Sports', price: 1000, imageUrl: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80' },
-  { title: 'Tennis Open 2026', description: 'Grand slam style tournament for all age groups.', category: 'Sports', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1622279457486-62dcc4a4bd13?w=800&q=80' },
+  { title: 'Tennis Open 2026', description: 'Grand slam style tournament for all age groups.', category: 'Sports', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=800&q=80' },
 
   // FOOD (4)
   { title: 'Biryani Food Street', description: 'Every type of biryani you can imagine in one place.', category: 'Food', price: 600, imageUrl: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&q=80' },
@@ -36,7 +36,7 @@ const seedEvents = [
 
   // BUSINESS (4)
   { title: 'Startup Founders Summit', description: 'Networking and pitches with top VCs.', category: 'Business', price: 0, imageUrl: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80' },
-  { title: 'Marketing Strategy 2026', description: 'Advanced digital growth and brand building.', category: 'Business', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1432888622747-4eb9a8f2c205?w=800&q=80' },
+  { title: 'Marketing Strategy 2026', description: 'Advanced digital growth and brand building.', category: 'Business', price: 1500, imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80' },
   { title: 'E-commerce Mastery', description: 'Scaling your D2C brand to new heights.', category: 'Business', price: 3000, imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80' },
   { title: 'Creative Leadership', description: 'Leading teams with empathy and innovation.', category: 'Business', price: 1200, imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80' },
 

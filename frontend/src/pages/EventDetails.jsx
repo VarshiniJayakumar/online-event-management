@@ -118,7 +118,9 @@ const EventDetails = () => {
             alt={event.title} 
             className="w-full h-full object-cover"
             onError={(e) => {
-              e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&q=80';
+              if (e.target.src !== 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&q=80') {
+                e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=1200&q=80';
+              }
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/60 to-transparent"></div>

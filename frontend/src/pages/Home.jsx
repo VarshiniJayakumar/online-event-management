@@ -135,10 +135,16 @@ const Home = () => {
                         </div>
                         {/* Actual Image */}
                         <img 
-                          src={event.imageUrl} 
+                          src={event.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80'} 
                           alt={event.title} 
                           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                          onError={(e) => { e.target.style.display = 'none'; }}
+                          onError={(e) => { 
+                            if (e.target.src !== 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80') {
+                              e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80';
+                            } else {
+                              e.target.style.display = 'none';
+                            }
+                          }}
                         />
                         <div className="absolute top-4 left-4 glass rounded-full px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
                           {event.category}

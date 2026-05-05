@@ -103,7 +103,16 @@ const Dashboard = () => {
                     <h3 className="text-3xl font-display font-bold text-white leading-tight">Web3 & AI Summit 2026</h3>
                   </div>
                   <div className="hidden sm:block w-16 h-16 rounded-xl overflow-hidden shrink-0 shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=200&q=80" className="w-full h-full object-cover" alt="Event" />
+                    <img 
+                      src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=200&q=80" 
+                      className="w-full h-full object-cover" 
+                      alt="Event" 
+                      onError={(e) => {
+                        if (e.target.src !== 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=200&q=80') {
+                          e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=200&q=80';
+                        }
+                      }}
+                    />
                   </div>
                 </div>
 
