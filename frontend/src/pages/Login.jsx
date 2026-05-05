@@ -31,11 +31,11 @@ const Login = () => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      // Redirect to dashboard
-      // Force a full reload to update the navbar state easily (or could use context)
-      window.location.href = '/dashboard';
+      console.log('Login successful, navigating to dashboard...');
+      navigate('/dashboard');
       
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.message);
     } finally {
       setLoading(false);

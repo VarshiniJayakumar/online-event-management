@@ -27,6 +27,13 @@ const Events = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Sync state with URL parameters
+  useEffect(() => {
+    setSearchTerm(queryParams.get('search') || '');
+    setCategoryFilter(queryParams.get('category') || '');
+    setLocationFilter(queryParams.get('location') || '');
+  }, [location.search]);
+
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
