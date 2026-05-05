@@ -6,22 +6,17 @@ const Event = require('../models/Event');
 
 router.post('/create-checkout-session', async (req, res) => {
   if (!stripe) {
-    return res.status(500).json({ error: 'Stripe is not configured on the server. Please add STRIPE_SECRET_KEY to your .env file.' });
+    return res.status(500).json({ message: 'Stripe is not configured on the server. Please add STRIPE_SECRET_KEY to your backend environment variables.' });
   }
   try {
     const { eventId, ticketQuantity } = req.body;
-    // For now we mock the event details since we might not have it in DB,
-    // but typically you would fetch the event:
-    // const event = await Event.findById(eventId);
-    // if (!event) return res.status(404).json({ error: 'Event not found' });
     
-    // Using mock data for demonstration
-    const event = {
-      title: 'The Metropol Charity Gala',
-      price: 299,
-      image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80'
-    };
-
+    // Fetch the real event from the database
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -30,9 +25,9 @@ router.post('/create-checkout-session', async (req, res) => {
             currency: 'usd',
             product_data: {
               name: event.title,
-              images: [event.image],
+              images: [event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'],
             },
-            unit_amount: event.price * 100, // Stripe expects amount in cents
+            unit_amount: (event.price || 0) * 100, // Stripe expects amount in cents
           },
           quantity: ticketQuantity,
         },
@@ -45,7 +40,7 @@ router.post('/create-checkout-session', async (req, res) => {
     res.json({ id: session.id });
   } catch (error) {
     console.error('Stripe error:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
