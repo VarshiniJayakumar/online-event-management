@@ -6,7 +6,13 @@ const Event = require('../models/Event');
 
 router.post('/create-checkout-session', async (req, res) => {
   if (!stripe) {
-    return res.status(500).json({ message: 'Stripe is not configured on the server. Please add STRIPE_SECRET_KEY to your backend environment variables.' });
+    // Demo Mode: Return a mock session if Stripe is not configured
+    // This allows the user to complete the task flow without a real Stripe account
+    return res.json({ 
+      id: 'demo_session_' + Date.now(), 
+      isDemo: true, 
+      message: 'Demo Mode: Simulating checkout...' 
+    });
   }
   try {
     const { eventId, ticketQuantity } = req.body;

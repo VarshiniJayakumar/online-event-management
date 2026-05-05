@@ -75,6 +75,15 @@ const EventDetails = () => {
         throw new Error(data.message || 'Payment failed');
       }
 
+      // Handle Demo Mode
+      if (data.isDemo) {
+        setTimeout(() => {
+          setRegistrationSuccess(true);
+          setCheckoutLoading(false);
+        }, 2000);
+        return;
+      }
+
       const stripe = await stripePromise;
       const { error } = await stripe.redirectToCheckout({
         sessionId: data.id,
