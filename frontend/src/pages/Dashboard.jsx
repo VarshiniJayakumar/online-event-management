@@ -481,7 +481,10 @@ const Dashboard = () => {
                     <input 
                       type="text" 
                       value={updatedName}
-                      onChange={(e) => setUpdatedName(e.target.value)}
+                      onChange={(e) => {
+                        setUpdatedName(e.target.value);
+                        setUpdateSuccess(false);
+                      }}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
                       placeholder="Your name"
                     />
@@ -496,13 +499,15 @@ const Dashboard = () => {
                     />
                   </div>
                 </div>
-                <button 
-                  type="submit"
-                  disabled={isUpdating}
-                  className="mt-8 bg-primary text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-all flex items-center disabled:opacity-50 shadow-glow-primary"
-                >
-                  {isUpdating ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : 'Save Changes'}
-                </button>
+                {!updateSuccess && (
+                  <button 
+                    type="submit"
+                    disabled={isUpdating}
+                    className="mt-8 bg-primary text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-all flex items-center disabled:opacity-50 shadow-glow-primary"
+                  >
+                    {isUpdating ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : 'Save Changes'}
+                  </button>
+                )}
               </form>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
