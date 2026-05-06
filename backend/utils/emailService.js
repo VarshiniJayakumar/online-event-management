@@ -21,7 +21,10 @@ const sendEmail = async ({ to, subject, htmlContent }) => {
         'content-type': 'application/json'
       },
       body: JSON.stringify({
-        sender: { name: "Eventure Team", email: "verify@eventure.com" },
+        sender: { 
+          name: "Eventure Team", 
+          email: process.env.BREVO_SENDER_EMAIL || "notifications@eventure.com" 
+        },
         to: [{ email: to }],
         subject: subject,
         htmlContent: htmlContent
