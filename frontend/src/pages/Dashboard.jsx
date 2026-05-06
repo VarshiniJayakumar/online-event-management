@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard, CheckCircle2, Users, X } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard, CheckCircle2, Users, X, Trash2 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import getApiUrl from '../utils/api';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('tickets');
   const [tickets, setTickets] = useState([]);
   const [managedEvents, setManagedEvents] = useState([]);
@@ -17,6 +18,11 @@ const Dashboard = () => {
   const [updatedName, setUpdatedName] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [notifications, setNotifications] = useState({
+    email: true,
+    marketing: false,
+    updates: true
+  });
 
   // Modal State for registrations
   const [selectedEventRegs, setSelectedEventRegs] = useState(null);
@@ -129,6 +135,35 @@ const Dashboard = () => {
     } catch (err) {
       alert(err.message);
     }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!window.confirm('WARNING: Are you absolutely sure you want to delete your account? This will permanently remove all your data and events. This action cannot be undone.')) return;
+    
+    const confirmation = window.prompt('Please type "DELETE" to confirm account deletion:');
+    if (confirmation !== 'DELETE') return;
+
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(getApiUrl('/auth/profile'), {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) throw new Error('Failed to delete account');
+
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      alert('Your account has been deleted.');
+      navigate('/');
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const toggleNotification = (key) => {
+    setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
+    // In a real app, you'd send this to the backend
   };
 
   if (loading) return (
@@ -487,19 +522,35 @@ const Dashboard = () => {
                   <h3 className="text-lg font-bold text-white mb-6 flex items-center">
                     <Bell className="mr-3 h-5 w-5 text-primary" /> Notifications
                   </h3>
-                  <p className="text-gray-400 text-sm mb-6">Manage how you receive updates about your events.</p>
-                  <button className="w-full border border-white/10 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-white/5 transition-colors">
-                    Configure
-                  </button>
+                  <div className="space-y-4 mb-6">
+                    {Object.entries(notifications).map(([key, val]) => (
+                      <div key={key} className="flex items-center justify-between">
+                        <span className="text-sm text-gray-300 capitalize">{key} Notifications</span>
+                        <button 
+                          onClick={() => toggleNotification(key)}
+                          className={`w-10 h-5 rounded-full transition-colors relative ${val ? 'bg-primary' : 'bg-white/10'}`}
+                        >
+                          <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${val ? 'right-1' : 'left-1'}`}></div>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               <div className="glass-card p-6 border-red-500/10 bg-red-500/5">
-                <h3 className="text-lg font-bold text-red-500 mb-2">Danger Zone</h3>
-                <p className="text-gray-400 text-sm mb-6">Once you delete your account, there is no going back. Please be certain.</p>
-                <button className="text-red-500 font-bold hover:underline">
-                  Delete Account
-                </button>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-red-500 mb-2">Danger Zone</h3>
+                    <p className="text-gray-400 text-sm">Once you delete your account, there is no going back. Please be certain.</p>
+                  </div>
+                  <button 
+                    onClick={handleDeleteAccount}
+                    className="flex items-center bg-red-500/10 hover:bg-red-500/20 text-red-500 px-4 py-2 rounded-xl font-bold transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" /> Delete Account
+                  </button>
+                </div>
               </div>
             </div>
           </div>

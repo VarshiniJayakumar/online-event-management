@@ -104,4 +104,26 @@ router.put('/profile', async (req, res) => {
   }
 });
 
+// Delete Account
+router.delete('/profile', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    
+    // Delete user
+    const user = await User.findByIdAndDelete(decoded.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Optionally delete user's events and registrations
+    // await Event.deleteMany({ organizer: decoded.id });
+    // await Registration.deleteMany({ user: decoded.id });
+
+    res.status(200).json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
