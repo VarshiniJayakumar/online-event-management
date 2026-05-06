@@ -146,7 +146,7 @@ const EventDetails = () => {
       <div className="relative h-[400px] md:h-[500px] overflow-hidden">
         <div className="absolute inset-0">
           <img 
-            src={event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=80'} 
+            src={event.imageUrl ? (event.imageUrl.includes('unsplash.com') ? `${event.imageUrl.split('?')[0]}?w=1200&q=80` : event.imageUrl) : 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&q=80'} 
             alt={event.title} 
             className="w-full h-full object-cover"
             onError={(e) => {

@@ -115,12 +115,13 @@ const Events = () => {
                         {cat.icon}
                       </div>
                       <img 
-                        src={event.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80'} 
+                        src={event.imageUrl ? (event.imageUrl.includes('unsplash.com') ? `${event.imageUrl.split('?')[0]}?w=600&q=75` : event.imageUrl) : 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75'} 
                         alt={event.title} 
+                        loading="lazy"
                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         onError={(e) => { 
-                          if (e.target.src !== 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80') {
-                            e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80';
+                          if (e.target.src !== 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75') {
+                            e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75';
                           } else {
                             e.target.style.display = 'none';
                           }
