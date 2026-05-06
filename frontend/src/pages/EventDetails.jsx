@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
-import { CalendarDays, MapPin, Clock, Share2, Heart, ArrowLeft, Ticket, Loader2, CheckCircle2 } from 'lucide-react';
+import { CalendarDays, MapPin, Clock, Share2, Heart, ArrowLeft, Ticket, Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
 import getApiUrl from '../utils/api';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_TYooMQauvdEDq54NiTphI7jx');
@@ -174,7 +174,7 @@ const EventDetails = () => {
             <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-6 leading-tight max-w-4xl">
               {event.title}
             </h1>
-            <div className="flex flex-wrap gap-8">
+            <div className="flex flex-wrap gap-8 mb-8">
               <div className="flex items-center text-white/90">
                 <div className="w-12 h-12 rounded-xl glass flex items-center justify-center mr-4 border-white/10">
                   <CalendarDays className="h-6 w-6 text-primary" />
@@ -194,11 +194,25 @@ const EventDetails = () => {
                 </div>
               </div>
             </div>
+
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => document.getElementById('event-content').scrollIntoView({ behavior: 'smooth' })}
+                className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl font-bold transition-all flex items-center group"
+              >
+                Explore Details
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+              <div className="hidden md:flex flex-col items-center ml-8 animate-bounce opacity-50">
+                <span className="text-[10px] uppercase tracking-widest font-bold mb-2">Scroll</span>
+                <div className="w-1 h-8 bg-gradient-to-b from-primary to-transparent rounded-full"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-12 py-12">
+      <div id="event-content" className="max-w-7xl mx-auto px-4 md:px-12 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2">
@@ -283,7 +297,7 @@ const EventDetails = () => {
 
                   <div className="space-y-6 mb-8">
                     <div>
-                      <label className="block text-sm font-bold text-gray-300 mb-3">Quantity</label>
+                      <label className="block text-sm font-bold text-gray-300 mb-3">Number of Attendees</label>
                       <div className="flex items-center glass rounded-xl border-white/10 p-1">
                         <button 
                           onClick={() => setTicketCount(Math.max(1, ticketCount - 1))}
