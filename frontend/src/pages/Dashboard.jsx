@@ -498,7 +498,7 @@ const Dashboard = () => {
                     />
                   </div>
                 </div>
-                {!updateSuccess && (
+                {!updateSuccess && updatedName !== user?.name && (
                   <button 
                     type="submit"
                     disabled={isUpdating}
