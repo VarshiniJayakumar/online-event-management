@@ -1,6 +1,11 @@
 const sendEmail = async ({ to, subject, htmlContent }) => {
   const BREVO_API_KEY = process.env.BREVO_API_KEY;
-  const SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL || "notifications@eventure.com";
+  const SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL;
+
+  console.log('--- Email System Status Check ---');
+  console.log(`🔑 BREVO_API_KEY: ${BREVO_API_KEY ? '✅ DETECTED' : '❌ MISSING'}`);
+  console.log(`📧 SENDER_EMAIL: ${SENDER_EMAIL ? '✅ DETECTED' : '❌ MISSING'}`);
+  console.log('---------------------------------');
 
   if (!BREVO_API_KEY) {
     console.log('\n📢 EMAIL NOTICE: Running in SIMULATION MODE.');
