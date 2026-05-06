@@ -82,12 +82,16 @@ router.post('/register', async (req, res) => {
 router.get('/verify/:token', async (req, res) => {
   try {
     const { token } = req.params;
+    console.log(`\nAttempting to verify token: ${token}`);
+    
     const user = await User.findOne({ verificationToken: token });
     
     if (!user) {
+      console.log('❌ No user found with this verification token.');
       return res.status(400).json({ message: 'Invalid or expired verification token' });
     }
 
+    console.log(`✅ User found: ${user.email}. Marking as verified.`);
     user.isVerified = true;
     user.verificationToken = undefined; // Clear the token
     await user.save();
