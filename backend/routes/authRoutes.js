@@ -44,8 +44,12 @@ router.post('/register', async (req, res) => {
     }
 
     // Send Verification Email
-    const verificationLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/verify-email/${verificationToken}`;
+    const baseUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+    const verificationLink = `${baseUrl}/verify-email/${verificationToken}`;
     
+    console.log(`\nVerification attempt for: ${email}`);
+    console.log(`Token: ${verificationToken}\n`);
+
     await sendEmail({
       to: email,
       subject: "Verify your Eventure Account",
