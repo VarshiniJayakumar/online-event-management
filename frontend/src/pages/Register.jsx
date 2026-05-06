@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Mail, Lock, Loader2, CheckCircle2, User } from 'lucide-react';
 import getApiUrl from '../utils/api';
 
 const Register = () => {
@@ -9,7 +9,12 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [isRegistered, setIsRegistered] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -37,12 +42,15 @@ const Register = () => {
         throw new Error(data.message || 'Registration failed');
       }
 
-      // Save token and user data
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      console.log('Registration successful, navigating to dashboard...');
-      navigate('/dashboard');
+      // If verification is required, show success message
+      if (data.requiresVerification) {
+        setIsRegistered(true);
+      } else {
+        // Fallback for non-verification mode (local testing)
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = '/dashboard';
+      }
       
     } catch (err) {
       console.error('Registration error:', err);
@@ -51,6 +59,31 @@ const Register = () => {
       setLoading(false);
     }
   };
+
+  if (isRegistered) {
+    return (
+      <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-4 py-12">
+        <div className="glass-card max-w-md w-full p-10 text-center animate-in zoom-in duration-500">
+          <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-8 border border-green-500/30">
+            <Mail className="h-10 w-10 text-green-500" />
+          </div>
+          <h2 className="text-3xl font-display font-bold text-white mb-4">Check your email!</h2>
+          <p className="text-gray-400 mb-8 leading-relaxed">
+            We've sent a verification link to <span className="text-white font-bold">{email}</span>. 
+            Please click the link in your inbox to activate your account.
+          </p>
+          <div className="space-y-4">
+            <Link to="/login" className="block w-full py-4 bg-primary text-white font-bold rounded-xl shadow-glow-primary">
+              Return to Login
+            </Link>
+            <p className="text-xs text-gray-500">
+              Didn't receive the email? Check your spam folder or contact support.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[calc(100vh-80px)] flex items-center justify-center px-4 py-12 relative overflow-hidden">
@@ -77,39 +110,48 @@ const Register = () => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5" htmlFor="name">Full Name</label>
-              <input
-                id="name"
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full bg-[#1a1a24] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-all"
-                placeholder="John Doe"
-              />
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                <input
+                  id="name"
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full bg-[#1a1a24] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-all"
+                  placeholder="John Doe"
+                />
+              </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5" htmlFor="email">Email</label>
-              <input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#1a1a24] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-all"
-                placeholder="you@example.com"
-              />
+              <label className="block text-sm font-medium text-gray-300 mb-1.5" htmlFor="email">Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-[#1a1a24] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-all"
+                  placeholder="you@example.com"
+                />
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5" htmlFor="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#1a1a24] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-all"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                <input
+                  id="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-[#1a1a24] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
             </div>
           </div>
 
@@ -117,9 +159,9 @@ const Register = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-gradient-to-r from-secondary to-primary text-white font-bold rounded-xl hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(236,72,153,0.3)] disabled:opacity-50"
+              className="w-full py-4 bg-gradient-to-r from-secondary to-primary text-white font-bold rounded-xl hover:opacity-90 transition-opacity shadow-[0_0_20px_rgba(236,72,153,0.3)] disabled:opacity-50 flex items-center justify-center"
             >
-              {loading ? 'Creating account...' : 'Sign up for Eventure'}
+              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Create Account'}
             </button>
           </div>
         </form>
