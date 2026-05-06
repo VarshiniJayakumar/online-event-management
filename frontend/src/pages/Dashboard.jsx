@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Ticket, Calendar, BarChart3, Settings, Plus, Download, QrCode, Loader2, AlertCircle } from 'lucide-react';
+import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard } from 'lucide-react';
+import { QRCodeCanvas } from 'qrcode.react';
 import getApiUrl from '../utils/api';
 
 const Dashboard = () => {
@@ -130,7 +131,7 @@ const Dashboard = () => {
               onClick={() => setActiveTab('settings')}
               className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all ${activeTab === 'settings' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'}`}
             >
-              <Settings className="mr-3 h-5 w-5" /> Settings
+              <SettingsIcon className="mr-3 h-5 w-5" /> Settings
             </button>
           </nav>
         </div>
@@ -240,10 +241,16 @@ const Dashboard = () => {
 
                     {/* Right Side: QR Code */}
                     <div className="md:w-1/4 p-8 flex flex-col items-center justify-center bg-[#1a1a24]/50 relative">
-                      <div className="w-32 h-32 bg-white rounded-xl p-2 mb-4 flex items-center justify-center">
-                        <QrCode className="w-full h-full text-black" />
+                      <div className="w-32 h-32 bg-white rounded-xl p-2 mb-4 flex items-center justify-center overflow-hidden">
+                        <QRCodeCanvas 
+                          value={JSON.stringify({ ticketId: ticket._id, event: ticket.event?.title, user: user?.email })}
+                          size={120}
+                          bgColor={"#ffffff"}
+                          fgColor={"#000000"}
+                          level={"L"}
+                        />
                       </div>
-                      <p className="text-xs text-gray-400 font-mono tracking-widest">TKT-{ticket._id.slice(-8).toUpperCase()}</p>
+                      <p className="text-xs text-gray-400 font-mono tracking-widest uppercase">TKT-{ticket._id.slice(-8)}</p>
                       <button className="mt-4 text-xs font-bold text-primary hover:text-white transition-colors flex items-center">
                         <Download className="w-3 h-3 mr-1" /> Add to Apple Wallet
                       </button>
@@ -303,13 +310,77 @@ const Dashboard = () => {
             <h2 className="text-xl font-display font-bold text-white mb-6">Revenue Overview</h2>
             <div className="glass-card border-white/5 p-6 h-80 flex items-center justify-center relative overflow-hidden">
               <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-              {/* Mock Area Chart */}
               <div className="absolute bottom-0 w-full h-3/4 opacity-20 bg-gradient-to-t from-primary/50 to-transparent flex items-end px-6">
                  <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full fill-primary stroke-primary/50 stroke-2">
                    <path d="M0,100 L0,80 Q10,70 20,60 T40,40 T60,50 T80,20 T100,10 L100,100 Z" />
                  </svg>
               </div>
               <p className="text-gray-500 font-medium z-10 relative">Chart Visualization Area</p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'settings' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h2 className="text-2xl font-display font-bold text-white mb-8">Account Settings</h2>
+            
+            <div className="space-y-6">
+              <div className="glass-card p-6 border-white/5">
+                <h3 className="text-lg font-bold text-white mb-6 flex items-center">
+                  <User className="mr-3 h-5 w-5 text-primary" /> Profile Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
+                    <input 
+                      type="text" 
+                      defaultValue={user?.name}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                    <input 
+                      type="email" 
+                      defaultValue={user?.email}
+                      disabled
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-gray-500 cursor-not-allowed"
+                    />
+                  </div>
+                </div>
+                <button className="mt-8 bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:opacity-90 transition-opacity">
+                  Save Changes
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="glass-card p-6 border-white/5">
+                  <h3 className="text-lg font-bold text-white mb-6 flex items-center">
+                    <Shield className="mr-3 h-5 w-5 text-primary" /> Security
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-6">Update your password to keep your account secure.</p>
+                  <button className="w-full border border-white/10 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-white/5 transition-colors">
+                    Change Password
+                  </button>
+                </div>
+                <div className="glass-card p-6 border-white/5">
+                  <h3 className="text-lg font-bold text-white mb-6 flex items-center">
+                    <Bell className="mr-3 h-5 w-5 text-primary" /> Notifications
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-6">Manage how you receive updates about your events.</p>
+                  <button className="w-full border border-white/10 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-white/5 transition-colors">
+                    Configure
+                  </button>
+                </div>
+              </div>
+
+              <div className="glass-card p-6 border-red-500/10 bg-red-500/5">
+                <h3 className="text-lg font-bold text-red-500 mb-2">Danger Zone</h3>
+                <p className="text-gray-400 text-sm mb-6">Once you delete your account, there is no going back. Please be certain.</p>
+                <button className="text-red-500 font-bold hover:underline">
+                  Delete Account
+                </button>
+              </div>
             </div>
           </div>
         )}
