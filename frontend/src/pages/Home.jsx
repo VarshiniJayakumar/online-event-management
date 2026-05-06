@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, MapPin, Calendar, ArrowRight, Loader2, Music, Laptop, Trophy, Utensils, Briefcase, Palette, HeartPulse } from 'lucide-react';
 import getApiUrl from '../utils/api';
+import { CardSkeleton } from '../components/Skeleton';
 
 const categories = [
   { name: 'Music', icon: <Music className="h-12 w-12" />, color: 'from-purple-600 to-purple-900', border: 'border-purple-500/30' },
@@ -120,7 +121,9 @@ const Home = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
-            <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div>
+            <div className="flex space-x-6 overflow-x-auto pb-8 hide-scrollbar">
+              {[1, 2, 3].map(i => <CardSkeleton key={i} />)}
+            </div>
           ) : (
             <div className="flex space-x-6 overflow-x-auto pb-8 hide-scrollbar snap-x">
               {events.map((event) => {

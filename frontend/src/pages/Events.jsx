@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Search, MapPin, Calendar, Filter, Loader2, Music, Laptop, Trophy, Utensils, Briefcase, Palette, HeartPulse } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import getApiUrl from '../utils/api';
+import { CardSkeleton } from '../components/Skeleton';
 
 const categoryConfig = {
   'Music': { icon: <Music className="h-12 w-12" />, color: 'from-purple-600 to-purple-900' },
@@ -102,7 +103,9 @@ const Events = () => {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-24"><Loader2 className="h-12 w-12 text-primary animate-spin" /></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map(i => <CardSkeleton key={i} />)}
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {events.map(event => {
