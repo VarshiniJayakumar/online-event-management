@@ -19,17 +19,29 @@ router.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
     
+    // Auto-verify if Brevo is not configured (for easier testing/demo)
+    const isVerified = !process.env.BREVO_API_KEY;
+    
     // Create verification token
-    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationToken = isVerified ? undefined : crypto.randomBytes(32).toString('hex');
     
     const user = await User.create({ 
       name, 
       email, 
       password: hashedPassword, 
       role: role || 'user',
-      isVerified: false,
+      isVerified,
       verificationToken
     });
+
+    if (isVerified) {
+      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
+      return res.status(201).json({ 
+        user: { id: user._id, name: user.name, email: user.email, role: user.role }, 
+        token,
+        message: 'Account created and auto-verified (Brevo not configured)'
+      });
+    }
 
     // Send Verification Email
     const verificationLink = `${process.env.CLIENT_URL || 'http://localhost:5173'}/verify-email/${verificationToken}`;
