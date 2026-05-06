@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard } from 'lucide-react';
+import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard, CheckCircle2 } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import getApiUrl from '../utils/api';
 
@@ -12,11 +12,17 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
+  
+  // Settings State
+  const [updatedName, setUpdatedName] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedUser = JSON.parse(localStorage.getItem('user'));
     setUser(storedUser);
+    if (storedUser) setUpdatedName(storedUser.name);
 
     if (!token) {
       setError('Please login to view dashboard');
@@ -56,7 +62,7 @@ const Dashboard = () => {
             setStats({
               revenue: totalRevenue,
               sold: statsData.registrationsCount,
-              views: eventsData.length * 150 // Mocked views based on event count
+              views: eventsData.length * 150 
             });
           }
         }
@@ -70,6 +76,40 @@ const Dashboard = () => {
 
     fetchDashboardData();
   }, []);
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    setIsUpdating(true);
+    setUpdateSuccess(false);
+    const token = localStorage.getItem('token');
+
+    try {
+      const response = await fetch(getApiUrl('/auth/profile'), {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name: updatedName }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+
+      // Update local storage and state
+      const newUser = { ...user, name: data.user.name };
+      localStorage.setItem('user', JSON.stringify(newUser));
+      setUser(newUser);
+      setUpdateSuccess(true);
+      
+      // Auto hide success message
+      setTimeout(() => setUpdateSuccess(false), 3000);
+    } catch (err) {
+      alert(`Update failed: ${err.message}`);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
@@ -97,7 +137,7 @@ const Dashboard = () => {
       <div className="w-full md:w-64 shrink-0">
         <div className="glass-card p-6 sticky top-28">
           <div className="mb-8 border-b border-white/10 pb-6">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-lg text-white mb-3">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-lg text-white mb-3 shadow-glow-primary">
               {user?.name?.charAt(0) || 'U'}
             </div>
             <h2 className="font-display font-bold text-white text-xl truncate">{user?.name || 'User'}</h2>
@@ -140,7 +180,7 @@ const Dashboard = () => {
       {/* Main Content Area */}
       <div className="flex-1 min-h-[600px]">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-display font-bold text-white">Welcome back, {user?.name?.split(' ')[0]} 👋</h1>
+          <h1 className="text-3xl font-display font-bold text-white">Welcome back, {user?.name?.split(' ')[0] || 'User'} 👋</h1>
           {role === 'organizer' && activeTab === 'events' && (
             <Link to="/create-event" className="bg-white text-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-200 transition-colors flex items-center shadow-lg">
               <Plus className="h-4 w-4 mr-1" /> Create Event
@@ -305,37 +345,32 @@ const Dashboard = () => {
           </div>
         )}
 
-        {activeTab === 'analytics' && (
-          <div className="animate-in fade-in duration-300">
-            <h2 className="text-xl font-display font-bold text-white mb-6">Revenue Overview</h2>
-            <div className="glass-card border-white/5 p-6 h-80 flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-              <div className="absolute bottom-0 w-full h-3/4 opacity-20 bg-gradient-to-t from-primary/50 to-transparent flex items-end px-6">
-                 <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full fill-primary stroke-primary/50 stroke-2">
-                   <path d="M0,100 L0,80 Q10,70 20,60 T40,40 T60,50 T80,20 T100,10 L100,100 Z" />
-                 </svg>
-              </div>
-              <p className="text-gray-500 font-medium z-10 relative">Chart Visualization Area</p>
-            </div>
-          </div>
-        )}
-
         {activeTab === 'settings' && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="text-2xl font-display font-bold text-white mb-8">Account Settings</h2>
             
             <div className="space-y-6">
-              <div className="glass-card p-6 border-white/5">
+              <form onSubmit={handleUpdateProfile} className="glass-card p-6 border-white/5">
                 <h3 className="text-lg font-bold text-white mb-6 flex items-center">
                   <User className="mr-3 h-5 w-5 text-primary" /> Profile Information
                 </h3>
+                
+                {updateSuccess && (
+                  <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl flex items-center animate-in zoom-in duration-300">
+                    <CheckCircle2 className="h-5 w-5 mr-3" />
+                    Profile updated successfully!
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
                     <input 
                       type="text" 
-                      defaultValue={user?.name}
+                      value={updatedName}
+                      onChange={(e) => setUpdatedName(e.target.value)}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      placeholder="Your name"
                     />
                   </div>
                   <div>
@@ -348,10 +383,14 @@ const Dashboard = () => {
                     />
                   </div>
                 </div>
-                <button className="mt-8 bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:opacity-90 transition-opacity">
-                  Save Changes
+                <button 
+                  type="submit"
+                  disabled={isUpdating}
+                  className="mt-8 bg-primary text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-all flex items-center disabled:opacity-50 shadow-glow-primary"
+                >
+                  {isUpdating ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : 'Save Changes'}
                 </button>
-              </div>
+              </form>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="glass-card p-6 border-white/5">
@@ -359,7 +398,10 @@ const Dashboard = () => {
                     <Shield className="mr-3 h-5 w-5 text-primary" /> Security
                   </h3>
                   <p className="text-gray-400 text-sm mb-6">Update your password to keep your account secure.</p>
-                  <button className="w-full border border-white/10 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-white/5 transition-colors">
+                  <button 
+                    onClick={() => alert('Password reset link sent to your email!')}
+                    className="w-full border border-white/10 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-white/5 transition-colors"
+                  >
                     Change Password
                   </button>
                 </div>

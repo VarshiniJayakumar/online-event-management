@@ -81,4 +81,27 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
+// Update Profile
+router.put('/profile', async (req, res) => {
+  try {
+    const { name } = req.body;
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (name) user.name = name;
+    await user.save();
+
+    res.status(200).json({ 
+      message: 'Profile updated successfully',
+      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
