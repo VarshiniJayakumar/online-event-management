@@ -41,25 +41,33 @@ const EventDetails = () => {
 
     setCheckoutLoading(true);
 
-    // Handle Free Events
-    if (event.price === 0) {
-      try {
-        // Here we could call a direct registration API if we had one
-        // For now, we simulate success or use the existing checkout but skip Stripe if backend supports it
-        // Or we just show a success message for UI demo purposes
-        setTimeout(() => {
-          setRegistrationSuccess(true);
-          setCheckoutLoading(false);
-        }, 1500);
-        return;
-      } catch (err) {
-        alert('Registration failed');
+    try {
+      let registrationData = {
+        eventId: id,
+        ticketType: 'General Admission',
+        quantity: ticketCount,
+        totalAmount: (event.price || 0) * ticketCount
+      };
+
+      // Handle Free Events
+      if (event.price === 0) {
+        const response = await fetch(getApiUrl('/registrations'), {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(registrationData),
+        });
+
+        if (!response.ok) throw new Error('Registration failed');
+        
+        setRegistrationSuccess(true);
         setCheckoutLoading(false);
         return;
       }
-    }
 
-    try {
+      // Handle Paid Events
       const response = await fetch(getApiUrl('/payment/create-checkout-session'), {
         method: 'POST',
         headers: { 
@@ -77,10 +85,25 @@ const EventDetails = () => {
 
       // Handle Demo Mode
       if (data.isDemo) {
+        // In demo mode, we manually create the registration since Stripe won't redirect back to a success URL
+        const regResponse = await fetch(getApiUrl('/registrations'), {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            ...registrationData,
+            stripeSessionId: data.id
+          }),
+        });
+
+        if (!regResponse.ok) throw new Error('Registration failed');
+
         setTimeout(() => {
           setRegistrationSuccess(true);
           setCheckoutLoading(false);
-        }, 2000);
+        }, 1500);
         return;
       }
 

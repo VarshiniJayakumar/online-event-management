@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const Event = require('../models/Event');
+const jwt = require('jsonwebtoken');
 
 // Middleware to check auth (simple version for now)
 const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Unauthorized' });
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  const token = authHeader.split(' ')[1];
   try {
-    const jwt = require('jsonwebtoken');
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
     req.user = decoded;
     next();
@@ -33,6 +36,16 @@ router.get('/', async (req, res) => {
 
     const events = await Event.find(query).populate('organizer', 'name email');
     res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get user's own events (for organizer)
+router.get('/my-events/managed', authMiddleware, async (req, res) => {
+  try {
+    const events = await Event.find({ organizer: req.user.id });
+    res.json(events);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

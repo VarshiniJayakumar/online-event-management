@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, Calendar, MapPin, Clock, Tag, DollarSign, Plus, X } from 'lucide-react';
 import getApiUrl from '../utils/api';
