@@ -4,12 +4,13 @@ const sendEmail = async ({ to, subject, htmlContent }) => {
   const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
   if (!BREVO_API_KEY) {
-    console.log('\n--- EMAIL SIMULATION (No BREVO_API_KEY) ---');
+    console.log('\n📢 EMAIL NOTICE: Running in SIMULATION MODE because BREVO_API_KEY is missing.');
+    console.log('To send real emails, add BREVO_API_KEY to your Render environment variables.');
     console.log(`To: ${to}`);
     console.log(`Subject: ${subject}`);
     console.log(`Content: ${htmlContent.slice(0, 200)}...`);
     console.log('-------------------------------------------\n');
-    return { success: true, message: 'Email simulated' };
+    return { success: true, message: 'Email simulated', simulated: true };
   }
 
   try {
