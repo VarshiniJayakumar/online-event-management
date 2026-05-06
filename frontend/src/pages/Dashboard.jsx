@@ -110,7 +110,6 @@ const Dashboard = () => {
       localStorage.setItem('user', JSON.stringify(newUser));
       setUser(newUser);
       setUpdateSuccess(true);
-      setTimeout(() => setUpdateSuccess(false), 3000);
     } catch (err) {
       alert(`Update failed: ${err.message}`);
     } finally {
