@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard, CheckCircle2 } from 'lucide-react';
+import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard, CheckCircle2, Users, X } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import getApiUrl from '../utils/api';
 
@@ -8,7 +8,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('tickets');
   const [tickets, setTickets] = useState([]);
   const [managedEvents, setManagedEvents] = useState([]);
-  const [stats, setStats] = useState({ revenue: 0, sold: 0, views: 0 });
+  const [stats, setStats] = useState({ revenue: 0, sold: 0, views: 0, registrations: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
@@ -17,6 +17,9 @@ const Dashboard = () => {
   const [updatedName, setUpdatedName] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+
+  // Modal State for registrations
+  const [selectedEventRegs, setSelectedEventRegs] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -62,7 +65,8 @@ const Dashboard = () => {
             setStats({
               revenue: totalRevenue,
               sold: statsData.registrationsCount,
-              views: eventsData.length * 150 
+              views: eventsData.length * 150,
+              registrations: statsData.registrations
             });
           }
         }
@@ -96,13 +100,10 @@ const Dashboard = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message);
 
-      // Update local storage and state
       const newUser = { ...user, name: data.user.name };
       localStorage.setItem('user', JSON.stringify(newUser));
       setUser(newUser);
       setUpdateSuccess(true);
-      
-      // Auto hide success message
       setTimeout(() => setUpdateSuccess(false), 3000);
     } catch (err) {
       alert(`Update failed: ${err.message}`);
@@ -329,7 +330,7 @@ const Dashboard = () => {
                   <tr className="bg-white/5 border-b border-white/10 text-xs uppercase tracking-wider text-gray-400 font-semibold">
                     <th className="px-6 py-4">Event Name</th>
                     <th className="px-6 py-4">Date</th>
-                    <th className="px-6 py-4">Category</th>
+                    <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4">Price</th>
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
@@ -340,32 +341,84 @@ const Dashboard = () => {
                       <td colSpan="5" className="px-6 py-12 text-center text-gray-500 italic">No events created yet.</td>
                     </tr>
                   ) : (
-                    managedEvents.map((event) => (
-                      <tr key={event._id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                        <td className="px-6 py-4 font-bold text-white">{event.title}</td>
-                        <td className="px-6 py-4 text-gray-400">
-                          {new Date(event.date).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 text-gray-400">{event.category}</td>
-                        <td className="px-6 py-4">
-                          <span className="px-2 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-xs font-bold">
-                            {event.price === 0 ? 'Free' : `$${event.price}`}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-right space-x-4">
-                          <Link to={`/events/${event._id}`} className="text-primary hover:text-white font-medium transition-colors">View</Link>
-                          <button 
-                            onClick={() => handleDeleteEvent(event._id)}
-                            className="text-red-500 hover:text-red-400 font-medium transition-colors"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))
+                    managedEvents.map((event) => {
+                      const eventRegs = stats.registrations.filter(r => r.event?._id === event._id || r.event === event._id);
+                      return (
+                        <tr key={event._id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                          <td className="px-6 py-4">
+                            <p className="font-bold text-white">{event.title}</p>
+                            <p className="text-xs text-gray-500">{event.category}</p>
+                          </td>
+                          <td className="px-6 py-4 text-gray-400">
+                            {new Date(event.date).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4">
+                            <button 
+                              onClick={() => setSelectedEventRegs({ event, regs: eventRegs })}
+                              className="flex items-center text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-md hover:bg-primary/20 transition-colors"
+                            >
+                              <Users className="w-3 h-3 mr-1" /> {eventRegs.length} Attendees
+                            </button>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="px-2 py-1 bg-white/5 text-gray-300 border border-white/10 rounded-full text-xs font-bold">
+                              {event.price === 0 ? 'Free' : `$${event.price}`}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-right space-x-4">
+                            <Link to={`/events/${event._id}`} className="text-primary hover:text-white font-medium transition-colors">View</Link>
+                            <button 
+                              onClick={() => handleDeleteEvent(event._id)}
+                              className="text-red-500 hover:text-red-400 font-medium transition-colors"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <div className="animate-in fade-in duration-300">
+            <h2 className="text-xl font-display font-bold text-white mb-6">Performance Insights</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+               <div className="glass-card p-6 border-white/5">
+                  <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Registration Trend</h4>
+                  <div className="h-48 flex items-end justify-between gap-2">
+                    {[40, 70, 45, 90, 65, 80, 100].map((h, i) => (
+                      <div key={i} className="flex-1 bg-gradient-to-t from-primary to-secondary rounded-t-lg transition-all hover:opacity-80" style={{ height: `${h}%` }}></div>
+                    ))}
+                  </div>
+                  <div className="flex justify-between mt-4 text-[10px] text-gray-500 font-bold uppercase">
+                    <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                  </div>
+               </div>
+               <div className="glass-card p-6 border-white/5">
+                  <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Top Categories</h4>
+                  <div className="space-y-4">
+                    {[
+                      { name: 'Tech', val: 75, color: 'bg-blue-500' },
+                      { name: 'Music', val: 60, color: 'bg-purple-500' },
+                      { name: 'Sports', val: 40, color: 'bg-green-500' }
+                    ].map((c, i) => (
+                      <div key={i}>
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-white font-medium">{c.name}</span>
+                          <span className="text-gray-500">{c.val}%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                          <div className={`h-full ${c.color}`} style={{ width: `${c.val}%` }}></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+               </div>
             </div>
           </div>
         )}
@@ -453,6 +506,46 @@ const Dashboard = () => {
         )}
 
       </div>
+
+      {/* Attendee Modal */}
+      {selectedEventRegs && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="glass-card w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)] border-white/10">
+            <div className="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
+              <div>
+                <h3 className="text-xl font-bold text-white">{selectedEventRegs.event.title}</h3>
+                <p className="text-sm text-gray-400">Total Attendees: {selectedEventRegs.regs.length}</p>
+              </div>
+              <button onClick={() => setSelectedEventRegs(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                <X className="h-6 w-6 text-gray-400" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {selectedEventRegs.regs.length === 0 ? (
+                <div className="text-center py-12 text-gray-500 italic">No registrations found for this event.</div>
+              ) : (
+                selectedEventRegs.regs.map((reg, i) => (
+                  <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold mr-4">
+                        {reg.user?.name?.charAt(0) || 'U'}
+                      </div>
+                      <div>
+                        <p className="text-white font-bold">{reg.user?.name || 'Anonymous'}</p>
+                        <p className="text-xs text-gray-500">{reg.user?.email}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-white">{reg.quantity} Tickets</p>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Booked on {new Date(reg.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
