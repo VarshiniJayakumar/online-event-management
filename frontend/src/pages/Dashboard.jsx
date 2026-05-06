@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard, CheckCircle2, Users, X, Trash2 } from 'lucide-react';
+import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard, CheckCircle2, Users, X, Trash2, Printer } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import getApiUrl from '../utils/api';
 
@@ -162,7 +162,46 @@ const Dashboard = () => {
 
   const toggleNotification = (key) => {
     setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
-    // In a real app, you'd send this to the backend
+  };
+
+  const handlePrintTicket = (ticket) => {
+    const printWindow = window.open('', '_blank');
+    const qrCanvas = document.getElementById(`qr-${ticket._id}`);
+    const qrDataUrl = qrCanvas ? qrCanvas.toDataURL() : '';
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Ticket - ${ticket.event?.title || 'Event'}</title>
+          <style>
+            body { font-family: sans-serif; padding: 40px; text-align: center; background: #f4f4f9; }
+            .ticket { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; border: 2px dashed #ccc; }
+            .event-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; color: #1a1a24; }
+            .details { margin: 20px 0; color: #666; font-size: 14px; line-height: 1.6; }
+            .qr { margin: 30px 0; }
+            .footer { font-size: 10px; color: #aaa; margin-top: 40px; text-transform: uppercase; letter-spacing: 2px; }
+            @media print { .no-print { display: none; } }
+          </style>
+        </head>
+        <body>
+          <div class="ticket">
+            <div class="event-title">${ticket.event?.title || 'Unknown Event'}</div>
+            <div class="details">
+              <strong>Date:</strong> ${ticket.event ? new Date(ticket.event.date).toLocaleDateString() : 'N/A'}<br>
+              <strong>Location:</strong> ${ticket.event?.location || 'TBA'}<br>
+              <strong>Ticket Type:</strong> ${ticket.ticketType}<br>
+              <strong>Quantity:</strong> ${ticket.quantity}
+            </div>
+            <div class="qr">
+              <img src="${qrDataUrl}" width="200" height="200">
+            </div>
+            <div class="footer">Ticket ID: ${ticket._id}</div>
+          </div>
+          <p class="no-print"><button onclick="window.print()">Print This Ticket</button></p>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
   };
 
   if (loading) return (
@@ -242,7 +281,7 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Stats Row (if organizer) */}
+        {/* Stats Row */}
         {role === 'organizer' && (activeTab === 'events' || activeTab === 'analytics') && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
             <div className="glass-card p-6 border-white/5 relative overflow-hidden">
@@ -327,26 +366,26 @@ const Dashboard = () => {
                           <p className="text-white font-medium">{ticket.quantity} Tickets</p>
                         </div>
                       </div>
-                      
-                      {/* Visual punches for boarding pass effect */}
-                      <div className="hidden md:block absolute -right-4 -top-4 w-8 h-8 bg-dark-bg rounded-full"></div>
-                      <div className="hidden md:block absolute -right-4 -bottom-4 w-8 h-8 bg-dark-bg rounded-full"></div>
                     </div>
 
                     {/* Right Side: QR Code */}
                     <div className="md:w-1/4 p-8 flex flex-col items-center justify-center bg-[#1a1a24]/50 relative">
-                      <div className="w-32 h-32 bg-white rounded-xl p-2 mb-4 flex items-center justify-center overflow-hidden">
+                      <div className="w-32 h-32 bg-white rounded-xl p-2 mb-4 flex items-center justify-center overflow-hidden shadow-lg border-4 border-white/10">
                         <QRCodeCanvas 
-                          value={JSON.stringify({ ticketId: ticket._id, event: ticket.event?.title, user: user?.email })}
+                          id={`qr-${ticket._id}`}
+                          value={JSON.stringify({ t: ticket._id, e: ticket.event?.title?.slice(0, 20) })}
                           size={120}
                           bgColor={"#ffffff"}
                           fgColor={"#000000"}
-                          level={"L"}
+                          level={"M"}
                         />
                       </div>
-                      <p className="text-xs text-gray-400 font-mono tracking-widest uppercase">TKT-{ticket._id.slice(-8)}</p>
-                      <button className="mt-4 text-xs font-bold text-primary hover:text-white transition-colors flex items-center">
-                        <Download className="w-3 h-3 mr-1" /> Add to Apple Wallet
+                      <p className="text-[10px] text-gray-400 font-mono tracking-widest uppercase mb-4">ID: {ticket._id.slice(-12)}</p>
+                      <button 
+                        onClick={() => handlePrintTicket(ticket)}
+                        className="text-xs font-bold text-primary hover:text-white transition-colors flex items-center bg-primary/10 px-3 py-2 rounded-lg hover:bg-primary/20"
+                      >
+                        <Download className="w-3 h-3 mr-2" /> Download Ticket
                       </button>
                     </div>
                   </div>
