@@ -111,6 +111,25 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteEvent = async (eventId) => {
+    if (!window.confirm('Are you sure you want to delete this event? This action cannot be undone.')) return;
+    
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(getApiUrl(`/events/${eventId}`), {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) throw new Error('Failed to delete event');
+
+      setManagedEvents(prev => prev.filter(e => e._id !== eventId));
+      alert('Event deleted successfully');
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
       <Loader2 className="h-12 w-12 text-primary animate-spin" />
@@ -333,8 +352,14 @@ const Dashboard = () => {
                             {event.price === 0 ? 'Free' : `$${event.price}`}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-right">
+                        <td className="px-6 py-4 text-right space-x-4">
                           <Link to={`/events/${event._id}`} className="text-primary hover:text-white font-medium transition-colors">View</Link>
+                          <button 
+                            onClick={() => handleDeleteEvent(event._id)}
+                            className="text-red-500 hover:text-red-400 font-medium transition-colors"
+                          >
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ))
