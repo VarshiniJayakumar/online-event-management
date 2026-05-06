@@ -42,43 +42,58 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
+        setError('');
         
         // Fetch Tickets
-        const ticketsRes = await fetch(getApiUrl('/registrations/my-tickets'), {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (ticketsRes.ok) {
-          const ticketsData = await ticketsRes.json();
-          setTickets(ticketsData);
+        try {
+          const ticketsRes = await fetch(getApiUrl('/registrations/my-tickets'), {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (ticketsRes.ok) {
+            const ticketsData = await ticketsRes.json();
+            setTickets(ticketsData);
+          } else {
+            console.error('Tickets fetch failed:', ticketsRes.status);
+          }
+        } catch (e) {
+          console.error('Tickets fetch error:', e);
         }
 
         // If organizer, fetch managed events and stats
         if (storedUser?.role === 'organizer') {
-          const eventsRes = await fetch(getApiUrl('/events/my-events/managed'), {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (eventsRes.ok) {
-            const eventsData = await eventsRes.json();
-            setManagedEvents(eventsData);
+          try {
+            const eventsRes = await fetch(getApiUrl('/events/my-events/managed'), {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (eventsRes.ok) {
+              const eventsData = await eventsRes.json();
+              setManagedEvents(eventsData);
+            }
+          } catch (e) {
+            console.error('Managed events fetch error:', e);
           }
 
-          const statsRes = await fetch(getApiUrl('/registrations/organizer-stats'), {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (statsRes.ok) {
-            const statsData = await statsRes.json();
-            const totalRevenue = statsData.registrations.reduce((acc, reg) => acc + (reg.totalAmount || 0), 0);
-            setStats({
-              revenue: totalRevenue,
-              sold: statsData.registrationsCount,
-              views: eventsData.length * 150,
-              registrations: statsData.registrations
+          try {
+            const statsRes = await fetch(getApiUrl('/registrations/organizer-stats'), {
+              headers: { 'Authorization': `Bearer ${token}` }
             });
+            if (statsRes.ok) {
+              const statsData = await statsRes.json();
+              const totalRevenue = statsData.registrations.reduce((acc, reg) => acc + (reg.totalAmount || 0), 0);
+              setStats({
+                revenue: totalRevenue,
+                sold: statsData.registrationsCount,
+                views: statsData.eventsCount * 150,
+                registrations: statsData.registrations
+              });
+            }
+          } catch (e) {
+            console.error('Stats fetch error:', e);
           }
         }
       } catch (err) {
-        console.error('Dashboard fetch error:', err);
-        setError('Failed to load dashboard data');
+        console.error('Dashboard general error:', err);
+        setError('Connection problem. Please refresh or try again later.');
       } finally {
         setLoading(false);
       }
