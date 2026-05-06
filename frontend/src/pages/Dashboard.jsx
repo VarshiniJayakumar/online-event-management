@@ -264,7 +264,7 @@ const Dashboard = () => {
 
         {activeTab === 'events' && (
           <div className="animate-in fade-in duration-300">
-            <div className="glass-card border-white/5 overflow-hidden">
+            <div className="glass-card border-white/5 overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-white/5 border-b border-white/10 text-xs uppercase tracking-wider text-gray-400 font-semibold">

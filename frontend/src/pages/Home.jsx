@@ -62,8 +62,8 @@ const Home = () => {
             <span className="text-gray-300">Discover handpicked events</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-8">
-            Find your next <br className="hidden md:block" />
+          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-6 md:mb-8 leading-[1.1]">
+            Find your next <br className="hidden sm:block" />
             <span className="text-gradient">unforgettable</span> experience
           </h1>
           
