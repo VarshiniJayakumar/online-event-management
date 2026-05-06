@@ -4,7 +4,11 @@ const getApiUrl = (endpoint) => {
   
   if (typeof window !== 'undefined' && (window.location.hostname.includes('netlify.app') || window.location.hostname.includes('render.com'))) {
     if (!import.meta.env.VITE_API_URL) {
-      console.warn('⚠️ VITE_API_URL is missing! Requests will fail on Netlify/Render. Please add it to your environment variables.');
+      console.warn('🛑 API CONFIGURATION ERROR: The frontend cannot find your backend.');
+      console.warn('1. Go to your Render.com dashboard and copy your backend URL.');
+      console.warn('2. Go to Netlify -> Site Settings -> Environment Variables.');
+      console.warn('3. Add VITE_API_URL = [Your Render URL].');
+      console.warn('4. Redeploy your Netlify site.');
     }
   }
   
