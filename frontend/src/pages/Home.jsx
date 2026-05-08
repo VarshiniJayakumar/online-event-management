@@ -97,8 +97,8 @@ const Home = () => {
             <span className="text-gray-300 uppercase tracking-widest">Event Discovery Platform</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold tracking-tight mb-6 leading-tight animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            Experience the <span className="text-gradient">Extraordinary</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold tracking-tight mb-12 leading-tight animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            Find your next <span className="text-gradient">unforgettable</span> experience
           </h1>
           
           <form onSubmit={handleSearch} className="max-w-3xl mx-auto glass rounded-[2rem] p-1.5 flex flex-col md:flex-row shadow-2xl shadow-black/40 border-white/10 animate-in fade-in zoom-in duration-700 delay-300">
