@@ -455,6 +455,7 @@ const Dashboard = () => {
                           </td>
                           <td className="px-6 py-4 text-right space-x-4">
                             <Link to={`/events/${event._id}`} className="text-primary hover:text-white font-medium transition-colors">View</Link>
+                            <Link to={`/edit-event/${event._id}`} className="text-blue-400 hover:text-white font-medium transition-colors">Edit</Link>
                             <button 
                               onClick={() => handleDeleteEvent(event._id)}
                               className="text-red-500 hover:text-red-400 font-medium transition-colors"

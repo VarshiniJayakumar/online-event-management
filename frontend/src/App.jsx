@@ -9,6 +9,7 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import CreateEvent from './pages/CreateEvent';
+import EditEvent from './pages/EditEvent';
 import VerifyEmail from './pages/VerifyEmail';
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
               <Route path="/events" element={<Events />} />
               <Route path="/events/:id" element={<EventDetails />} />
               <Route path="/create-event" element={<CreateEvent />} />
+              <Route path="/edit-event/:id" element={<EditEvent />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
