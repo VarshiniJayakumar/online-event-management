@@ -188,28 +188,34 @@ const Events = () => {
               const cat = categoryConfig[event.category] || categoryConfig['Default'];
               return (
                 <Link to={`/events/${event._id}`} key={event._id} className="group">
-                  <div className="glass-card glass-shine overflow-hidden h-full flex flex-col transition-all duration-500 hover:-translate-y-3 border-white/5 group-hover:shadow-glow-primary/20">
-                    <div className="relative aspect-[16/10] overflow-hidden bg-white/5">
+                  <div className="elegant-card h-full flex flex-col glass-shine">
+                    {/* Background Glow */}
+                    <div className={`elegant-card-hover-glow bg-gradient-to-br ${cat.color}`}></div>
+                    
+                    <div className="elegant-card-image-wrap">
                       <img 
                         src={event.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75'} 
                         alt={event.title} 
                         loading="lazy"
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                       />
-                      <div className="absolute top-4 left-4 glass rounded-full px-4 py-1.5 text-xs font-bold text-white backdrop-blur-md uppercase tracking-wider">{event.category}</div>
-                      <div className="absolute top-4 right-4 bg-white text-black rounded-full px-4 py-1.5 text-xs font-black shadow-xl">
+                      <div className="absolute top-4 left-4 glass rounded-full px-4 py-1.5 text-[10px] font-black text-white backdrop-blur-md uppercase tracking-[0.2em] border border-white/10">{event.category}</div>
+                      <div className="absolute top-4 right-4 bg-white/90 text-black rounded-full px-4 py-1.5 text-[10px] font-black shadow-xl backdrop-blur-sm border border-white/20">
                         {event.price === 0 ? 'FREE' : `$${event.price}`}
                       </div>
-                      <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                     </div>
-                    <div className="p-8 flex flex-col flex-1">
-                      <h3 className="text-2xl font-display font-bold text-white mb-6 line-clamp-2 group-hover:text-primary transition-colors leading-tight">{event.title}</h3>
-                      <div className="space-y-4 mt-auto text-gray-400">
-                        <div className="flex items-center text-sm font-medium"><Calendar className="h-5 w-5 mr-3 text-primary" /> {new Date(event.date).toLocaleDateString(undefined, { dateStyle: 'full' })}</div>
-                        <div className="flex items-center text-sm font-medium"><MapPin className="h-5 w-5 mr-3 text-primary" /> {event.location}</div>
+
+                    <div className="p-8 pt-4 flex flex-col flex-1 relative z-10">
+                      <h3 className="text-xl md:text-2xl font-display font-bold text-white mb-4 line-clamp-2 group-hover:text-primary transition-colors leading-tight tracking-tight">{event.title}</h3>
+                      
+                      <div className="space-y-3 mt-auto text-white/50">
+                        <div className="flex items-center text-xs font-medium tracking-wide"><Calendar className="h-4 w-4 mr-3 text-primary/70" /> {new Date(event.date).toLocaleDateString(undefined, { dateStyle: 'full' })}</div>
+                        <div className="flex items-center text-xs font-medium tracking-wide"><MapPin className="h-4 w-4 mr-3 text-primary/70" /> {event.location}</div>
                       </div>
-                      <div className="mt-8 w-full py-4 glass border-white/5 rounded-2xl text-center font-bold text-white group-hover:bg-primary group-hover:border-primary transition-all">
-                        View Details
+
+                      <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between group/btn">
+                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] group-hover/btn:text-primary transition-colors">Details</span>
+                        <Sparkles className="h-4 w-4 text-white/20 group-hover/btn:text-primary group-hover/btn:scale-110 transition-all" />
                       </div>
                     </div>
                   </div>

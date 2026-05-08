@@ -203,26 +203,32 @@ const Home = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {catEvents.map((event) => (
                     <Link to={`/events/${event._id}`} key={event._id} className="group">
-                      <div className="glass-card glass-shine overflow-hidden h-full flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-glow-primary border-white/5">
-                        <div className="relative aspect-video overflow-hidden">
+                      <div className="elegant-card h-full flex flex-col glass-shine">
+                        <div className={`elegant-card-hover-glow bg-gradient-to-br ${cat.color}`}></div>
+                        
+                        <div className="elegant-card-image-wrap !aspect-video">
                           <img 
                             src={event.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75'} 
                             alt={event.title} 
-                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                           />
-                          <div className="absolute top-3 left-3 glass rounded-full px-3 py-1 text-[10px] font-bold text-white backdrop-blur-md uppercase tracking-wider">
-                            {event.category}
-                          </div>
-                          <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-black/80 to-transparent"></div>
-                          <div className="absolute bottom-3 right-3 text-white font-black text-lg">
+                          <div className="absolute top-3 right-3 bg-white/90 text-black rounded-full px-3 py-1 text-[9px] font-black shadow-xl backdrop-blur-sm border border-white/20">
                             {event.price === 0 ? 'FREE' : `$${event.price}`}
                           </div>
                         </div>
-                        <div className="p-5 flex flex-col flex-1">
-                          <h3 className="text-lg font-display font-bold text-white mb-3 line-clamp-1 group-hover:text-primary transition-colors">{event.title}</h3>
-                          <div className="space-y-2 mt-auto text-gray-400 text-xs">
-                            <div className="flex items-center"><Calendar className="h-3 w-3 mr-2 text-primary" /> {new Date(event.date).toLocaleDateString()}</div>
-                            <div className="flex items-center"><MapPin className="h-3 w-3 mr-2 text-primary" /> {event.location}</div>
+
+                        <div className="p-5 pt-2 flex flex-col flex-1 relative z-10">
+                          <h3 className="text-lg font-display font-bold text-white mb-3 line-clamp-1 group-hover:text-primary transition-colors leading-tight tracking-tight">{event.title}</h3>
+                          
+                          <div className="space-y-2 mt-auto text-white/40">
+                            <div className="flex items-center text-[10px] font-medium tracking-wide"><Calendar className="h-3.5 w-3.5 mr-2 text-primary/70" /> {new Date(event.date).toLocaleDateString(undefined, { dateStyle: 'medium' })}</div>
+                            <div className="flex items-center text-[10px] font-medium tracking-wide"><MapPin className="h-3.5 w-3.5 mr-2 text-primary/70" /> {event.location}</div>
+                          </div>
+
+                          <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between group/btn">
+                            <span className="text-[9px] font-black text-white/20 uppercase tracking-[0.2em] group-hover/btn:text-primary transition-colors">Details</span>
+                            <Sparkles className="h-3.5 w-3.5 text-white/20 group-hover/btn:text-primary transition-all" />
                           </div>
                         </div>
                       </div>
