@@ -59,8 +59,28 @@ const Login = () => {
         </div>
         
         {error && (
-          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-sm text-center">
-            {error}
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-sm text-center flex flex-col items-center gap-3">
+            <span>{error}</span>
+            {error.includes('verify your email') && (
+              <button 
+                onClick={async () => {
+                  try {
+                    const res = await fetch(getApiUrl('/auth/resend-verification'), {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ email: formData.email }),
+                    });
+                    const data = await res.json();
+                    alert(data.message);
+                  } catch (err) {
+                    alert('Failed to resend email');
+                  }
+                }}
+                className="text-primary hover:underline font-bold"
+              >
+                Resend Verification Email
+              </button>
+            )}
           </div>
         )}
 

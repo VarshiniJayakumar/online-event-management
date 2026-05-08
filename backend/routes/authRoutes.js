@@ -50,7 +50,7 @@ router.post('/register', async (req, res) => {
     console.log(`\nVerification attempt for: ${email}`);
     console.log(`Token: ${verificationToken}\n`);
 
-    await sendEmail({
+    const emailResult = await sendEmail({
       to: email,
       subject: "Verify your Eventure Account",
       htmlContent: `
@@ -68,6 +68,14 @@ router.post('/register', async (req, res) => {
         </div>
       `
     });
+
+    if (!emailResult.success && !emailResult.simulated) {
+      return res.status(201).json({ 
+        message: 'Registration successful, but there was an error sending the verification email. You can try resending it from the login page.',
+        requiresVerification: true,
+        emailError: emailResult.error
+      });
+    }
 
     res.status(201).json({ 
       message: 'Registration successful! Please check your email to verify your account.',
@@ -99,6 +107,60 @@ router.get('/verify/:token', async (req, res) => {
     res.status(200).json({ message: 'Email verified successfully! You can now login.' });
   } catch (error) {
     res.status(500).json({ message: 'Verification failed' });
+  }
+});
+
+router.post('/resend-verification', async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: 'Account is already verified' });
+    }
+
+    // Create new token if it doesn't exist
+    if (!user.verificationToken) {
+      user.verificationToken = crypto.randomBytes(32).toString('hex');
+      await user.save();
+    }
+
+    const baseUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+    const verificationLink = `${baseUrl}/verify-email/${user.verificationToken}`;
+
+    console.log(`\nResending verification to: ${email}`);
+    console.log(`Token: ${user.verificationToken}\n`);
+
+    const emailResult = await sendEmail({
+      to: email,
+      subject: "Verify your Eventure Account (Resend)",
+      htmlContent: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #ec4899; text-align: center;">Verify your Account</h2>
+          <p>Hi ${user.name},</p>
+          <p>You requested to resend your verification email. Please click the button below to verify your email address:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${verificationLink}" style="background-color: #ec4899; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Verify Email Address</a>
+          </div>
+          <p>Link: ${verificationLink}</p>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+          <p style="font-size: 12px; color: #999; text-align: center;">If you did not request this, you can safely ignore this email.</p>
+        </div>
+      `
+    });
+
+    if (!emailResult.success) {
+      return res.status(500).json({ message: 'Failed to send email. ' + (emailResult.error || '') });
+    }
+
+    res.status(200).json({ message: 'Verification email resent! Please check your inbox.' });
+  } catch (error) {
+    console.error('Resend error:', error);
+    res.status(500).json({ message: 'Something went wrong' });
   }
 });
 

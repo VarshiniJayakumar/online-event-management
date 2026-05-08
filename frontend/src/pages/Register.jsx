@@ -73,11 +73,29 @@ const Register = () => {
             Please click the link in your inbox to activate your account.
           </p>
           <div className="space-y-4">
-            <Link to="/login" className="block w-full py-4 bg-primary text-white font-bold rounded-xl shadow-glow-primary">
+            <Link to="/login" className="block w-full py-4 bg-primary text-white font-bold rounded-xl shadow-glow-primary hover:opacity-90 transition-opacity">
               Return to Login
             </Link>
+            <button 
+              onClick={async () => {
+                try {
+                  const res = await fetch(getApiUrl('/auth/resend-verification'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email }),
+                  });
+                  const data = await res.json();
+                  alert(data.message);
+                } catch (err) {
+                  alert('Failed to resend email');
+                }
+              }}
+              className="w-full py-4 border border-white/10 text-gray-300 font-bold rounded-xl hover:bg-white/5 transition-all"
+            >
+              Resend Verification Email
+            </button>
             <p className="text-xs text-gray-500">
-              Didn't receive the email? Check your spam folder or contact support.
+              Didn't receive the email? Check your spam folder or try resending.
             </p>
           </div>
         </div>

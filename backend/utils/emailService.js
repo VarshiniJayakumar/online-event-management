@@ -38,7 +38,12 @@ const sendEmail = async ({ to, subject, htmlContent }) => {
       return { success: true, data };
     } else {
       console.error('❌ Brevo API Error:', JSON.stringify(data));
-      throw new Error(data.message || 'Failed to send email');
+      return { 
+        success: false, 
+        error: data.message || 'Brevo API error', 
+        code: response.status,
+        details: data
+      };
     }
   } catch (error) {
     console.error('💥 Fatal Email Error:', error.message);
