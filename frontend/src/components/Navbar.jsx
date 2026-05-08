@@ -52,6 +52,12 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <Link 
+              to="/" 
+              className={`font-medium transition-colors text-sm ${isActive('/') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
+            >
+              Home
+            </Link>
+            <Link 
               to="/events" 
               className={`font-medium transition-colors text-sm ${isActive('/events') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
             >
@@ -97,6 +103,13 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="md:hidden glass border-t border-white/5 animate-in slide-in-from-top duration-300">
           <div className="px-4 pt-2 pb-6 space-y-3">
+            <Link 
+              to="/" 
+              onClick={() => setIsMenuOpen(false)}
+              className={`block px-4 py-3 rounded-xl font-medium ${isActive('/') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-white/5'}`}
+            >
+              Home
+            </Link>
             <Link 
               to="/events" 
               onClick={() => setIsMenuOpen(false)}
