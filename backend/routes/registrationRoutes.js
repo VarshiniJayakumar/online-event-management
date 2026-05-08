@@ -50,7 +50,7 @@ router.post('/', authMiddleware, async (req, res) => {
 // Get user's registrations (My Tickets)
 router.get('/my-tickets', authMiddleware, async (req, res) => {
   try {
-    const registrations = await Registration.find({ user: req.user.id })
+    const registrations = await Registration.find({ user: req.user.id, status: 'active' })
       .populate('event')
       .sort({ createdAt: -1 });
     res.json(registrations);
@@ -74,6 +74,28 @@ router.get('/organizer-stats', authMiddleware, async (req, res) => {
       registrationsCount: registrations.length,
       registrations
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Cancel a registration (Refund/Delete ticket)
+router.delete('/:id', authMiddleware, async (req, res) => {
+  try {
+    const registration = await Registration.findOne({ _id: req.id || req.params.id, user: req.user.id });
+    
+    if (!registration) {
+      return res.status(404).json({ message: 'Registration not found' });
+    }
+
+    if (registration.status === 'cancelled') {
+      return res.status(400).json({ message: 'Registration is already cancelled' });
+    }
+
+    registration.status = 'cancelled';
+    await registration.save();
+
+    res.json({ message: 'Registration cancelled successfully', registration });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

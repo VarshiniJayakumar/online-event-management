@@ -219,6 +219,25 @@ const Dashboard = () => {
     printWindow.document.close();
   };
 
+  const handleCancelTicket = async (ticketId) => {
+    if (!window.confirm('Are you sure you want to cancel this ticket? This action cannot be undone.')) return;
+    
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(getApiUrl(`/registrations/${ticketId}`), {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) throw new Error('Failed to cancel ticket');
+
+      setTickets(prev => prev.filter(t => t._id !== ticketId));
+      alert('Ticket cancelled successfully');
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
       <Loader2 className="h-12 w-12 text-primary animate-spin" />
@@ -401,6 +420,12 @@ const Dashboard = () => {
                         className="text-xs font-bold text-primary hover:text-white transition-colors flex items-center bg-primary/10 px-3 py-2 rounded-lg hover:bg-primary/20"
                       >
                         <Download className="w-3 h-3 mr-2" /> Download Ticket
+                      </button>
+                      <button 
+                        onClick={() => handleCancelTicket(ticket._id)}
+                        className="text-xs font-bold text-red-500 hover:text-white transition-colors flex items-center bg-red-500/10 px-3 py-2 rounded-lg hover:bg-red-500/20 mt-2 w-full justify-center"
+                      >
+                        Cancel Ticket
                       </button>
                     </div>
                   </div>

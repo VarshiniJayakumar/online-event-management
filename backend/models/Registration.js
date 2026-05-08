@@ -7,6 +7,7 @@ const registrationSchema = new mongoose.Schema({
   quantity: { type: Number, required: true },
   totalAmount: { type: Number, required: true },
   paymentStatus: { type: String, enum: ['pending', 'completed', 'failed'], default: 'pending' },
+  status: { type: String, enum: ['active', 'cancelled'], default: 'active' },
   stripeSessionId: { type: String },
 }, { timestamps: true });
 
