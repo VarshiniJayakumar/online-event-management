@@ -85,45 +85,39 @@ const Home = () => {
 
   return (
     <div className="flex flex-col bg-dark-bg min-h-screen">
-      {/* Hero Section - "The Search Engine" */}
-      <section className="relative min-h-[80vh] flex items-center justify-center pt-20 pb-16 overflow-hidden">
+      {/* Hero Section - Compact Search Engine */}
+      <section className="relative min-h-[60vh] flex items-center justify-center pt-24 pb-12 overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] z-0"></div>
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse pointer-events-none"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/15 rounded-full blur-[100px] animate-pulse delay-700 pointer-events-none"></div>
+        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px] animate-pulse pointer-events-none"></div>
 
-        <div className="relative z-10 max-w-6xl mx-auto px-4 w-full text-center">
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full glass border-white/5 text-sm font-medium mb-10 animate-in fade-in slide-in-from-top-4 duration-1000">
-            <Sparkles className="h-4 w-4 text-primary mr-2 fill-primary/20" />
-            <span className="text-gray-200">The ultimate event discovery platform</span>
+        <div className="relative z-10 max-w-5xl mx-auto px-4 w-full text-center">
+          <div className="inline-flex items-center px-3 py-1 rounded-full glass border-white/5 text-[10px] md:text-xs font-medium mb-6 animate-in fade-in slide-in-from-top-4 duration-1000">
+            <Sparkles className="h-3 w-3 text-primary mr-2 fill-primary/20" />
+            <span className="text-gray-300 uppercase tracking-widest">Event Discovery Platform</span>
           </div>
 
-          <h1 className="text-5xl sm:text-6xl md:text-8xl font-display font-bold tracking-tight mb-8 leading-[1.05] animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            Experience the <br className="hidden md:block" />
-            <span className="text-gradient">Extraordinary</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold tracking-tight mb-6 leading-tight animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            Experience the <span className="text-gradient">Extraordinary</span>
           </h1>
           
-          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
-            Discover and book the most exclusive events, from underground concerts to high-tech conferences.
-          </p>
-
-          <form onSubmit={handleSearch} className="max-w-4xl mx-auto glass rounded-[2.5rem] p-2 flex flex-col md:flex-row shadow-3xl shadow-black/50 border-white/10 animate-in fade-in zoom-in duration-700 delay-300">
-            <div className="flex-[1.5] flex items-center px-6 py-4 border-b md:border-b-0 md:border-r border-white/10">
-              <Search className="h-6 w-6 text-primary mr-4 shrink-0" />
+          <form onSubmit={handleSearch} className="max-w-3xl mx-auto glass rounded-[2rem] p-1.5 flex flex-col md:flex-row shadow-2xl shadow-black/40 border-white/10 animate-in fade-in zoom-in duration-700 delay-300">
+            <div className="flex-[1.2] flex items-center px-5 py-3 border-b md:border-b-0 md:border-r border-white/5">
+              <Search className="h-5 w-5 text-primary mr-3 shrink-0" />
               <input 
                 type="text" 
-                placeholder="What are you looking for?" 
-                className="w-full bg-transparent border-none focus:outline-none text-white text-lg placeholder-gray-500" 
+                placeholder="Find events..." 
+                className="w-full bg-transparent border-none focus:outline-none text-white text-base placeholder-gray-500" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex-1 flex items-center px-6 py-4 relative group/loc">
-              <MapPin className="h-6 w-6 text-gray-400 mr-4 shrink-0" />
+            <div className="flex-1 flex items-center px-5 py-3 relative group/loc">
+              <MapPin className="h-5 w-5 text-gray-400 mr-3 shrink-0" />
               <input 
                 type="text" 
                 placeholder="Where?" 
-                className="w-full bg-transparent border-none focus:outline-none text-white text-lg placeholder-gray-500 pr-10" 
+                className="w-full bg-transparent border-none focus:outline-none text-white text-base placeholder-gray-500 pr-10" 
                 value={locationQuery}
                 onChange={(e) => setLocationQuery(e.target.value)}
               />
@@ -131,13 +125,13 @@ const Home = () => {
                 type="button"
                 onClick={handleGetLocation}
                 disabled={locating}
-                className="absolute right-6 p-2 rounded-xl hover:bg-white/5 transition-colors text-primary disabled:opacity-50"
+                className="absolute right-4 p-1.5 rounded-lg hover:bg-white/5 transition-colors text-primary disabled:opacity-50"
               >
-                {locating ? <Loader2 className="h-5 w-5 animate-spin" /> : <Navigation className="h-5 w-5" />}
+                {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Navigation className="h-4 w-4" />}
               </button>
             </div>
-            <button type="submit" className="md:ml-2 px-10 py-5 bg-white text-black font-black text-lg rounded-[2rem] hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center shrink-0 shadow-xl active:scale-95">
-              Search Events
+            <button type="submit" className="md:ml-1 px-8 py-3.5 bg-white text-black font-bold text-base rounded-[1.5rem] hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center shrink-0 shadow-lg active:scale-95">
+              Search
             </button>
           </form>
 
