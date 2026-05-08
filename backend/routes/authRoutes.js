@@ -61,8 +61,6 @@ router.post('/register', async (req, res) => {
           <div style="text-align: center; margin: 30px 0;">
             <a href="${verificationLink}" style="background-color: #ec4899; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Verify Email Address</a>
           </div>
-          <p>If the button doesn't work, copy and paste this link into your browser:</p>
-          <p style="color: #666; font-size: 12px;">${verificationLink}</p>
           <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
           <p style="font-size: 12px; color: #999; text-align: center;">If you did not create an account, no further action is required.</p>
         </div>
@@ -146,7 +144,6 @@ router.post('/resend-verification', async (req, res) => {
           <div style="text-align: center; margin: 30px 0;">
             <a href="${verificationLink}" style="background-color: #ec4899; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Verify Email Address</a>
           </div>
-          <p>Link: ${verificationLink}</p>
           <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
           <p style="font-size: 12px; color: #999; text-align: center;">If you did not request this, you can safely ignore this email.</p>
         </div>
@@ -179,7 +176,7 @@ router.post('/login', async (req, res) => {
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) return res.status(400).json({ message: 'Invalid credentials' });
+    if (!isPasswordCorrect) return res.status(400).json({ message: 'Invalid password' });
 
     const token = createToken(user);
     res.status(200).json({ 
