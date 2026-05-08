@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Search, MapPin, Calendar, Filter, Loader2, Music, Laptop, Trophy, Utensils, Briefcase, Palette, HeartPulse } from 'lucide-react';
+import { Search, MapPin, Calendar, Filter, Loader2, Music, Laptop, Trophy, Utensils, Briefcase, Palette, HeartPulse, Navigation } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import getApiUrl from '../utils/api';
 import { CardSkeleton } from '../components/Skeleton';
@@ -26,6 +26,7 @@ const Events = () => {
   
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [locating, setLocating] = useState(false);
   const [error, setError] = useState('');
 
   // Sync state with URL parameters
@@ -59,6 +60,38 @@ const Events = () => {
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, categoryFilter, locationFilter]);
 
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser');
+      return;
+    }
+
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      try {
+        const { latitude, longitude } = position.coords;
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+        const data = await response.json();
+        
+        const city = data.address.city || data.address.town || data.address.village || data.address.state || '';
+        if (city) {
+          setLocationFilter(city);
+        } else {
+          alert('Could not determine your city name. Please enter it manually.');
+        }
+      } catch (err) {
+        console.error('Error getting location:', err);
+        alert('Failed to get your location. Please check your permissions.');
+      } finally {
+        setLocating(false);
+      }
+    }, (error) => {
+      console.error('Geolocation error:', error);
+      alert('Location access denied or unavailable.');
+      setLocating(false);
+    });
+  };
+
   const getCatConfig = (cat) => categoryConfig[cat] || categoryConfig['Default'];
 
   return (
@@ -73,11 +106,20 @@ const Events = () => {
             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
             <input
               type="text"
-              className="block w-full pl-12 pr-4 py-3.5 bg-[#1a1a24] border border-white/5 rounded-xl text-white placeholder-gray-500 focus:outline-none"
+              className="block w-full pl-12 pr-12 py-3.5 bg-[#1a1a24] border border-white/5 rounded-xl text-white placeholder-gray-500 focus:outline-none"
               placeholder="Search for city (e.g. Chennai, Mumbai...)"
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
             />
+            <button
+              type="button"
+              onClick={handleGetLocation}
+              disabled={locating}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-white/5 transition-colors text-primary disabled:opacity-50"
+              title="Use my current location"
+            >
+              {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Navigation className="h-4 w-4" />}
+            </button>
           </div>
           <div className="md:w-64 relative">
             <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
