@@ -188,7 +188,7 @@ const Events = () => {
               const cat = categoryConfig[event.category] || categoryConfig['Default'];
               return (
                 <Link to={`/events/${event._id}`} key={event._id} className="group">
-                  <div className="elegant-card h-full flex flex-col glass-shine">
+                  <div className="elegant-card h-full flex flex-col glass-shine shimmer-bg">
                     {/* Background Glow */}
                     <div className={`elegant-card-hover-glow bg-gradient-to-br ${cat.color}`}></div>
                     
