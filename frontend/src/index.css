@@ -147,14 +147,30 @@
   }
 
   .shimmer-bg {
-    background-size: 300% 300%;
-    animation: bg-shimmer 6s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
   }
 
-  @keyframes bg-shimmer {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  .shimmer-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: shimmer-swipe 4s infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes shimmer-swipe {
+    100% {
+      transform: translateX(100%);
+    }
   }
 
   .elegant-card {
