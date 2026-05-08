@@ -204,7 +204,7 @@ const Home = () => {
                   {catEvents.map((event) => (
                     <Link to={`/events/${event._id}`} key={event._id} className="group">
                       <div className="elegant-card h-full flex flex-col glass-shine">
-                        <div className={`elegant-card-hover-glow bg-gradient-to-br ${cat.color}`}></div>
+                        <div className={`elegant-card-hover-glow bg-gradient-to-br ${catInfo?.color}`}></div>
                         
                         <div className="elegant-card-image-wrap !aspect-video">
                           <img 
