@@ -154,8 +154,11 @@ const Home = () => {
                 onClick={() => navigate(`/events?category=${cat.name}`)}
                 className="group relative min-w-[130px] md:min-w-[180px] aspect-square rounded-[2rem] overflow-hidden snap-start flex flex-col p-5 transition-all duration-500 hover:scale-[1.05] active:scale-95"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} opacity-80 group-hover:opacity-100 transition-opacity duration-500 shimmer-bg`}></div>
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                {/* Background Gradient */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} opacity-90 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                
+                {/* Shimmer Overlay */}
+                <div className="absolute inset-0 shimmer-bg opacity-40"></div>
                 
                 <div className="relative z-10 w-10 h-10 md:w-12 md:h-12 rounded-xl glass flex items-center justify-center mb-auto text-white text-xl md:text-2xl shadow-lg group-hover:scale-110 transition-transform">
                   {cat.icon}
