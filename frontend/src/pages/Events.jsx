@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Search, MapPin, Calendar, Filter, Loader2, Music, Laptop, Trophy, Utensils, Briefcase, Palette, HeartPulse, Navigation } from 'lucide-react';
+import { Search, MapPin, Calendar, Filter, Loader2, Music, Laptop, Trophy, Utensils, Briefcase, Palette, HeartPulse, Navigation, Sparkles, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import getApiUrl from '../utils/api';
 import { CardSkeleton } from '../components/Skeleton';
 
 const categoryConfig = {
-  'Music': { icon: <Music className="h-12 w-12" />, color: 'from-purple-600 to-purple-900' },
-  'Tech': { icon: <Laptop className="h-12 w-12" />, color: 'from-blue-600 to-blue-900' },
-  'Sports': { icon: <Trophy className="h-12 w-12" />, color: 'from-green-600 to-green-900' },
-  'Food': { icon: <Utensils className="h-12 w-12" />, color: 'from-orange-600 to-orange-900' },
-  'Business': { icon: <Briefcase className="h-12 w-12" />, color: 'from-pink-600 to-pink-900' },
-  'Art': { icon: <Palette className="h-12 w-12" />, color: 'from-indigo-600 to-indigo-900' },
-  'Wellness': { icon: <HeartPulse className="h-12 w-12" />, color: 'from-teal-600 to-teal-900' },
-  'Default': { icon: <Calendar className="h-12 w-12" />, color: 'from-gray-600 to-gray-900' }
+  'Music': { icon: <Music />, color: 'from-violet-600 via-purple-600 to-indigo-700', description: 'Experience the rhythm of live performances' },
+  'Tech': { icon: <Laptop />, color: 'from-blue-600 via-cyan-600 to-blue-800', description: 'Innovate and learn from industry leaders' },
+  'Sports': { icon: <Trophy />, color: 'from-emerald-600 via-green-600 to-teal-700', description: 'Feel the adrenaline of competition' },
+  'Food': { icon: <Utensils />, color: 'from-orange-500 via-red-500 to-amber-600', description: 'Savor flavors from around the world' },
+  'Business': { icon: <Briefcase />, color: 'from-rose-600 via-pink-600 to-purple-700', description: 'Network and grow your professional reach' },
+  'Art': { icon: <Palette />, color: 'from-indigo-600 via-violet-600 to-purple-800', description: 'Express yourself through creative arts' },
+  'Wellness': { icon: <HeartPulse />, color: 'from-teal-500 via-emerald-500 to-cyan-600', description: 'Rejuvenate your body and mind' },
+  'Default': { icon: <Sparkles />, color: 'from-gray-700 via-gray-800 to-gray-900', description: 'Discover extraordinary experiences' }
 };
 
 const Events = () => {
@@ -29,7 +29,6 @@ const Events = () => {
   const [locating, setLocating] = useState(false);
   const [error, setError] = useState('');
 
-  // Sync state with URL parameters
   useEffect(() => {
     setSearchTerm(queryParams.get('search') || '');
     setCategoryFilter(queryParams.get('category') || '');
@@ -81,33 +80,59 @@ const Events = () => {
         }
       } catch (err) {
         console.error('Error getting location:', err);
-        alert('Failed to get your location. Please check your permissions.');
       } finally {
         setLocating(false);
       }
     }, (error) => {
-      console.error('Geolocation error:', error);
-      alert('Location access denied or unavailable.');
       setLocating(false);
     });
   };
 
-  const getCatConfig = (cat) => categoryConfig[cat] || categoryConfig['Default'];
+  const currentCat = categoryConfig[categoryFilter] || categoryConfig['Default'];
 
   return (
-    <div className="py-12 md:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">Explore Events</h1>
+    <div className="py-12 md:py-24 bg-dark-bg min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        
+        {/* Dynamic Category Header */}
+        <div className={`relative py-16 md:py-24 px-8 rounded-[2.5rem] md:rounded-[4rem] overflow-hidden mb-16 transition-all duration-700 animate-in fade-in zoom-in-95`}>
+            <div className={`absolute inset-0 bg-gradient-to-br ${currentCat.color} opacity-90`}></div>
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+            <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-black/20 rounded-full blur-3xl"></div>
+            
+            <div className="relative z-10 text-center">
+                <div className="inline-flex p-5 rounded-3xl glass border-white/10 mb-8 text-white text-4xl shadow-2xl">
+                    {currentCat.icon}
+                </div>
+                <h1 className="text-5xl md:text-8xl font-display font-bold text-white mb-6 tracking-tight">
+                    {categoryFilter || 'All Events'}
+                </h1>
+                <p className="text-white/80 text-lg md:text-2xl max-w-2xl mx-auto font-medium leading-relaxed">
+                    {currentCat.description}
+                </p>
+            </div>
         </div>
 
-        <div className="glass rounded-2xl p-4 mb-12 flex flex-col md:flex-row gap-4 border-white/10 shadow-lg">
-          <div className="flex-[2] relative">
-            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+        {/* Search & Filter Bar */}
+        <div className="glass rounded-[2rem] p-3 mb-16 flex flex-col lg:flex-row gap-3 border-white/5 shadow-2xl sticky top-20 z-30">
+          <div className="flex-[2] relative group">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-primary transition-colors" />
             <input
               type="text"
-              className="block w-full pl-12 pr-12 py-3.5 bg-[#1a1a24] border border-white/5 rounded-xl text-white placeholder-gray-500 focus:outline-none"
-              placeholder="Search for city (e.g. Chennai, Mumbai...)"
+              className="block w-full pl-16 pr-6 py-4 bg-dark-bg/50 border border-white/5 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-primary/30 transition-all text-lg"
+              placeholder="Search for events, keywords..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex-1 relative group">
+            <MapPin className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-primary transition-colors" />
+            <input
+              type="text"
+              className="block w-full pl-16 pr-12 py-4 bg-dark-bg/50 border border-white/5 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-primary/30 transition-all text-lg"
+              placeholder="Location"
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
             />
@@ -115,35 +140,37 @@ const Events = () => {
               type="button"
               onClick={handleGetLocation}
               disabled={locating}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-white/5 transition-colors text-primary disabled:opacity-50"
-              title="Use my current location"
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-white/5 transition-colors text-primary disabled:opacity-50"
             >
-              {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Navigation className="h-4 w-4" />}
+              {locating ? <Loader2 className="h-5 w-5 animate-spin" /> : <Navigation className="h-5 w-5" />}
             </button>
           </div>
-          <div className="md:w-64 relative">
-            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
+
+          <div className="lg:w-64 relative group">
+            <Filter className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-primary transition-colors pointer-events-none" />
             <select
-              className="block w-full pl-12 pr-4 py-3.5 bg-[#1a1a24] border border-white/5 rounded-xl text-white appearance-none focus:outline-none cursor-pointer"
+              className="block w-full pl-16 pr-10 py-4 bg-dark-bg/50 border border-white/5 rounded-2xl text-white appearance-none focus:outline-none focus:border-primary/30 transition-all cursor-pointer text-lg"
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
             >
-              <option value="">All Categories</option>
+              <option value="">All Interest</option>
               {Object.keys(categoryConfig).filter(c => c !== 'Default').map(c => <option key={c} value={c}>{c}</option>)}
             </select>
+            <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
           </div>
         </div>
 
+        {/* Event Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {[1, 2, 3, 4, 5, 6].map(i => <CardSkeleton key={i} />)}
           </div>
         ) : events.length === 0 ? (
           <div className="glass-card p-20 text-center animate-in fade-in zoom-in duration-500">
-            <Search className="h-16 w-16 text-gray-600 mx-auto mb-6 opacity-20" />
-            <h3 className="text-3xl font-display font-bold text-white mb-4">No events found</h3>
-            <p className="text-gray-400 max-w-md mx-auto mb-10 text-lg">
-              We couldn't find any events matching your criteria. Try adjusting your filters or search for another city.
+            <Search className="h-24 w-24 text-gray-700 mx-auto mb-8 opacity-20" />
+            <h3 className="text-4xl font-display font-bold text-white mb-6">No events found</h3>
+            <p className="text-gray-400 max-w-md mx-auto mb-12 text-xl leading-relaxed">
+              We couldn't find any events matching your criteria in this galaxy. Try a different city or category.
             </p>
             <button 
               onClick={() => {
@@ -151,56 +178,47 @@ const Events = () => {
                 setCategoryFilter('');
                 setLocationFilter('');
               }}
-              className="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-all shadow-glow-primary"
+              className="bg-white text-black px-12 py-4 rounded-2xl font-black text-lg hover:bg-primary hover:text-white transition-all shadow-glow-primary active:scale-95"
             >
               Clear All Filters
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {events.map(event => {
-              const cat = getCatConfig(event.category);
+              const cat = categoryConfig[event.category] || categoryConfig['Default'];
               return (
-                <div key={event._id} className="group h-full">
-                  <div className="glass-card overflow-hidden h-full flex flex-col transition-all duration-300 hover:-translate-y-2 border-white/5">
-                    <div className={`relative h-60 overflow-hidden bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
-                      <div className="absolute inset-0 flex items-center justify-center opacity-30 text-white">
-                        {cat.icon}
-                      </div>
+                <Link to={`/events/${event._id}`} key={event._id} className="group">
+                  <div className="glass-card overflow-hidden h-full flex flex-col transition-all duration-500 hover:-translate-y-3 border-white/5 group-hover:shadow-glow-primary/20">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-white/5">
                       <img 
-                        src={event.imageUrl ? (event.imageUrl.includes('unsplash.com') ? `${event.imageUrl.split('?')[0]}?w=600&q=75` : event.imageUrl) : 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75'} 
+                        src={event.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75'} 
                         alt={event.title} 
                         loading="lazy"
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        onError={(e) => { 
-                          if (e.target.src !== 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75') {
-                            e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75';
-                          } else {
-                            e.target.style.display = 'none';
-                          }
-                        }}
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
-                      <div className="absolute top-4 left-4 glass rounded-full px-3 py-1 text-xs font-bold text-white backdrop-blur-md">{event.category}</div>
-                      <div className="absolute top-4 right-4 bg-white text-black rounded-full px-3 py-1 text-xs font-extrabold shadow-lg">
+                      <div className="absolute top-4 left-4 glass rounded-full px-4 py-1.5 text-xs font-bold text-white backdrop-blur-md uppercase tracking-wider">{event.category}</div>
+                      <div className="absolute top-4 right-4 bg-white text-black rounded-full px-4 py-1.5 text-xs font-black shadow-xl">
                         {event.price === 0 ? 'FREE' : `$${event.price}`}
                       </div>
+                      <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                     </div>
-                    <div className="p-6 flex flex-col flex-1">
-                      <h3 className="text-xl font-display font-bold text-white mb-4 line-clamp-2 group-hover:text-primary transition-colors">{event.title}</h3>
-                      <div className="space-y-3 mt-auto text-gray-400 text-sm">
-                        <div className="flex items-center"><Calendar className="h-4 w-4 mr-3 text-primary" /> {new Date(event.date).toLocaleDateString()}</div>
-                        <div className="flex items-center"><MapPin className="h-4 w-4 mr-3 text-primary" /> {event.location}</div>
+                    <div className="p-8 flex flex-col flex-1">
+                      <h3 className="text-2xl font-display font-bold text-white mb-6 line-clamp-2 group-hover:text-primary transition-colors leading-tight">{event.title}</h3>
+                      <div className="space-y-4 mt-auto text-gray-400">
+                        <div className="flex items-center text-sm font-medium"><Calendar className="h-5 w-5 mr-3 text-primary" /> {new Date(event.date).toLocaleDateString(undefined, { dateStyle: 'full' })}</div>
+                        <div className="flex items-center text-sm font-medium"><MapPin className="h-5 w-5 mr-3 text-primary" /> {event.location}</div>
                       </div>
-                      <Link to={`/events/${event._id}`} className="mt-6 w-full py-3.5 bg-[#1a1a24] border border-white/5 rounded-xl text-center font-semibold text-white hover:bg-white/10 transition-colors">
-                        Get Tickets
-                      </Link>
+                      <div className="mt-8 w-full py-4 glass border-white/5 rounded-2xl text-center font-bold text-white group-hover:bg-primary group-hover:border-primary transition-all">
+                        View Details
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
-        )}}
+        )}
       </div>
     </div>
   );

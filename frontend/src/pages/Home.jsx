@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, MapPin, Calendar, ArrowRight, Loader2, Music, Laptop, Trophy, Utensils, Briefcase, Palette, HeartPulse, Navigation } from 'lucide-react';
+import { Search, MapPin, Calendar, ArrowRight, Loader2, Music, Laptop, Trophy, Utensils, Briefcase, Palette, HeartPulse, Navigation, Sparkles, ChevronDown } from 'lucide-react';
 import getApiUrl from '../utils/api';
 import { CardSkeleton } from '../components/Skeleton';
 
 const categories = [
-  { name: 'Music', icon: <Music className="h-12 w-12" />, color: 'from-purple-600 to-purple-900', border: 'border-purple-500/30' },
-  { name: 'Tech', icon: <Laptop className="h-12 w-12" />, color: 'from-blue-600 to-blue-900', border: 'border-blue-500/30' },
-  { name: 'Sports', icon: <Trophy className="h-12 w-12" />, color: 'from-green-600 to-green-900', border: 'border-green-500/30' },
-  { name: 'Food', icon: <Utensils className="h-12 w-12" />, color: 'from-orange-600 to-orange-900', border: 'border-orange-500/30' },
-  { name: 'Business', icon: <Briefcase className="h-12 w-12" />, color: 'from-pink-600 to-pink-900', border: 'border-pink-500/30' },
-  { name: 'Art', icon: <Palette className="h-12 w-12" />, color: 'from-indigo-600 to-indigo-900', border: 'border-indigo-500/30' },
-  { name: 'Wellness', icon: <HeartPulse className="h-12 w-12" />, color: 'from-teal-600 to-teal-900', border: 'border-teal-500/30' },
+  { name: 'Music', icon: <Music />, color: 'from-violet-600 via-purple-600 to-indigo-700', description: 'Live concerts, festivals & raves' },
+  { name: 'Tech', icon: <Laptop />, color: 'from-blue-600 via-cyan-600 to-blue-800', description: 'Workshops, hackathons & talks' },
+  { name: 'Sports', icon: <Trophy />, color: 'from-emerald-600 via-green-600 to-teal-700', description: 'Matches, tournaments & fitness' },
+  { name: 'Food', icon: <Utensils />, color: 'from-orange-500 via-red-500 to-amber-600', description: 'Tastings, brunches & culinary' },
+  { name: 'Business', icon: <Briefcase />, color: 'from-rose-600 via-pink-600 to-purple-700', description: 'Networking, summits & expos' },
+  { name: 'Art', icon: <Palette />, color: 'from-indigo-600 via-violet-600 to-purple-800', description: 'Galleries, theatre & workshops' },
+  { name: 'Wellness', icon: <HeartPulse />, color: 'from-teal-500 via-emerald-500 to-cyan-600', description: 'Yoga, meditation & retreats' },
 ];
 
 const Home = () => {
@@ -29,7 +29,7 @@ const Home = () => {
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Failed to fetch from ${url}`);
         const data = await response.json();
-        setEvents(data.slice(0, 6));
+        setEvents(data);
       } catch (err) {
         console.error('Fetch error:', err);
       } finally {
@@ -60,7 +60,6 @@ const Home = () => {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
         const data = await response.json();
         
-        // Try to get city, town, or village
         const city = data.address.city || data.address.town || data.address.village || data.address.state || '';
         if (city) {
           setLocationQuery(city);
@@ -80,45 +79,51 @@ const Home = () => {
     });
   };
 
-  const getCategoryData = (name) => {
-    return categories.find(c => c.name === name) || categories[1]; // Default to tech
+  const getEventsByCategory = (category) => {
+    return events.filter(e => e.category === category).slice(0, 4);
   };
 
   return (
-    <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative pt-24 pb-32 lg:pt-40 lg:pb-48 overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-50 z-0"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-primary/20 via-secondary/10 to-transparent blur-[80px] pointer-events-none z-0"></div>
+    <div className="flex flex-col bg-dark-bg min-h-screen">
+      {/* Hero Section - "The Search Engine" */}
+      <section className="relative min-h-[80vh] flex items-center justify-center pt-20 pb-16 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] z-0"></div>
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] animate-pulse pointer-events-none"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-secondary/15 rounded-full blur-[100px] animate-pulse delay-700 pointer-events-none"></div>
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center px-3 py-1 rounded-full glass border-white/10 text-xs font-medium mb-8">
-            <span className="flex h-2 w-2 rounded-full bg-red-500 mr-2 animate-pulse"></span>
-            <span className="text-gray-300">Discover handpicked events</span>
+        <div className="relative z-10 max-w-6xl mx-auto px-4 w-full text-center">
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full glass border-white/5 text-sm font-medium mb-10 animate-in fade-in slide-in-from-top-4 duration-1000">
+            <Sparkles className="h-4 w-4 text-primary mr-2 fill-primary/20" />
+            <span className="text-gray-200">The ultimate event discovery platform</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-6 md:mb-8 leading-[1.1]">
-            Find your next <br className="hidden sm:block" />
-            <span className="text-gradient">unforgettable</span> experience
+          <h1 className="text-5xl sm:text-6xl md:text-8xl font-display font-bold tracking-tight mb-8 leading-[1.05] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            Experience the <br className="hidden md:block" />
+            <span className="text-gradient">Extraordinary</span>
           </h1>
           
-          <form onSubmit={handleSearch} className="max-w-3xl mx-auto glass rounded-2xl p-2 flex flex-col sm:flex-row shadow-2xl shadow-primary/10">
-            <div className="flex-1 flex items-center px-4 py-3 border-b sm:border-b-0 sm:border-r border-white/10">
-              <Search className="h-5 w-5 text-gray-400 mr-3 shrink-0" />
+          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
+            Discover and book the most exclusive events, from underground concerts to high-tech conferences.
+          </p>
+
+          <form onSubmit={handleSearch} className="max-w-4xl mx-auto glass rounded-[2.5rem] p-2 flex flex-col md:flex-row shadow-3xl shadow-black/50 border-white/10 animate-in fade-in zoom-in duration-700 delay-300">
+            <div className="flex-[1.5] flex items-center px-6 py-4 border-b md:border-b-0 md:border-r border-white/10">
+              <Search className="h-6 w-6 text-primary mr-4 shrink-0" />
               <input 
                 type="text" 
-                placeholder="Search events, creators, or topics" 
-                className="w-full bg-transparent border-none focus:outline-none text-white placeholder-gray-500" 
+                placeholder="What are you looking for?" 
+                className="w-full bg-transparent border-none focus:outline-none text-white text-lg placeholder-gray-500" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex-1 flex items-center px-4 py-3 relative group/loc">
-              <MapPin className="h-5 w-5 text-gray-400 mr-3 shrink-0" />
+            <div className="flex-1 flex items-center px-6 py-4 relative group/loc">
+              <MapPin className="h-6 w-6 text-gray-400 mr-4 shrink-0" />
               <input 
                 type="text" 
-                placeholder="Location" 
-                className="w-full bg-transparent border-none focus:outline-none text-white placeholder-gray-500 pr-10" 
+                placeholder="Where?" 
+                className="w-full bg-transparent border-none focus:outline-none text-white text-lg placeholder-gray-500 pr-10" 
                 value={locationQuery}
                 onChange={(e) => setLocationQuery(e.target.value)}
               />
@@ -126,101 +131,141 @@ const Home = () => {
                 type="button"
                 onClick={handleGetLocation}
                 disabled={locating}
-                className="absolute right-4 p-1.5 rounded-lg hover:bg-white/5 transition-colors text-primary disabled:opacity-50"
-                title="Use my current location"
+                className="absolute right-6 p-2 rounded-xl hover:bg-white/5 transition-colors text-primary disabled:opacity-50"
               >
-                {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Navigation className="h-4 w-4" />}
+                {locating ? <Loader2 className="h-5 w-5 animate-spin" /> : <Navigation className="h-5 w-5" />}
               </button>
             </div>
-            <button type="submit" className="mt-2 sm:mt-0 px-8 py-3.5 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center shrink-0">
-              Search
+            <button type="submit" className="md:ml-2 px-10 py-5 bg-white text-black font-black text-lg rounded-[2rem] hover:bg-primary hover:text-white transition-all duration-300 flex items-center justify-center shrink-0 shadow-xl active:scale-95">
+              Search Events
             </button>
           </form>
 
-          <div className="mt-16 flex flex-wrap justify-center gap-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce opacity-50">
+            <span className="text-[10px] uppercase tracking-widest text-gray-400 mb-2 font-bold">Explore Categories</span>
+            <ChevronDown className="h-5 w-5 text-primary" />
+          </div>
+        </div>
+      </section>
+
+      {/* Category Discovery - "Visual Grid" */}
+      <section className="py-24 relative z-10">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">Browse by Interest</h2>
+              <p className="text-gray-400 text-lg">Choose a category to find your next adventure</p>
+            </div>
+          </div>
+
+          <div className="flex overflow-x-auto pb-8 hide-scrollbar gap-6 snap-x">
             {categories.map((cat, idx) => (
               <button 
                 key={idx} 
                 onClick={() => navigate(`/events?category=${cat.name}`)}
-                className="group flex items-center space-x-3 px-4 py-2.5 rounded-2xl glass border border-white/5 hover:border-primary/30 transition-all hover:-translate-y-1 hover:shadow-glow-primary/20"
+                className="group relative min-w-[280px] md:min-w-[320px] aspect-[4/5] rounded-[2.5rem] overflow-hidden snap-start flex flex-col p-8 transition-all duration-500 hover:scale-[1.02]"
               >
-                <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform overflow-hidden`}>
-                   <div className="scale-[0.35] text-white">
-                      {cat.icon}
-                   </div>
+                <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} transition-transform duration-700 group-hover:scale-110`}></div>
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+                
+                <div className="relative z-10 w-16 h-16 rounded-2xl glass flex items-center justify-center mb-6 text-white text-3xl">
+                  {cat.icon}
                 </div>
-                <span className="text-sm font-bold text-gray-400 group-hover:text-white transition-colors tracking-tight">{cat.name}</span>
+                
+                <div className="relative z-10 mt-auto">
+                  <h3 className="text-3xl font-display font-bold text-white mb-2">{cat.name}</h3>
+                  <p className="text-white/70 text-sm mb-6 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {cat.description}
+                  </p>
+                  <div className="flex items-center text-white font-bold group-hover:translate-x-2 transition-transform">
+                    Explore <ArrowRight className="ml-2 h-5 w-5" />
+                  </div>
+                </div>
               </button>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Featured Horizontal Scroll */}
-      <section className="py-24 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 flex justify-between items-end">
-          <div>
-            <h2 className="text-3xl font-display font-bold text-white">Trending this week</h2>
-          </div>
-          <Link to="/events" className="hidden sm:flex items-center text-primary font-medium hover:text-white transition-colors">
-            View all <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </div>
+      {/* Dynamic Category Sections - "The Next Pages" */}
+      {['Music', 'Tech', 'Sports'].map((catName) => {
+        const catEvents = getEventsByCategory(catName);
+        const catInfo = categories.find(c => c.name === catName);
+        if (catEvents.length === 0 && !loading) return null;
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {loading ? (
-            <div className="flex space-x-6 overflow-x-auto pb-8 hide-scrollbar">
-              {[1, 2, 3].map(i => <CardSkeleton key={i} />)}
-            </div>
-          ) : (
-            <div className="flex space-x-6 overflow-x-auto pb-8 hide-scrollbar snap-x">
-              {events.map((event) => {
-                const cat = getCategoryData(event.category);
-                return (
-                  <div key={event._id} className="min-w-[320px] md:min-w-[380px] snap-start shrink-0 group">
-                    <div className="glass-card overflow-hidden h-full flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-glow-primary border-white/5">
-                      <div className={`relative h-56 overflow-hidden bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
-                        {/* CSS Icon Fallback (underneath) */}
-                        <div className="absolute inset-0 flex items-center justify-center opacity-40">
-                           {cat.icon}
-                        </div>
-                        {/* Actual Image */}
-                        <img 
-                          src={event.imageUrl ? (event.imageUrl.includes('unsplash.com') ? `${event.imageUrl.split('?')[0]}?w=600&q=75` : event.imageUrl) : 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75'} 
-                          alt={event.title} 
-                          loading="lazy"
-                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                          onError={(e) => { 
-                            if (e.target.src !== 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75') {
-                              e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75';
-                            } else {
-                              e.target.style.display = 'none';
-                            }
-                          }}
-                        />
-                        <div className="absolute top-4 left-4 glass rounded-full px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
-                          {event.category}
-                        </div>
-                        <div className="absolute top-4 right-4 bg-white text-black rounded-full px-3 py-1 text-xs font-extrabold shadow-lg">
-                          {event.price === 0 ? 'FREE' : `$${event.price}`}
-                        </div>
-                      </div>
-                      <div className="p-6 flex flex-col flex-1">
-                        <h3 className="text-xl font-display font-bold text-white mb-4 line-clamp-1 group-hover:text-primary transition-colors">{event.title}</h3>
-                        <div className="space-y-2 mt-auto text-gray-400 text-sm">
-                          <div className="flex items-center"><Calendar className="h-4 w-4 mr-2 text-primary" /> {new Date(event.date).toLocaleDateString()}</div>
-                          <div className="flex items-center"><MapPin className="h-4 w-4 mr-2 text-primary" /> {event.location}</div>
-                        </div>
-                        <Link to={`/events/${event._id}`} className="mt-6 w-full py-3 bg-dark-bg border border-white/10 rounded-xl text-center font-semibold text-white hover:bg-white/5 transition-colors">
-                          Get Tickets
-                        </Link>
-                      </div>
+        return (
+          <section key={catName} className="py-24 border-t border-white/5">
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="flex items-end justify-between mb-12">
+                <div>
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${catInfo?.color} text-white`}>
+                      {catInfo?.icon}
                     </div>
+                    <span className="text-primary font-bold uppercase tracking-widest text-sm">{catName} Spotlight</span>
                   </div>
-                );
-              })}
+                  <h2 className="text-4xl md:text-5xl font-display font-bold text-white">Featured in {catName}</h2>
+                </div>
+                <Link to={`/events?category=${catName}`} className="flex items-center text-gray-400 font-medium hover:text-white transition-colors group">
+                  See all {catName} <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+
+              {loading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {[1, 2, 3, 4].map(i => <CardSkeleton key={i} />)}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {catEvents.map((event) => (
+                    <Link to={`/events/${event._id}`} key={event._id} className="group">
+                      <div className="glass-card overflow-hidden h-full flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-glow-primary border-white/5">
+                        <div className="relative aspect-video overflow-hidden">
+                          <img 
+                            src={event.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75'} 
+                            alt={event.title} 
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          />
+                          <div className="absolute top-3 left-3 glass rounded-full px-3 py-1 text-[10px] font-bold text-white backdrop-blur-md uppercase tracking-wider">
+                            {event.category}
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-black/80 to-transparent"></div>
+                          <div className="absolute bottom-3 right-3 text-white font-black text-lg">
+                            {event.price === 0 ? 'FREE' : `$${event.price}`}
+                          </div>
+                        </div>
+                        <div className="p-5 flex flex-col flex-1">
+                          <h3 className="text-lg font-display font-bold text-white mb-3 line-clamp-1 group-hover:text-primary transition-colors">{event.title}</h3>
+                          <div className="space-y-2 mt-auto text-gray-400 text-xs">
+                            <div className="flex items-center"><Calendar className="h-3 w-3 mr-2 text-primary" /> {new Date(event.date).toLocaleDateString()}</div>
+                            <div className="flex items-center"><MapPin className="h-3 w-3 mr-2 text-primary" /> {event.location}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </section>
+        );
+      })}
+
+      {/* Footer CTA */}
+      <section className="py-32 relative overflow-hidden border-t border-white/5">
+        <div className="absolute inset-0 bg-primary/5 z-0"></div>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-4xl md:text-6xl font-display font-bold text-white mb-8">Ready to explore more?</h2>
+          <p className="text-gray-400 text-xl mb-12">Join thousands of people discovering unforgettable experiences every day.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link to="/events" className="w-full sm:w-auto px-12 py-5 bg-white text-black font-black text-lg rounded-2xl hover:bg-primary hover:text-white transition-all shadow-xl">
+              Browse All Events
+            </Link>
+            <Link to="/register" className="w-full sm:w-auto px-12 py-5 glass text-white font-black text-lg rounded-2xl hover:bg-white/5 transition-all">
+              Create Account
+            </Link>
+          </div>
         </div>
       </section>
     </div>
