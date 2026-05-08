@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Upload, Calendar, MapPin, Clock, Tag, DollarSign, Plus, X } from 'lucide-react';
 import getApiUrl from '../utils/api';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
@@ -52,8 +53,7 @@ const CreateEvent = () => {
 
     const token = localStorage.getItem('token');
     if (!token) {
-      setError('You must be logged in to create an event');
-      setLoading(false);
+      navigate('/login', { state: { from: location.pathname } });
       return;
     }
 

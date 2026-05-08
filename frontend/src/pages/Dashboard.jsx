@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard, CheckCircle2, Users, X, Trash2, Printer } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import getApiUrl from '../utils/api';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('tickets');
   const [tickets, setTickets] = useState([]);
   const [managedEvents, setManagedEvents] = useState([]);
@@ -34,8 +35,7 @@ const Dashboard = () => {
     if (storedUser) setUpdatedName(storedUser.name);
 
     if (!token) {
-      setError('Please login to view dashboard');
-      setLoading(false);
+      navigate('/login', { state: { from: location.pathname } });
       return;
     }
 

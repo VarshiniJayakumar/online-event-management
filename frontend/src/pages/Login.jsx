@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
 import getApiUrl from '../utils/api';
 
@@ -9,6 +9,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || '/dashboard';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,8 +34,8 @@ const Login = () => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      console.log('Login successful, navigating to dashboard...');
-      navigate('/dashboard');
+      console.log(`Login successful, navigating to ${from}...`);
+      navigate(from);
       
     } catch (err) {
       console.error('Login error:', err);
@@ -53,7 +55,11 @@ const Login = () => {
           <h2 className="text-3xl font-display font-bold text-white mb-2">Welcome Back</h2>
           <p className="text-gray-400">
             Don't have an account?{' '}
-            <Link to="/register" className="text-primary hover:text-white transition-colors font-medium">
+            <Link 
+              to="/register" 
+              state={{ from }}
+              className="text-primary hover:text-white transition-colors font-medium"
+            >
               Sign up
             </Link>
           </p>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { CalendarDays, MapPin, Clock, Share2, Heart, ArrowLeft, Ticket, Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
 import getApiUrl from '../utils/api';
@@ -8,6 +8,8 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_t
 
 const EventDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -35,7 +37,7 @@ const EventDetails = () => {
   const handleCheckout = async () => {
     const token = localStorage.getItem('token');
     if (!token) {
-      alert('Please login to get tickets');
+      navigate('/login', { state: { from: location.pathname } });
       return;
     }
 

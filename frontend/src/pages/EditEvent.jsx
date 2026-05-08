@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Calendar, MapPin, Clock, Tag, DollarSign, Plus, X, Loader2, ArrowLeft } from 'lucide-react';
 import getApiUrl from '../utils/api';
 
 const EditEvent = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -85,8 +86,7 @@ const EditEvent = () => {
 
     const token = localStorage.getItem('token');
     if (!token) {
-      setError('You must be logged in to update an event');
-      setSaving(false);
+      navigate('/login', { state: { from: location.pathname } });
       return;
     }
 

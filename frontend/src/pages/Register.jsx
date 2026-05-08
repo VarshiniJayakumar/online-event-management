@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, Loader2, CheckCircle2, User, Eye, EyeOff } from 'lucide-react';
 import getApiUrl from '../utils/api';
 
@@ -11,6 +11,9 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || '/dashboard';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +53,7 @@ const Register = () => {
         // Fallback for non-verification mode (local testing)
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.href = '/dashboard';
+        navigate(from);
       }
       
     } catch (err) {
@@ -74,7 +77,11 @@ const Register = () => {
             Please click the link in your inbox to activate your account.
           </p>
           <div className="space-y-4">
-            <Link to="/login" className="block w-full py-4 bg-primary text-white font-bold rounded-xl shadow-glow-primary hover:opacity-90 transition-opacity">
+            <Link 
+              to="/login" 
+              state={{ from }}
+              className="block w-full py-4 bg-primary text-white font-bold rounded-xl shadow-glow-primary hover:opacity-90 transition-opacity"
+            >
               Return to Login
             </Link>
             <button 
@@ -113,7 +120,11 @@ const Register = () => {
           <h2 className="text-3xl font-display font-bold text-white mb-2">Create Account</h2>
           <p className="text-gray-400">
             Already have an account?{' '}
-            <Link to="/login" className="text-secondary hover:text-white transition-colors font-medium">
+            <Link 
+              to="/login" 
+              state={{ from }}
+              className="text-secondary hover:text-white transition-colors font-medium"
+            >
               Sign in
             </Link>
           </p>
