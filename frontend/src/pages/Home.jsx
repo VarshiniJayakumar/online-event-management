@@ -203,7 +203,7 @@ const Home = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {catEvents.map((event) => (
                     <Link to={`/events/${event._id}`} key={event._id} className="group">
-                      <div className="elegant-card h-full flex flex-col glass-shine shimmer-bg">
+                      <div className="elegant-card h-full flex flex-col glass-shine">
                         <div className={`elegant-card-hover-glow bg-gradient-to-br ${catInfo?.color}`}></div>
                         
                         <div className="elegant-card-image-wrap !aspect-video">
