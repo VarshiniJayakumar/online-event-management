@@ -142,45 +142,37 @@ const Home = () => {
           </form>
 
           {/* Scroll Indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce opacity-50">
-            <span className="text-[10px] uppercase tracking-widest text-gray-400 mb-2 font-bold">Explore Categories</span>
-            <ChevronDown className="h-5 w-5 text-primary" />
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce opacity-40">
+            <ChevronDown className="h-4 w-4 text-primary" />
           </div>
         </div>
       </section>
 
-      {/* Category Discovery - "Visual Grid" */}
-      <section className="py-24 relative z-10">
+      {/* Category Discovery - Compact Grid */}
+      <section className="py-16 relative z-10">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">Browse by Interest</h2>
-              <p className="text-gray-400 text-lg">Choose a category to find your next adventure</p>
-            </div>
+          <div className="mb-10 text-center md:text-left">
+            <h2 className="text-2xl md:text-4xl font-display font-bold text-white mb-2">Browse by Interest</h2>
+            <p className="text-gray-400 text-sm md:text-base">Find your next adventure by category</p>
           </div>
 
-          <div className="flex overflow-x-auto pb-8 hide-scrollbar gap-6 snap-x">
+          <div className="flex overflow-x-auto pb-6 hide-scrollbar gap-4 snap-x">
             {categories.map((cat, idx) => (
               <button 
                 key={idx} 
                 onClick={() => navigate(`/events?category=${cat.name}`)}
-                className="group relative min-w-[280px] md:min-w-[320px] aspect-[4/5] rounded-[2.5rem] overflow-hidden snap-start flex flex-col p-8 transition-all duration-500 hover:scale-[1.02]"
+                className="group relative min-w-[130px] md:min-w-[180px] aspect-square rounded-[2rem] overflow-hidden snap-start flex flex-col p-5 transition-all duration-500 hover:scale-[1.05] active:scale-95"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} transition-transform duration-700 group-hover:scale-110`}></div>
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+                <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} opacity-80 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
                 
-                <div className="relative z-10 w-16 h-16 rounded-2xl glass flex items-center justify-center mb-6 text-white text-3xl">
+                <div className="relative z-10 w-10 h-10 md:w-12 md:h-12 rounded-xl glass flex items-center justify-center mb-auto text-white text-xl md:text-2xl shadow-lg group-hover:scale-110 transition-transform">
                   {cat.icon}
                 </div>
                 
-                <div className="relative z-10 mt-auto">
-                  <h3 className="text-3xl font-display font-bold text-white mb-2">{cat.name}</h3>
-                  <p className="text-white/70 text-sm mb-6 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    {cat.description}
-                  </p>
-                  <div className="flex items-center text-white font-bold group-hover:translate-x-2 transition-transform">
-                    Explore <ArrowRight className="ml-2 h-5 w-5" />
-                  </div>
+                <div className="relative z-10">
+                  <h3 className="text-base md:text-xl font-display font-bold text-white tracking-tight">{cat.name}</h3>
+                  <div className="w-6 h-1 bg-white/30 rounded-full mt-2 group-hover:w-10 group-hover:bg-white transition-all"></div>
                 </div>
               </button>
             ))}
