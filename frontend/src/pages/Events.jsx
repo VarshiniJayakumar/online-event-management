@@ -104,7 +104,7 @@ const Events = () => {
                 <div className={`inline-flex p-2.5 rounded-xl bg-gradient-to-br ${currentCat.color} mb-3 text-white text-xl shadow-lg shadow-black/20`}>
                     {currentCat.icon}
                 </div>
-                <h1 className="text-2xl md:text-4xl font-display font-bold text-white mb-2 tracking-tight drop-shadow-md">
+                <h1 className="text-2xl md:text-4xl font-display font-bold text-white mb-2 tracking-tight drop-shadow-md text-shimmer">
                     {categoryFilter || 'All Events'}
                 </h1>
                 <p className="text-white/70 text-xs md:text-base max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-sm">

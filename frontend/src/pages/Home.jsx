@@ -162,7 +162,7 @@ const Home = () => {
                 </div>
                 
                 <div className="relative z-10">
-                  <h3 className="text-base md:text-xl font-display font-bold text-white tracking-tight">{cat.name}</h3>
+                  <h3 className="text-base md:text-xl font-display font-bold text-white tracking-tight text-shimmer">{cat.name}</h3>
                   <div className="w-6 h-1 bg-white/30 rounded-full mt-2 group-hover:w-10 group-hover:bg-white transition-all"></div>
                 </div>
               </button>
