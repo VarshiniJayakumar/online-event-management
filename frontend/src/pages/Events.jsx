@@ -188,7 +188,7 @@ const Events = () => {
               const cat = categoryConfig[event.category] || categoryConfig['Default'];
               return (
                 <Link to={`/events/${event._id}`} key={event._id} className="group">
-                  <div className="glass-card overflow-hidden h-full flex flex-col transition-all duration-500 hover:-translate-y-3 border-white/5 group-hover:shadow-glow-primary/20">
+                  <div className="glass-card glass-shine overflow-hidden h-full flex flex-col transition-all duration-500 hover:-translate-y-3 border-white/5 group-hover:shadow-glow-primary/20">
                     <div className="relative aspect-[16/10] overflow-hidden bg-white/5">
                       <img 
                         src={event.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75'} 

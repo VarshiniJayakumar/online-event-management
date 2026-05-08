@@ -95,7 +95,7 @@ const Home = () => {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold tracking-tight mb-12 leading-tight animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            Find your next <span className="text-gradient">unforgettable</span> experience
+            Find your next <span className="text-shimmer">unforgettable</span> experience
           </h1>
           
           <form onSubmit={handleSearch} className="max-w-3xl mx-auto glass rounded-[2rem] p-1.5 flex flex-col md:flex-row shadow-2xl shadow-black/40 border-white/10 animate-in fade-in zoom-in duration-700 delay-300">
@@ -203,7 +203,7 @@ const Home = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {catEvents.map((event) => (
                     <Link to={`/events/${event._id}`} key={event._id} className="group">
-                      <div className="glass-card overflow-hidden h-full flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-glow-primary border-white/5">
+                      <div className="glass-card glass-shine overflow-hidden h-full flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-glow-primary border-white/5">
                         <div className="relative aspect-video overflow-hidden">
                           <img 
                             src={event.imageUrl || 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=75'} 
