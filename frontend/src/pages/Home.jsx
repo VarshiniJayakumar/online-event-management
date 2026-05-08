@@ -87,9 +87,6 @@ const Home = () => {
     <div className="flex flex-col bg-dark-bg min-h-screen">
       {/* Hero Section - Compact Search Engine */}
       <section className="relative min-h-[60vh] flex items-center justify-center pt-24 pb-12 overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] z-0"></div>
-        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px] animate-pulse pointer-events-none"></div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 w-full text-center">
           <div className="inline-flex items-center px-3 py-1 rounded-full glass border-white/5 text-[10px] md:text-xs font-medium mb-6 animate-in fade-in slide-in-from-top-4 duration-1000">
