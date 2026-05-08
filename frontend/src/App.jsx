@@ -18,9 +18,9 @@ function App() {
       <div className="min-h-screen bg-dark-bg text-gray-100 font-sans selection:bg-primary selection:text-white relative overflow-x-hidden">
         {/* Global Background Layers */}
         <div className="fixed inset-0 bg-[#06060a] z-0"></div>
-        <div className="fixed inset-0 bg-gradient-to-br from-primary/25 via-transparent to-secondary/25 pointer-events-none z-0"></div>
-        <div className="fixed inset-0 bg-grid-pattern opacity-40 pointer-events-none z-0"></div>
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-gradient-radial from-primary/30 via-secondary/10 to-transparent blur-[160px] pointer-events-none z-0"></div>
+        <div className="fixed inset-0 bg-gradient-to-br from-primary/30 via-transparent to-secondary/30 pointer-events-none z-0"></div>
+        <div className="fixed inset-0 bg-grid-pattern opacity-60 pointer-events-none z-0"></div>
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-gradient-radial from-primary/35 via-secondary/15 to-transparent blur-[160px] pointer-events-none z-0"></div>
         
         <div className="relative z-10 flex flex-col min-h-screen">
           <Navbar />

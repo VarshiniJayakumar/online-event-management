@@ -91,7 +91,7 @@ const Events = () => {
   const currentCat = categoryConfig[categoryFilter] || categoryConfig['Default'];
 
   return (
-    <div className="py-12 md:py-24 bg-dark-bg min-h-screen">
+    <div className="py-12 md:py-24 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
         {/* Dynamic Category Header */}

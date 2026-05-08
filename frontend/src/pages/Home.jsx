@@ -84,7 +84,7 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col bg-dark-bg min-h-screen">
+    <div className="flex flex-col min-h-screen">
       {/* Hero Section - Compact Search Engine */}
       <section className="relative min-h-[60vh] flex items-center justify-center pt-24 pb-12 overflow-hidden">
 
