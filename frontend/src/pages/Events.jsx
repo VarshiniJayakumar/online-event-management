@@ -94,21 +94,19 @@ const Events = () => {
     <div className="py-12 md:py-24 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
-        {/* Dynamic Category Header */}
-        <div className={`relative py-16 md:py-24 px-8 rounded-[2.5rem] md:rounded-[4rem] overflow-hidden mb-16 transition-all duration-700 animate-in fade-in zoom-in-95`}>
+        {/* Dynamic Category Header - Compact */}
+        <div className={`relative py-12 md:py-16 px-6 rounded-[2rem] md:rounded-[3rem] overflow-hidden mb-12 transition-all duration-700 animate-in fade-in zoom-in-95 shadow-2xl`}>
             <div className={`absolute inset-0 bg-gradient-to-br ${currentCat.color} opacity-90`}></div>
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
-            <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-black/20 rounded-full blur-3xl"></div>
             
             <div className="relative z-10 text-center">
-                <div className="inline-flex p-5 rounded-3xl glass border-white/10 mb-8 text-white text-4xl shadow-2xl">
+                <div className="inline-flex p-3 rounded-2xl glass border-white/10 mb-4 text-white text-2xl shadow-xl">
                     {currentCat.icon}
                 </div>
-                <h1 className="text-5xl md:text-8xl font-display font-bold text-white mb-6 tracking-tight">
+                <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-3 tracking-tight">
                     {categoryFilter || 'All Events'}
                 </h1>
-                <p className="text-white/80 text-lg md:text-2xl max-w-2xl mx-auto font-medium leading-relaxed">
+                <p className="text-white/80 text-sm md:text-lg max-w-2xl mx-auto font-medium leading-relaxed">
                     {currentCat.description}
                 </p>
             </div>
