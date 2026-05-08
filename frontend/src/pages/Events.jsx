@@ -138,6 +138,24 @@ const Events = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3, 4, 5, 6].map(i => <CardSkeleton key={i} />)}
           </div>
+        ) : events.length === 0 ? (
+          <div className="glass-card p-20 text-center animate-in fade-in zoom-in duration-500">
+            <Search className="h-16 w-16 text-gray-600 mx-auto mb-6 opacity-20" />
+            <h3 className="text-3xl font-display font-bold text-white mb-4">No events found</h3>
+            <p className="text-gray-400 max-w-md mx-auto mb-10 text-lg">
+              We couldn't find any events matching your criteria. Try adjusting your filters or search for another city.
+            </p>
+            <button 
+              onClick={() => {
+                setSearchTerm('');
+                setCategoryFilter('');
+                setLocationFilter('');
+              }}
+              className="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-all shadow-glow-primary"
+            >
+              Clear All Filters
+            </button>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {events.map(event => {
@@ -182,7 +200,7 @@ const Events = () => {
               );
             })}
           </div>
-        )}
+        )}}
       </div>
     </div>
   );
