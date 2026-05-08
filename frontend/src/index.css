@@ -101,4 +101,59 @@
     top: 100%;
     opacity: 1;
   }
+
+  .card-glow-border {
+    position: relative;
+    padding: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+  }
+
+  .card-glow-border::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+      transparent,
+      #7c3aed,
+      transparent 30%,
+      transparent 70%,
+      #ec4899,
+      transparent
+    );
+    animation: rotate-border 6s linear infinite;
+    z-index: 0;
+  }
+
+  .card-glow-inner {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+    width: 100%;
+    background: #0a0a0f;
+    border-radius: inherit;
+  }
+
+  @keyframes rotate-border {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .shimmer-bg {
+    background-size: 300% 300%;
+    animation: bg-shimmer 6s ease-in-out infinite;
+  }
+
+  @keyframes bg-shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 }
