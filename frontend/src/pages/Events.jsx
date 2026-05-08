@@ -94,19 +94,20 @@ const Events = () => {
     <div className="py-8 md:py-16 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
-        {/* Dynamic Category Header - Minimal */}
-        <div className={`relative py-10 md:py-12 px-6 rounded-3xl overflow-hidden mb-10 transition-all duration-700 animate-in fade-in zoom-in-95 shadow-2xl`}>
-            <div className={`absolute inset-0 bg-gradient-to-br ${currentCat.color} opacity-90`}></div>
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+        {/* Dynamic Category Header - Glassmorphic Minimal */}
+        <div className={`relative py-8 md:py-10 px-6 rounded-[2rem] overflow-hidden mb-10 transition-all duration-700 animate-in fade-in zoom-in-95 glass border-white/10 shadow-2xl`}>
+            {/* Subtle Color Tint Overlay */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${currentCat.color} opacity-20`}></div>
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5"></div>
             
             <div className="relative z-10 text-center">
-                <div className="inline-flex p-2.5 rounded-xl glass border-white/10 mb-3 text-white text-xl shadow-lg">
+                <div className={`inline-flex p-2.5 rounded-xl bg-gradient-to-br ${currentCat.color} mb-3 text-white text-xl shadow-lg shadow-black/20`}>
                     {currentCat.icon}
                 </div>
-                <h1 className="text-2xl md:text-4xl font-display font-bold text-white mb-2 tracking-tight">
+                <h1 className="text-2xl md:text-4xl font-display font-bold text-white mb-2 tracking-tight drop-shadow-md">
                     {categoryFilter || 'All Events'}
                 </h1>
-                <p className="text-white/70 text-xs md:text-base max-w-2xl mx-auto font-medium leading-relaxed">
+                <p className="text-white/70 text-xs md:text-base max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-sm">
                     {currentCat.description}
                 </p>
             </div>
