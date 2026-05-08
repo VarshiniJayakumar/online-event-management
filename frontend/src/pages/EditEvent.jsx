@@ -180,7 +180,27 @@ const EditEvent = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1.5">Image URL</label>
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="block text-sm font-medium text-gray-300">Image URL</label>
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      const categoryImages = {
+                        'Tech': 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80',
+                        'Music': 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80',
+                        'Sports': 'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=800&q=80',
+                        'Food': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
+                        'Business': 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',
+                        'Wellness': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80',
+                        'Art': 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=800&q=80'
+                      };
+                      setFormData(prev => ({ ...prev, imageUrl: categoryImages[prev.category] || categoryImages['Tech'] }));
+                    }}
+                    className="text-[10px] uppercase tracking-widest font-bold text-primary hover:text-white transition-colors"
+                  >
+                    ✨ Suggest Image
+                  </button>
+                </div>
                 <input
                   type="text"
                   name="imageUrl"
@@ -191,6 +211,20 @@ const EditEvent = () => {
                 />
               </div>
             </div>
+
+            {formData.imageUrl && (
+              <div className="mt-4">
+                <p className="text-xs font-medium text-gray-500 mb-2 uppercase tracking-wider">Preview</p>
+                <div className="relative h-48 w-full rounded-xl overflow-hidden border border-white/10">
+                  <img 
+                    src={formData.imageUrl} 
+                    alt="Preview" 
+                    className="w-full h-full object-cover"
+                    onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80'}
+                  />
+                </div>
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">Description</label>
