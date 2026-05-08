@@ -137,16 +137,19 @@ const Home = () => {
             </button>
           </form>
 
-          <div className="mt-16 flex flex-wrap justify-center gap-3 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+          <div className="mt-16 flex flex-wrap justify-center gap-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
             {categories.map((cat, idx) => (
               <button 
                 key={idx} 
                 onClick={() => navigate(`/events?category=${cat.name}`)}
-                className="px-4 py-2 rounded-xl glass border-white/5 hover:border-primary/50 flex items-center space-x-3 transition-all hover:-translate-y-1 group relative overflow-hidden"
+                className="group flex items-center space-x-3 px-4 py-2.5 rounded-2xl glass border border-white/5 hover:border-primary/30 transition-all hover:-translate-y-1 hover:shadow-glow-primary/20"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} opacity-0 group-hover:opacity-10 transition-opacity`}></div>
-                <div className={`w-1.5 h-1.5 rounded-full bg-gradient-to-br ${cat.color} shadow-glow-primary`}></div>
-                <span className="text-gray-400 group-hover:text-white text-[10px] font-bold uppercase tracking-[0.2em]">{cat.name}</span>
+                <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform overflow-hidden`}>
+                   <div className="scale-[0.35] text-white">
+                      {cat.icon}
+                   </div>
+                </div>
+                <span className="text-sm font-bold text-gray-400 group-hover:text-white transition-colors tracking-tight">{cat.name}</span>
               </button>
             ))}
           </div>
