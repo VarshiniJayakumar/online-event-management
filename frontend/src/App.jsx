@@ -17,9 +17,10 @@ function App() {
     <Router>
       <div className="min-h-screen bg-dark-bg text-gray-100 font-sans selection:bg-primary selection:text-white relative overflow-x-hidden">
         {/* Global Background Layers */}
-        <div className="fixed inset-0 bg-grid-pattern opacity-100 pointer-events-none z-0"></div>
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-gradient-radial from-primary/20 via-secondary/5 to-transparent blur-[140px] pointer-events-none z-0"></div>
-        <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] opacity-20 pointer-events-none z-0"></div>
+        <div className="fixed inset-0 bg-[#0a0a0f] z-0"></div>
+        <div className="fixed inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 pointer-events-none z-0"></div>
+        <div className="fixed inset-0 bg-grid-pattern opacity-60 pointer-events-none z-0"></div>
+        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-gradient-radial from-primary/10 via-transparent to-transparent blur-[140px] pointer-events-none z-0"></div>
         
         <div className="relative z-10 flex flex-col min-h-screen">
           <Navbar />
