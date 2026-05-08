@@ -97,8 +97,10 @@ const Events = () => {
         {/* Dynamic Category Header - Glassmorphic Minimal */}
         <div className={`relative py-8 md:py-10 px-6 rounded-[2rem] overflow-hidden mb-10 transition-all duration-700 animate-in fade-in zoom-in-95 glass border-white/10 shadow-2xl`}>
             {/* Subtle Color Tint Overlay */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${currentCat.color} opacity-20`}></div>
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5"></div>
+            <div className={`absolute inset-0 bg-gradient-to-br ${currentCat.color} opacity-40 transition-opacity duration-700`}></div>
+            
+            {/* Shimmer Animation Overlay */}
+            <div className="absolute inset-0 shimmer-bg opacity-30"></div>
             
             <div className="relative z-10 text-center">
                 <div className={`inline-flex p-2.5 rounded-xl bg-gradient-to-br ${currentCat.color} mb-3 text-white text-xl shadow-lg shadow-black/20`}>
