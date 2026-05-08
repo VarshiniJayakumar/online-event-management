@@ -70,26 +70,16 @@ const Events = () => {
 
         <div className="glass rounded-2xl p-4 mb-12 flex flex-col md:flex-row gap-4 border-white/10 shadow-lg">
           <div className="flex-[2] relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-            <input
-              type="text"
-              className="block w-full pl-12 pr-4 py-3.5 bg-[#1a1a24] border border-white/5 rounded-xl text-white placeholder-gray-500 focus:outline-none"
-              placeholder="Search by event name..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="flex-1 relative">
             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
             <input
               type="text"
               className="block w-full pl-12 pr-4 py-3.5 bg-[#1a1a24] border border-white/5 rounded-xl text-white placeholder-gray-500 focus:outline-none"
-              placeholder="City (e.g. Chennai)"
+              placeholder="Search for city (e.g. Chennai, Mumbai...)"
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
             />
           </div>
-          <div className="md:w-56 relative">
+          <div className="md:w-64 relative">
             <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
             <select
               className="block w-full pl-12 pr-4 py-3.5 bg-[#1a1a24] border border-white/5 rounded-xl text-white appearance-none focus:outline-none cursor-pointer"
