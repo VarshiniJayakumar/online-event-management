@@ -112,25 +112,25 @@ const Events = () => {
             </div>
         </div>
 
-        {/* Search & Filter Bar */}
-        <div className="glass rounded-[2rem] p-3 mb-16 flex flex-col lg:flex-row gap-3 border-white/5 shadow-2xl sticky top-20 z-30">
-          <div className="flex-[2] relative group">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-primary transition-colors" />
-            <input
-              type="text"
-              className="block w-full pl-16 pr-6 py-4 bg-dark-bg/50 border border-white/5 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-primary/30 transition-all text-lg"
-              placeholder="Search for events, keywords..."
+        {/* Search & Filter Bar - Compact */}
+        <div className="glass rounded-2xl p-2 mb-10 flex flex-col lg:flex-row gap-2 border-white/5 shadow-xl sticky top-16 z-30 backdrop-blur-xl">
+          <div className="flex-[1.5] flex items-center px-4 py-2.5 border-b lg:border-b-0 lg:border-r border-white/5">
+            <Search className="h-5 w-5 text-primary mr-3 shrink-0" />
+            <input 
+              type="text" 
+              placeholder="Search by title, location or category..." 
+              className="w-full bg-transparent border-none focus:outline-none text-white text-base placeholder-gray-500" 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           
-          <div className="flex-1 relative group">
-            <MapPin className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-primary transition-colors" />
-            <input
-              type="text"
-              className="block w-full pl-16 pr-12 py-4 bg-dark-bg/50 border border-white/5 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-primary/30 transition-all text-lg"
-              placeholder="Location"
+          <div className="flex-1 flex items-center px-4 py-2.5">
+            <MapPin className="h-5 w-5 text-gray-400 mr-3 shrink-0" />
+            <input 
+              type="text" 
+              placeholder="Filter by city..." 
+              className="w-full bg-transparent border-none focus:outline-none text-white text-base placeholder-gray-500" 
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
             />
@@ -138,7 +138,7 @@ const Events = () => {
               type="button"
               onClick={handleGetLocation}
               disabled={locating}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-xl hover:bg-white/5 transition-colors text-primary disabled:opacity-50"
+              className="ml-auto p-2 rounded-xl hover:bg-white/5 transition-colors text-primary disabled:opacity-50"
             >
               {locating ? <Loader2 className="h-5 w-5 animate-spin" /> : <Navigation className="h-5 w-5" />}
             </button>

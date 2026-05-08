@@ -39,13 +39,13 @@ const Navbar = () => {
   return (
     <nav className="glass sticky top-0 z-50 border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
+        <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
             <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center space-x-2 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-glow-primary group-hover:scale-105 transition-transform">
-                <CalendarDays className="h-6 w-6 text-white" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-glow-primary group-hover:scale-105 transition-transform">
+                <CalendarDays className="h-5 w-5 text-white" />
               </div>
-              <span className="text-2xl font-display font-bold text-white tracking-tight">Eventure</span>
+              <span className="text-xl font-display font-bold text-white tracking-tight">Eventure</span>
             </Link>
           </div>
 
