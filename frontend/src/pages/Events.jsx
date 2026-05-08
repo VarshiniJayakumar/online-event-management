@@ -6,14 +6,14 @@ import getApiUrl from '../utils/api';
 import { CardSkeleton } from '../components/Skeleton';
 
 const categoryConfig = {
-  'Music': { icon: <Music />, color: 'from-violet-600 via-purple-600 to-indigo-700', description: 'Experience the rhythm of live performances' },
-  'Tech': { icon: <Laptop />, color: 'from-blue-600 via-cyan-600 to-blue-800', description: 'Innovate and learn from industry leaders' },
-  'Sports': { icon: <Trophy />, color: 'from-emerald-600 via-green-600 to-teal-700', description: 'Feel the adrenaline of competition' },
-  'Food': { icon: <Utensils />, color: 'from-orange-500 via-red-500 to-amber-600', description: 'Savor flavors from around the world' },
-  'Business': { icon: <Briefcase />, color: 'from-rose-600 via-pink-600 to-purple-700', description: 'Network and grow your professional reach' },
-  'Art': { icon: <Palette />, color: 'from-indigo-600 via-violet-600 to-purple-800', description: 'Express yourself through creative arts' },
-  'Wellness': { icon: <HeartPulse />, color: 'from-teal-500 via-emerald-500 to-cyan-600', description: 'Rejuvenate your body and mind' },
-  'Default': { icon: <Sparkles />, color: 'from-gray-700 via-gray-800 to-gray-900', description: 'Discover extraordinary experiences' }
+  'Music': { icon: <Music />, color: 'from-[#8A2BE2] to-[#4B0082]', description: 'Experience the rhythm of live performances' },
+  'Tech': { icon: <Laptop />, color: 'from-[#00CED1] to-[#00008B]', description: 'Innovate and learn from industry leaders' },
+  'Sports': { icon: <Trophy />, color: 'from-[#32CD32] to-[#006400]', description: 'Feel the adrenaline of competition' },
+  'Food': { icon: <Utensils />, color: 'from-[#FF4500] to-[#8B0000]', description: 'Savor flavors from around the world' },
+  'Business': { icon: <Briefcase />, color: 'from-[#FFD700] to-[#DAA520]', description: 'Network and grow your professional reach' },
+  'Art': { icon: <Palette />, color: 'from-[#FF1493] to-[#8B008B]', description: 'Express yourself through creative arts' },
+  'Wellness': { icon: <HeartPulse />, color: 'from-[#40E0D0] to-[#20B2AA]', description: 'Rejuvenate your body and mind' },
+  'Default': { icon: <Sparkles />, color: 'from-[#1a1a24] to-[#000000]', description: 'Discover extraordinary experiences' }
 };
 
 const Events = () => {
@@ -91,22 +91,22 @@ const Events = () => {
   const currentCat = categoryConfig[categoryFilter] || categoryConfig['Default'];
 
   return (
-    <div className="py-12 md:py-24 min-h-screen">
+    <div className="py-8 md:py-16 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
-        {/* Dynamic Category Header - Compact */}
-        <div className={`relative py-12 md:py-16 px-6 rounded-[2rem] md:rounded-[3rem] overflow-hidden mb-12 transition-all duration-700 animate-in fade-in zoom-in-95 shadow-2xl`}>
+        {/* Dynamic Category Header - Minimal */}
+        <div className={`relative py-10 md:py-12 px-6 rounded-3xl overflow-hidden mb-10 transition-all duration-700 animate-in fade-in zoom-in-95 shadow-2xl`}>
             <div className={`absolute inset-0 bg-gradient-to-br ${currentCat.color} opacity-90`}></div>
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
             
             <div className="relative z-10 text-center">
-                <div className="inline-flex p-3 rounded-2xl glass border-white/10 mb-4 text-white text-2xl shadow-xl">
+                <div className="inline-flex p-2.5 rounded-xl glass border-white/10 mb-3 text-white text-xl shadow-lg">
                     {currentCat.icon}
                 </div>
-                <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-3 tracking-tight">
+                <h1 className="text-2xl md:text-4xl font-display font-bold text-white mb-2 tracking-tight">
                     {categoryFilter || 'All Events'}
                 </h1>
-                <p className="text-white/80 text-sm md:text-lg max-w-2xl mx-auto font-medium leading-relaxed">
+                <p className="text-white/70 text-xs md:text-base max-w-2xl mx-auto font-medium leading-relaxed">
                     {currentCat.description}
                 </p>
             </div>

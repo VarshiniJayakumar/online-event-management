@@ -5,13 +5,13 @@ import getApiUrl from '../utils/api';
 import { CardSkeleton } from '../components/Skeleton';
 
 const categories = [
-  { name: 'Music', icon: <Music />, color: 'from-violet-600 via-purple-600 to-indigo-700', description: 'Live concerts, festivals & raves' },
-  { name: 'Tech', icon: <Laptop />, color: 'from-blue-600 via-cyan-600 to-blue-800', description: 'Workshops, hackathons & talks' },
-  { name: 'Sports', icon: <Trophy />, color: 'from-emerald-600 via-green-600 to-teal-700', description: 'Matches, tournaments & fitness' },
-  { name: 'Food', icon: <Utensils />, color: 'from-orange-500 via-red-500 to-amber-600', description: 'Tastings, brunches & culinary' },
-  { name: 'Business', icon: <Briefcase />, color: 'from-rose-600 via-pink-600 to-purple-700', description: 'Networking, summits & expos' },
-  { name: 'Art', icon: <Palette />, color: 'from-indigo-600 via-violet-600 to-purple-800', description: 'Galleries, theatre & workshops' },
-  { name: 'Wellness', icon: <HeartPulse />, color: 'from-teal-500 via-emerald-500 to-cyan-600', description: 'Yoga, meditation & retreats' },
+  { name: 'Music', icon: <Music />, color: 'from-[#8A2BE2] to-[#4B0082]', description: 'Live concerts, festivals & raves' },
+  { name: 'Tech', icon: <Laptop />, color: 'from-[#00CED1] to-[#00008B]', description: 'Workshops, hackathons & talks' },
+  { name: 'Sports', icon: <Trophy />, color: 'from-[#32CD32] to-[#006400]', description: 'Matches, tournaments & fitness' },
+  { name: 'Food', icon: <Utensils />, color: 'from-[#FF4500] to-[#8B0000]', description: 'Tastings, brunches & culinary' },
+  { name: 'Business', icon: <Briefcase />, color: 'from-[#FFD700] to-[#DAA520]', description: 'Networking, summits & expos' },
+  { name: 'Art', icon: <Palette />, color: 'from-[#FF1493] to-[#8B008B]', description: 'Galleries, theatre & workshops' },
+  { name: 'Wellness', icon: <HeartPulse />, color: 'from-[#40E0D0] to-[#20B2AA]', description: 'Yoga, meditation & retreats' },
 ];
 
 const Home = () => {
