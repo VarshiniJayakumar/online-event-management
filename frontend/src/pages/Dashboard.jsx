@@ -44,6 +44,26 @@ const Dashboard = () => {
         setLoading(true);
         setError('');
         
+        // Check for Stripe success redirect before fetching tickets
+        const query = new URLSearchParams(location.search);
+        const sessionId = query.get('session_id');
+        if (sessionId) {
+          try {
+            await fetch(getApiUrl('/payment/verify-session'), {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({ sessionId })
+            });
+            // Clean up URL
+            window.history.replaceState({}, document.title, "/dashboard");
+          } catch (err) {
+            console.error('Error verifying session:', err);
+          }
+        }
+        
         // Fetch Tickets
         try {
           const ticketsRes = await fetch(getApiUrl('/registrations/my-tickets'), {
