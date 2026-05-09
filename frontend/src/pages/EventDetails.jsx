@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
-import { CalendarDays, MapPin, Clock, Share2, Heart, ArrowLeft, Ticket, Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
+import { CalendarDays, MapPin, Clock, Share2, Heart, ArrowLeft, Ticket, Loader2, CheckCircle2, ArrowRight, CreditCard } from 'lucide-react';
 import getApiUrl from '../utils/api';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_TYooMQauvdEDq54NiTphI7jx');
@@ -18,6 +18,8 @@ const EventDetails = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [paymentModalData, setPaymentModalData] = useState(null);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   useEffect(() => {
     // Check if event is saved
@@ -96,25 +98,15 @@ const EventDetails = () => {
 
       // Handle Demo Mode
       if (data.isDemo) {
-        // In demo mode, we manually create the registration since Stripe won't redirect back to a success URL
-        const regResponse = await fetch(getApiUrl('/registrations'), {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
+        // Show simulated payment gateway modal
+        setPaymentModalData({
+          token,
+          registrationData: {
             ...registrationData,
             stripeSessionId: data.id
-          }),
+          }
         });
-
-        if (!regResponse.ok) throw new Error('Registration failed');
-
-        setTimeout(() => {
-          setRegistrationSuccess(true);
-          setCheckoutLoading(false);
-        }, 1500);
+        setCheckoutLoading(false);
         return;
       }
 
@@ -392,6 +384,75 @@ const EventDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Fake Payment Modal for Demo Mode */}
+      {paymentModalData && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="glass-card w-full max-w-md p-8 shadow-[0_0_50px_rgba(0,0,0,0.5)] border-white/10 relative">
+            <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
+              <CreditCard className="mr-3 h-6 w-6 text-primary" /> Secure Checkout
+            </h3>
+            
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Card Number</label>
+                <input type="text" placeholder="0000 0000 0000 0000" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" defaultValue="4242 4242 4242 4242" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Expiry Date</label>
+                  <input type="text" placeholder="MM/YY" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" defaultValue="12/28" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">CVC</label>
+                  <input type="text" placeholder="123" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" defaultValue="123" />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4 mt-8">
+              <button 
+                onClick={() => setPaymentModalData(null)}
+                disabled={processingPayment}
+                className="px-6 py-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={async () => {
+                  setProcessingPayment(true);
+                  try {
+                    const regResponse = await fetch(getApiUrl('/registrations'), {
+                      method: 'POST',
+                      headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${paymentModalData.token}`
+                      },
+                      body: JSON.stringify(paymentModalData.registrationData),
+                    });
+
+                    if (!regResponse.ok) throw new Error('Registration failed');
+                    
+                    setTimeout(() => {
+                      setRegistrationSuccess(true);
+                      setPaymentModalData(null);
+                      setProcessingPayment(false);
+                    }, 1500);
+                  } catch(e) {
+                    alert('Payment failed');
+                    setProcessingPayment(false);
+                  }
+                }}
+                disabled={processingPayment}
+                className="px-6 py-2 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center shadow-glow-primary disabled:opacity-50"
+              >
+                {processingPayment ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}
+                {processingPayment ? 'Processing...' : `Pay $${totalPrice}`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -21,14 +21,14 @@ if (!MONGO_URI) {
 mongoose.connect(MONGO_URI)
   .then(async () => {
     console.log('Connected to MongoDB');
-    
+
     const user = await User.findOne({ email: emailToVerify });
-    
+
     if (!user) {
       console.error(`User with email ${emailToVerify} not found.`);
       process.exit(1);
     }
-    
+
     if (user.isVerified) {
       console.log(`User ${emailToVerify} is already verified.`);
     } else {
@@ -37,7 +37,7 @@ mongoose.connect(MONGO_URI)
       await user.save();
       console.log(`Successfully verified user: ${emailToVerify}`);
     }
-    
+
     mongoose.connection.close();
   })
   .catch(err => {
