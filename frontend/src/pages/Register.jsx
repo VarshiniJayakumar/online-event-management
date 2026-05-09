@@ -37,7 +37,7 @@ const Register = () => {
       const response = await fetch(getApiUrl('/auth/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, role: 'organizer' }), 
+        body: JSON.stringify({ name, email, password, role: 'user' }), 
       });
 
       const data = await response.json();

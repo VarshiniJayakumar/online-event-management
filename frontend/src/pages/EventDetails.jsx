@@ -17,6 +17,15 @@ const EventDetails = () => {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    // Check if event is saved
+    const savedEvents = JSON.parse(localStorage.getItem('savedEvents') || '[]');
+    if (savedEvents.includes(id)) {
+      setIsSaved(true);
+    }
+  }, [id]);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -141,6 +150,25 @@ const EventDetails = () => {
   );
 
   const totalPrice = (event.price || 0) * ticketCount;
+  const isPastEvent = new Date(event.date) < new Date();
+  const availableTickets = event.tickets && event.tickets.length > 0 ? Math.max(0, event.tickets[0].quantity - event.tickets[0].sold) : null;
+
+  const handleSave = () => {
+    let savedEvents = JSON.parse(localStorage.getItem('savedEvents') || '[]');
+    if (isSaved) {
+      savedEvents = savedEvents.filter(eventId => eventId !== id);
+      setIsSaved(false);
+    } else {
+      savedEvents.push(id);
+      setIsSaved(true);
+    }
+    localStorage.setItem('savedEvents', JSON.stringify(savedEvents));
+  };
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Link copied to clipboard!');
+  };
 
   return (
     <div className="pb-20">
@@ -299,16 +327,25 @@ const EventDetails = () => {
 
                   <div className="space-y-6 mb-8">
                     <div>
-                      <label className="block text-sm font-bold text-gray-300 mb-3">Number of Attendees</label>
+                      <div className="flex justify-between items-center mb-3">
+                        <label className="block text-sm font-bold text-gray-300">Number of Attendees</label>
+                        {availableTickets !== null && (
+                          <span className="text-xs font-bold bg-primary/20 text-primary px-2 py-1 rounded-full border border-primary/30">
+                            {availableTickets} tickets left
+                          </span>
+                        )}
+                      </div>
                       <div className="flex items-center glass rounded-xl border-white/10 p-1">
                         <button 
                           onClick={() => setTicketCount(Math.max(1, ticketCount - 1))}
-                          className="w-12 h-12 flex items-center justify-center text-white hover:bg-white/10 rounded-lg transition-colors text-xl"
+                          disabled={isPastEvent || availableTickets === 0}
+                          className="w-12 h-12 flex items-center justify-center text-white hover:bg-white/10 rounded-lg transition-colors text-xl disabled:opacity-50"
                         >-</button>
                         <div className="flex-1 text-center font-bold text-white text-lg">{ticketCount}</div>
                         <button 
-                          onClick={() => setTicketCount(ticketCount + 1)}
-                          className="w-12 h-12 flex items-center justify-center text-white hover:bg-white/10 rounded-lg transition-colors text-xl"
+                          onClick={() => setTicketCount(availableTickets !== null ? Math.min(availableTickets, ticketCount + 1) : ticketCount + 1)}
+                          disabled={isPastEvent || availableTickets === 0 || (availableTickets !== null && ticketCount >= availableTickets)}
+                          className="w-12 h-12 flex items-center justify-center text-white hover:bg-white/10 rounded-lg transition-colors text-xl disabled:opacity-50"
                         >+</button>
                       </div>
                     </div>
@@ -325,15 +362,15 @@ const EventDetails = () => {
 
                   <button
                     onClick={handleCheckout}
-                    disabled={checkoutLoading}
-                    className="w-full py-5 bg-gradient-to-r from-primary to-secondary text-white font-bold rounded-2xl hover:opacity-90 transition-all shadow-glow-primary flex items-center justify-center disabled:opacity-50"
+                    disabled={checkoutLoading || isPastEvent || availableTickets === 0}
+                    className="w-full py-5 bg-gradient-to-r from-primary to-secondary text-white font-bold rounded-2xl hover:opacity-90 transition-all shadow-glow-primary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {checkoutLoading ? (
                       <Loader2 className="h-6 w-6 animate-spin" />
                     ) : (
                       <>
                         <Ticket className="mr-3 h-6 w-6" /> 
-                        {event.price === 0 ? 'Register Now' : 'Get Tickets'}
+                        {isPastEvent ? 'Event Completed' : (availableTickets === 0 ? 'Sold Out' : (event.price === 0 ? 'Register Now' : 'Get Tickets'))}
                       </>
                     )}
                   </button>
@@ -345,11 +382,11 @@ const EventDetails = () => {
             </div>
 
             <div className="mt-6 flex justify-center space-x-6">
-              <button className="flex items-center text-gray-400 hover:text-white transition-colors text-sm font-medium">
+              <button onClick={handleShare} className="flex items-center text-gray-400 hover:text-white transition-colors text-sm font-medium">
                 <Share2 className="h-4 w-4 mr-2" /> Share
               </button>
-              <button className="flex items-center text-gray-400 hover:text-pink-500 transition-colors text-sm font-medium">
-                <Heart className="h-4 w-4 mr-2" /> Save
+              <button onClick={handleSave} className={`flex items-center transition-colors text-sm font-medium ${isSaved ? 'text-pink-500' : 'text-gray-400 hover:text-pink-500'}`}>
+                <Heart className={`h-4 w-4 mr-2 ${isSaved ? 'fill-pink-500' : ''}`} /> {isSaved ? 'Saved' : 'Save'}
               </button>
             </div>
           </div>
