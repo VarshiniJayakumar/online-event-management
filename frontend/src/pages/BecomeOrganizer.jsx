@@ -9,6 +9,11 @@ const BecomeOrganizer = () => {
   const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    businessName: '',
+    email: '',
+    eventType: ''
+  });
   const [phone, setPhone] = useState('');
 
   const handleSubmit = async (e) => {
@@ -23,12 +28,19 @@ const BecomeOrganizer = () => {
         return;
       }
 
-      // Auto-approve by calling the upgrade-role endpoint
-      const response = await fetch(getApiUrl('/auth/upgrade-role'), {
+      // Send request to the backend
+      const response = await fetch(getApiUrl('/auth/request-organizer'), {
         method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
-        }
+        },
+        body: JSON.stringify({
+          businessName: formData.businessName,
+          email: formData.email,
+          phone,
+          eventType: formData.eventType
+        })
       });
 
       if (!response.ok) {
@@ -103,7 +115,9 @@ const BecomeOrganizer = () => {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Building className="h-5 w-5 text-gray-500" />
                   </div>
-                  <input required type="text" className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Acme Events" />
+                  <input required type="text" className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Acme Events" 
+                    value={formData.businessName} onChange={(e) => setFormData({...formData, businessName: e.target.value})} 
+                  />
                 </div>
               </div>
 
@@ -113,7 +127,9 @@ const BecomeOrganizer = () => {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-gray-500" />
                   </div>
-                  <input required type="email" className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:ring-2 focus:ring-primary/50 outline-none" placeholder="hello@acme.com" />
+                  <input required type="email" className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:ring-2 focus:ring-primary/50 outline-none" placeholder="hello@acme.com" 
+                    value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} 
+                  />
                 </div>
               </div>
 
@@ -136,7 +152,9 @@ const BecomeOrganizer = () => {
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Calendar className="h-5 w-5 text-gray-500" />
                   </div>
-                  <select required className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:ring-2 focus:ring-primary/50 outline-none appearance-none">
+                  <select required className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:ring-2 focus:ring-primary/50 outline-none appearance-none"
+                    value={formData.eventType} onChange={(e) => setFormData({...formData, eventType: e.target.value})}
+                  >
                     <option value="" className="bg-dark-bg text-gray-500">Select type...</option>
                     <option value="tech" className="bg-dark-bg">Tech & Professional</option>
                     <option value="music" className="bg-dark-bg">Music & Concerts</option>

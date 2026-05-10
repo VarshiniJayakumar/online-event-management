@@ -280,8 +280,8 @@ router.delete('/profile', async (req, res) => {
   }
 });
 
-// Auto-upgrade role to Organizer (for demo/development purposes)
-router.post('/upgrade-role', async (req, res) => {
+// Apply to become an Organizer
+router.post('/request-organizer', async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ message: 'Unauthorized' });
@@ -291,15 +291,19 @@ router.post('/upgrade-role', async (req, res) => {
     const user = await User.findById(decoded.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    user.role = 'organizer';
+    if (user.role === 'organizer' || user.role === 'admin') {
+      return res.status(400).json({ message: 'You are already an organizer or admin.' });
+    }
+
+    const { businessName, phone, eventType } = req.body;
+
+    user.organizerStatus = 'pending';
+    user.organizerDetails = { businessName, phone, eventType };
     await user.save();
 
-    const newToken = createToken(user);
-
     res.status(200).json({ 
-      message: 'Role upgraded to organizer successfully',
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
-      token: newToken
+      message: 'Organizer request submitted successfully. Please wait for admin approval.',
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, organizerStatus: user.organizerStatus }
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

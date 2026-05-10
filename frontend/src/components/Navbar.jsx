@@ -83,6 +83,14 @@ const Navbar = () => {
                   <User className="h-4 w-4" />
                   <span>{userName || 'Dashboard'}</span>
                 </Link>
+                {userRole === 'admin' && (
+                  <Link 
+                    to="/admin" 
+                    className={`font-medium transition-colors text-sm px-3 py-1 rounded-full bg-red-500/20 text-red-500 hover:bg-red-500/30`}
+                  >
+                    Admin
+                  </Link>
+                )}
                 <button onClick={handleLogout} className="text-gray-300 hover:text-red-400 font-medium transition-colors text-sm flex items-center space-x-1">
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>
@@ -146,6 +154,15 @@ const Navbar = () => {
                 >
                   My Dashboard
                 </Link>
+                {userRole === 'admin' && (
+                  <Link 
+                    to="/admin" 
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block px-4 py-3 rounded-xl font-medium ${isActive('/admin') ? 'bg-red-500/20 text-red-500' : 'text-red-400 hover:bg-red-500/10'}`}
+                  >
+                    Admin Panel
+                  </Link>
+                )}
                 <button 
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-3 rounded-xl font-medium text-gray-300 hover:bg-red-500/10 hover:text-red-400"

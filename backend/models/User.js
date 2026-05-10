@@ -7,6 +7,12 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['user', 'admin', 'organizer'], default: 'user' },
   isVerified: { type: Boolean, default: false },
   verificationToken: { type: String },
+  organizerStatus: { type: String, enum: ['none', 'pending', 'approved', 'rejected'], default: 'none' },
+  organizerDetails: {
+    businessName: String,
+    phone: String,
+    eventType: String
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
