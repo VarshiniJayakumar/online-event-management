@@ -415,7 +415,7 @@ const EventDetails = () => {
       {/* Fake Payment Modal for Demo Mode */}
       {paymentModalData && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="glass-card w-full max-w-md p-0 overflow-hidden shadow-[0_0_50px_rgba(124,58,237,0.3)] border-white/10 relative">
+          <div className="glass-card w-full max-w-md max-h-[90vh] overflow-y-auto shadow-[0_0_50px_rgba(124,58,237,0.3)] border-white/10 relative custom-scrollbar">
             {/* Header */}
             <div className="bg-white/5 p-6 border-b border-white/10 flex justify-between items-center">
               <div className="flex items-center">
