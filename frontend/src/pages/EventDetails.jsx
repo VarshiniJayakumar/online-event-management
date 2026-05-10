@@ -157,9 +157,21 @@ const EventDetails = () => {
     localStorage.setItem('savedEvents', JSON.stringify(savedEvents));
   };
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    alert('Link copied to clipboard!');
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: event.title,
+          text: event.description,
+          url: window.location.href,
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      }
+    } catch (err) {
+      console.error('Error sharing', err);
+    }
   };
 
   return (
@@ -310,6 +322,17 @@ const EventDetails = () => {
                 </div>
               ) : (
                 <>
+                  {availableTickets !== null && availableTickets <= 20 && (
+                    <div className="bg-orange-500/10 border border-orange-500/20 text-orange-500 font-bold px-4 py-2 rounded-xl text-center text-sm mb-6 animate-pulse">
+                      Hurry! Only {availableTickets} tickets left!
+                    </div>
+                  )}
+                  {availableTickets !== null && availableTickets > 20 && (
+                    <div className="bg-primary/10 border border-primary/20 text-primary font-bold px-4 py-2 rounded-xl text-center text-sm mb-6">
+                      {availableTickets} tickets available
+                    </div>
+                  )}
+
                   <div className="mb-8">
                     <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Price</p>
                     <div className="flex items-baseline">
@@ -321,11 +344,6 @@ const EventDetails = () => {
                     <div>
                       <div className="flex justify-between items-center mb-3">
                         <label className="block text-sm font-bold text-gray-300">Number of Attendees</label>
-                        {availableTickets !== null && (
-                          <span className="text-xs font-bold bg-primary/20 text-primary px-2 py-1 rounded-full border border-primary/30">
-                            {availableTickets} tickets left
-                          </span>
-                        )}
                       </div>
                       <div className="flex items-center glass rounded-xl border-white/10 p-1">
                         <button 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard, CheckCircle2, Users, X, Trash2, Printer } from 'lucide-react';
+import { Ticket, Calendar, BarChart3, Settings as SettingsIcon, Plus, Download, QrCode, Loader2, AlertCircle, User, Shield, Bell, CreditCard, CheckCircle2, Users, X, Trash2, Printer, Heart } from 'lucide-react';
 import { QRCodeCanvas } from 'qrcode.react';
 import getApiUrl from '../utils/api';
 
@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('tickets');
   const [tickets, setTickets] = useState([]);
   const [managedEvents, setManagedEvents] = useState([]);
+  const [savedEvents, setSavedEvents] = useState([]);
   const [stats, setStats] = useState({ revenue: 0, sold: 0, views: 0, registrations: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -77,6 +78,19 @@ const Dashboard = () => {
           }
         } catch (e) {
           console.error('Tickets fetch error:', e);
+        }
+
+        // Fetch Saved Events
+        try {
+          const savedIds = JSON.parse(localStorage.getItem('savedEvents') || '[]');
+          if (savedIds.length > 0) {
+            const savedRes = await Promise.all(
+              savedIds.map(id => fetch(getApiUrl(`/events/${id}`)).then(r => r.ok ? r.json() : null))
+            );
+            setSavedEvents(savedRes.filter(e => e !== null));
+          }
+        } catch (e) {
+          console.error('Saved events fetch error:', e);
         }
 
         // If organizer, fetch managed events and stats
@@ -298,6 +312,12 @@ const Dashboard = () => {
             >
               <Ticket className="mr-3 h-5 w-5" /> My Tickets
             </button>
+            <button 
+              onClick={() => setActiveTab('saved')}
+              className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all ${activeTab === 'saved' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'}`}
+            >
+              <Heart className="mr-3 h-5 w-5" /> Saved Events
+            </button>
             {role === 'organizer' && (
               <>
                 <button 
@@ -449,6 +469,46 @@ const Dashboard = () => {
                       </button>
                     </div>
                   </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'saved' && (
+          <div className="animate-in fade-in duration-300">
+            <h2 className="text-xl font-display font-bold text-white mb-6">Saved Events (Wishlist)</h2>
+            
+            {savedEvents.length === 0 ? (
+              <div className="glass-card p-12 text-center">
+                <Heart className="h-12 w-12 text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-400 mb-6">You haven't saved any events yet.</p>
+                <Link to="/events" className="text-primary font-bold hover:underline">Explore Events</Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {savedEvents.map((event) => (
+                  <Link to={`/events/${event._id}`} key={event._id} className="glass-card overflow-hidden group hover:-translate-y-1 transition-all duration-300 border-white/5 hover:border-primary/50 block">
+                    <div className="relative h-40">
+                      <img 
+                        src={event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'} 
+                        alt={event.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&q=80'}
+                      />
+                      <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-white border border-white/10">
+                        {event.category}
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="text-lg font-bold text-white mb-1 truncate">{event.title}</h3>
+                      <p className="text-gray-400 text-xs mb-3 truncate">{event.location}</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-white">{new Date(event.date).toLocaleDateString()}</span>
+                        <span className="text-primary font-bold text-sm">{event.price === 0 ? 'FREE' : `$${event.price}`}</span>
+                      </div>
+                    </div>
+                  </Link>
                 ))}
               </div>
             )}
