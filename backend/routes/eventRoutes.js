@@ -65,6 +65,9 @@ router.get('/:id', async (req, res) => {
 // Create event
 router.post('/', authMiddleware, async (req, res) => {
   try {
+    if (req.user.role !== 'organizer' && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Forbidden: Only organizers can create events' });
+    }
     const event = new Event({ ...req.body, organizer: req.user.id });
     await event.save();
     res.status(201).json(event);

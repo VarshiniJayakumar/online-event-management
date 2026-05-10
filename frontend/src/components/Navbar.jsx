@@ -7,6 +7,7 @@ const Navbar = () => {
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState('');
+  const [userRole, setUserRole] = useState('user');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -18,11 +19,13 @@ const Navbar = () => {
       try {
         const user = JSON.parse(userStr);
         setUserName(user.name);
+        setUserRole(user.role || 'user');
       } catch(e) {
         console.error(e);
       }
     } else {
       setIsAuthenticated(false);
+      setUserRole('user');
     }
   }, [location]); // Re-check on location change
 
@@ -63,6 +66,14 @@ const Navbar = () => {
             >
               Discover
             </Link>
+            {userRole !== 'organizer' && userRole !== 'admin' && (
+              <Link 
+                to="/become-organizer" 
+                className={`font-medium transition-colors text-sm ${isActive('/become-organizer') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
+              >
+                Become an Organizer
+              </Link>
+            )}
             {isAuthenticated ? (
               <>
                 <Link 
@@ -117,6 +128,15 @@ const Navbar = () => {
             >
               Discover Events
             </Link>
+            {userRole !== 'organizer' && userRole !== 'admin' && (
+              <Link 
+                to="/become-organizer" 
+                onClick={() => setIsMenuOpen(false)}
+                className={`block px-4 py-3 rounded-xl font-medium ${isActive('/become-organizer') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-white/5'}`}
+              >
+                Become an Organizer
+              </Link>
+            )}
             {isAuthenticated ? (
               <>
                 <Link 

@@ -258,6 +258,13 @@ const Home = () => {
               Create Account
             </Link>
           </div>
+          
+          <div className="mt-20 pt-10 border-t border-white/10 flex flex-col items-center">
+            <p className="text-gray-400 font-medium mb-4">Want to host your own events?</p>
+            <Link to="/become-organizer" className="inline-flex items-center px-6 py-3 border border-primary/30 text-primary rounded-xl font-bold hover:bg-primary/10 transition-colors">
+              Become an Organizer <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </section>
     </div>

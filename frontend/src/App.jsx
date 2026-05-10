@@ -11,6 +11,8 @@ import ResetPassword from './pages/ResetPassword';
 import CreateEvent from './pages/CreateEvent';
 import EditEvent from './pages/EditEvent';
 import VerifyEmail from './pages/VerifyEmail';
+import BecomeOrganizer from './pages/BecomeOrganizer';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -29,9 +31,10 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/events" element={<Events />} />
               <Route path="/events/:id" element={<EventDetails />} />
-              <Route path="/create-event" element={<CreateEvent />} />
-              <Route path="/edit-event/:id" element={<EditEvent />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/become-organizer" element={<BecomeOrganizer />} />
+              <Route path="/create-event" element={<ProtectedRoute allowedRoles={['organizer', 'admin']}><CreateEvent /></ProtectedRoute>} />
+              <Route path="/edit-event/:id" element={<ProtectedRoute allowedRoles={['organizer', 'admin']}><EditEvent /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
