@@ -175,3 +175,21 @@
     @apply absolute -inset-4 opacity-0 group-hover:opacity-20 blur-3xl transition-opacity duration-1000 pointer-events-none;
   }
 }
+
+/* react-phone-number-input overrides for dark theme */
+.PhoneInputInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  width: 100%;
+}
+.PhoneInputCountry {
+  margin-right: 12px;
+}
+.PhoneInputCountrySelect {
+  color: black;
+}
+.PhoneInputCountrySelectArrow {
+  opacity: 0.5;
+}

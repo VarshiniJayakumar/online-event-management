@@ -1,19 +1,53 @@
 import { useState } from 'react';
 import { Building, Mail, Phone, Calendar, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import getApiUrl from '../utils/api';
 
 const BecomeOrganizer = () => {
+  const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [phone, setPhone] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API call for approval request
-    setTimeout(() => {
-      setLoading(false);
+    
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert("Please log in first to apply.");
+        navigate('/login');
+        return;
+      }
+
+      // Auto-approve by calling the upgrade-role endpoint
+      const response = await fetch(getApiUrl('/auth/upgrade-role'), {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upgrade role');
+      }
+
+      const data = await response.json();
+      
+      // Update local storage with new token and user object
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
       setIsSubmitted(true);
-    }, 1500);
+    } catch (err) {
+      console.error(err);
+      alert('There was an error processing your request.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (isSubmitted) {
@@ -85,11 +119,14 @@ const BecomeOrganizer = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Phone Number</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Phone className="h-5 w-5 text-gray-500" />
-                  </div>
-                  <input required type="tel" className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white focus:ring-2 focus:ring-primary/50 outline-none" placeholder="+1 (555) 000-0000" />
+                <div className="relative phone-input-container">
+                  <PhoneInput
+                    international
+                    defaultCountry="IN"
+                    value={phone}
+                    onChange={setPhone}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus-within:ring-2 focus-within:ring-primary/50 outline-none"
+                  />
                 </div>
               </div>
 

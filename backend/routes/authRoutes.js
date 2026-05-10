@@ -280,4 +280,30 @@ router.delete('/profile', async (req, res) => {
   }
 });
 
+// Auto-upgrade role to Organizer (for demo/development purposes)
+router.post('/upgrade-role', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ message: 'Unauthorized' });
+
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.role = 'organizer';
+    await user.save();
+
+    const newToken = createToken(user);
+
+    res.status(200).json({ 
+      message: 'Role upgraded to organizer successfully',
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      token: newToken
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
