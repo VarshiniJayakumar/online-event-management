@@ -298,11 +298,15 @@ const Dashboard = () => {
       <div className="w-full md:w-64 shrink-0">
         <div className="glass-card p-6 sticky top-28">
           <div className="mb-8 border-b border-white/10 pb-6">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-lg text-white mb-3 shadow-glow-primary">
-              {user?.name?.charAt(0) || 'U'}
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-lg text-white shrink-0 shadow-glow-primary">
+                {user?.name?.charAt(0) || 'U'}
+              </div>
+              <div className="min-w-0">
+                <h2 className="font-display font-bold text-white text-xl truncate">{user?.name || 'User'}</h2>
+                <p className="text-gray-400 text-sm truncate">{user?.email}</p>
+              </div>
             </div>
-            <h2 className="font-display font-bold text-white text-xl truncate">{user?.name || 'User'}</h2>
-            <p className="text-gray-400 text-sm truncate">{user?.email}</p>
           </div>
           
           <nav className="space-y-2">
