@@ -20,6 +20,7 @@ const EventDetails = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [paymentModalData, setPaymentModalData] = useState(null);
   const [processingPayment, setProcessingPayment] = useState(false);
+  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     // Check if event is saved
