@@ -21,6 +21,8 @@ const EventDetails = () => {
   const [paymentModalData, setPaymentModalData] = useState(null);
   const [processingPayment, setProcessingPayment] = useState(false);
   const user = JSON.parse(localStorage.getItem('user'));
+  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [upiId, setUpiId] = useState('');
   const [cardDetails, setCardDetails] = useState({
     number: '',
     expiry: '',
@@ -426,92 +428,159 @@ const EventDetails = () => {
               </div>
             </div>
 
+            <div className="p-4 bg-white/5 border-b border-white/10 flex">
+              <button 
+                onClick={() => setPaymentMethod('card')}
+                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${paymentMethod === 'card' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                Card
+              </button>
+              <button 
+                onClick={() => setPaymentMethod('upi')}
+                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${paymentMethod === 'upi' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                UPI / QR
+              </button>
+            </div>
+
             <div className="p-8">
-              {/* Card Visual */}
-              <div className="relative h-44 w-full bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-6 mb-8 shadow-xl overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
-                <div className="flex justify-between items-start mb-10">
-                  <div className="w-10 h-8 bg-yellow-400/80 rounded-md shadow-inner"></div>
-                  <div className="text-white/30 italic font-bold">Eventure Pay</div>
-                </div>
-                <div className="text-xl text-white font-mono tracking-[0.2em] mb-4">
-                  {cardDetails.number || '**** **** **** ****'}
-                </div>
-                <div className="flex justify-between items-end">
-                  <div>
-                    <p className="text-[8px] text-white/50 uppercase tracking-widest mb-1">Card Holder</p>
-                    <p className="text-sm text-white font-medium uppercase">{cardDetails.name || 'YOUR NAME'}</p>
+              {paymentMethod === 'card' ? (
+                <>
+                  {/* Card Visual */}
+                  <div className="relative h-44 w-full bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-6 mb-8 shadow-xl overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                    <div className="flex justify-between items-start mb-10">
+                      <div className="w-10 h-8 bg-yellow-400/80 rounded-md shadow-inner"></div>
+                      <div className="text-white/30 italic font-bold">Eventure Pay</div>
+                    </div>
+                    <div className="text-xl text-white font-mono tracking-[0.2em] mb-4">
+                      {cardDetails.number || '**** **** **** ****'}
+                    </div>
+                    <div className="flex justify-between items-end">
+                      <div>
+                        <p className="text-[8px] text-white/50 uppercase tracking-widest mb-1">Card Holder</p>
+                        <p className="text-sm text-white font-medium uppercase">{cardDetails.name || 'YOUR NAME'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[8px] text-white/50 uppercase tracking-widest mb-1">Expires</p>
+                        <p className="text-sm text-white font-medium">{cardDetails.expiry || 'MM/YY'}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[8px] text-white/50 uppercase tracking-widest mb-1">Expires</p>
-                    <p className="text-sm text-white font-medium">{cardDetails.expiry || 'MM/YY'}</p>
+                  
+                  <div className="space-y-4 mb-8">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Card Number</label>
+                      <div className="relative">
+                        <input 
+                          type="text" 
+                          placeholder="Card Number" 
+                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" 
+                          value={cardDetails.number}
+                          onChange={(e) => {
+                            let val = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                            let formatted = val.match(/.{1,4}/g)?.join(' ') || '';
+                            if (formatted.length <= 19) setCardDetails({...cardDetails, number: formatted});
+                          }}
+                        />
+                        {cardDetails.number.length >= 19 && <CheckCircle2 className="absolute right-4 top-3 h-5 w-5 text-green-500" />}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cardholder Name</label>
+                      <input 
+                        type="text" 
+                        placeholder="Cardholder Name" 
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50" 
+                        value={cardDetails.name}
+                        onChange={(e) => setCardDetails({...cardDetails, name: e.target.value})}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Expiry Date</label>
+                        <input 
+                          type="text" 
+                          placeholder="MM/YY" 
+                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" 
+                          value={cardDetails.expiry}
+                          onChange={(e) => {
+                            let val = e.target.value.replace(/\//g, '').replace(/[^0-9]/gi, '');
+                            if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2, 4);
+                            if (val.length <= 5) setCardDetails({...cardDetails, expiry: val});
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">CVC</label>
+                        <input 
+                          type="password" 
+                          placeholder="123" 
+                          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" 
+                          value={cardDetails.cvc}
+                          onChange={(e) => {
+                            let val = e.target.value.replace(/[^0-9]/gi, '');
+                            if (val.length <= 3) setCardDetails({...cardDetails, cvc: val});
+                          }}
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4 mb-8">
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Card Number</label>
+                </>
+              ) : (
+                <div className="space-y-8 py-4">
+                  <div className="flex justify-around items-center gap-4">
+                    <div className="flex flex-col items-center group cursor-pointer">
+                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/Google_Pay_Logo.svg" alt="GPay" className="w-10" />
+                      </div>
+                      <span className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">GPay</span>
+                    </div>
+                    <div className="flex flex-col items-center group cursor-pointer">
+                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg" alt="Paytm" className="w-10" />
+                      </div>
+                      <span className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Paytm</span>
+                    </div>
+                    <div className="flex flex-col items-center group cursor-pointer">
+                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/PhonePe_Logo.svg" alt="PhonePe" className="w-10" />
+                      </div>
+                      <span className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">PhonePe</span>
+                    </div>
+                  </div>
+
                   <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white/10"></div>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-[#1a1a24] px-4 text-gray-500 font-bold tracking-widest">Or enter UPI ID</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">VPA / UPI ID</label>
                     <input 
                       type="text" 
-                      placeholder="Card Number" 
+                      placeholder="username@bank" 
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" 
-                      value={cardDetails.number}
-                      onChange={(e) => {
-                        let val = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-                        let formatted = val.match(/.{1,4}/g)?.join(' ') || '';
-                        if (formatted.length <= 19) setCardDetails({...cardDetails, number: formatted});
-                      }}
+                      value={upiId}
+                      onChange={(e) => setUpiId(e.target.value)}
                     />
-                    {cardDetails.number.length >= 19 && <CheckCircle2 className="absolute right-4 top-3 h-5 w-5 text-green-500" />}
+                    <p className="text-[10px] text-gray-500 mt-2">Example: 9876543210@paytm</p>
                   </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cardholder Name</label>
-                  <input 
-                    type="text" 
-                    placeholder="Cardholder Name" 
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50" 
-                    value={cardDetails.name}
-                    onChange={(e) => setCardDetails({...cardDetails, name: e.target.value})}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Expiry Date</label>
-                    <input 
-                      type="text" 
-                      placeholder="MM/YY" 
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" 
-                      value={cardDetails.expiry}
-                      onChange={(e) => {
-                        let val = e.target.value.replace(/\//g, '').replace(/[^0-9]/gi, '');
-                        if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2, 4);
-                        if (val.length <= 5) setCardDetails({...cardDetails, expiry: val});
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">CVC</label>
-                    <input 
-                      type="password" 
-                      placeholder="123" 
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" 
-                      value={cardDetails.cvc}
-                      onChange={(e) => {
-                        let val = e.target.value.replace(/[^0-9]/gi, '');
-                        if (val.length <= 3) setCardDetails({...cardDetails, cvc: val});
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+              )}
 
               <button 
                 onClick={async () => {
-                  if (!cardDetails.number || !cardDetails.name || !cardDetails.expiry || !cardDetails.cvc) {
+                  if (paymentMethod === 'card' && (!cardDetails.number || !cardDetails.name || !cardDetails.expiry || !cardDetails.cvc)) {
                     alert('Please fill in all payment details');
+                    return;
+                  }
+                  if (paymentMethod === 'upi' && !upiId) {
+                    alert('Please enter your UPI ID');
                     return;
                   }
                   setProcessingPayment(true);
@@ -537,13 +606,13 @@ const EventDetails = () => {
                     setProcessingPayment(false);
                   }
                 }}
-                disabled={processingPayment || !cardDetails.number || !cardDetails.name || !cardDetails.expiry || cardDetails.cvc.length < 3}
+                disabled={processingPayment || (paymentMethod === 'card' && (!cardDetails.number || !cardDetails.name || !cardDetails.expiry || cardDetails.cvc.length < 3)) || (paymentMethod === 'upi' && upiId.length < 3)}
                 className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-2xl hover:opacity-90 transition-opacity flex items-center justify-center shadow-glow-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {processingPayment ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin mr-3" /> 
-                    Verifying with bank...
+                    {paymentMethod === 'card' ? 'Verifying with bank...' : 'Requesting from app...'}
                   </>
                 ) : (
                   `Confirm & Pay $${totalPrice}`
