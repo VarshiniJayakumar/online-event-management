@@ -41,6 +41,18 @@ router.post('/', authMiddleware, async (req, res) => {
     });
 
     await registration.save();
+
+    // Update the event's sold ticket count
+    if (event.tickets && event.tickets.length > 0) {
+      const ticketTierIndex = event.tickets.findIndex(t => t.type === (ticketType || 'General Admission'));
+      if (ticketTierIndex !== -1) {
+        event.tickets[ticketTierIndex].sold += (quantity || 1);
+      } else {
+        event.tickets[0].sold += (quantity || 1);
+      }
+      await event.save();
+    }
+
     res.status(201).json(registration);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -94,6 +106,18 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 
     registration.status = 'cancelled';
     await registration.save();
+
+    // Decrease the event's sold ticket count
+    const event = await Event.findById(registration.event);
+    if (event && event.tickets && event.tickets.length > 0) {
+      const ticketTierIndex = event.tickets.findIndex(t => t.type === registration.ticketType);
+      if (ticketTierIndex !== -1) {
+        event.tickets[ticketTierIndex].sold = Math.max(0, event.tickets[ticketTierIndex].sold - registration.quantity);
+      } else {
+        event.tickets[0].sold = Math.max(0, event.tickets[0].sold - registration.quantity);
+      }
+      await event.save();
+    }
 
     res.json({ message: 'Registration cancelled successfully', registration });
   } catch (error) {
