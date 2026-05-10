@@ -21,6 +21,12 @@ const EventDetails = () => {
   const [paymentModalData, setPaymentModalData] = useState(null);
   const [processingPayment, setProcessingPayment] = useState(false);
   const user = JSON.parse(localStorage.getItem('user'));
+  const [cardDetails, setCardDetails] = useState({
+    number: '',
+    expiry: '',
+    cvc: '',
+    name: user?.name || ''
+  });
 
   useEffect(() => {
     // Check if event is saved
@@ -428,15 +434,17 @@ const EventDetails = () => {
                   <div className="w-10 h-8 bg-yellow-400/80 rounded-md shadow-inner"></div>
                   <div className="text-white/30 italic font-bold">Eventure Pay</div>
                 </div>
-                <div className="text-xl text-white font-mono tracking-[0.2em] mb-4">**** **** **** 4242</div>
+                <div className="text-xl text-white font-mono tracking-[0.2em] mb-4">
+                  {cardDetails.number || '**** **** **** ****'}
+                </div>
                 <div className="flex justify-between items-end">
                   <div>
                     <p className="text-[8px] text-white/50 uppercase tracking-widest mb-1">Card Holder</p>
-                    <p className="text-sm text-white font-medium uppercase">{user?.name || 'Your Name'}</p>
+                    <p className="text-sm text-white font-medium uppercase">{cardDetails.name || 'YOUR NAME'}</p>
                   </div>
                   <div>
                     <p className="text-[8px] text-white/50 uppercase tracking-widest mb-1">Expires</p>
-                    <p className="text-sm text-white font-medium">12/28</p>
+                    <p className="text-sm text-white font-medium">{cardDetails.expiry || 'MM/YY'}</p>
                   </div>
                 </div>
               </div>
@@ -445,18 +453,57 @@ const EventDetails = () => {
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Card Number</label>
                   <div className="relative">
-                    <input type="text" placeholder="4242 4242 4242 4242" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" readOnly defaultValue="4242 4242 4242 4242" />
-                    <CheckCircle2 className="absolute right-4 top-3 h-5 w-5 text-green-500" />
+                    <input 
+                      type="text" 
+                      placeholder="4242 4242 4242 4242" 
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" 
+                      value={cardDetails.number}
+                      onChange={(e) => {
+                        let val = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                        let formatted = val.match(/.{1,4}/g)?.join(' ') || '';
+                        if (formatted.length <= 19) setCardDetails({...cardDetails, number: formatted});
+                      }}
+                    />
+                    {cardDetails.number.length >= 19 && <CheckCircle2 className="absolute right-4 top-3 h-5 w-5 text-green-500" />}
                   </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cardholder Name</label>
+                  <input 
+                    type="text" 
+                    placeholder="John Doe" 
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50" 
+                    value={cardDetails.name}
+                    onChange={(e) => setCardDetails({...cardDetails, name: e.target.value})}
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Expiry Date</label>
-                    <input type="text" placeholder="MM/YY" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" readOnly defaultValue="12/28" />
+                    <input 
+                      type="text" 
+                      placeholder="MM/YY" 
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" 
+                      value={cardDetails.expiry}
+                      onChange={(e) => {
+                        let val = e.target.value.replace(/\//g, '').replace(/[^0-9]/gi, '');
+                        if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2, 4);
+                        if (val.length <= 5) setCardDetails({...cardDetails, expiry: val});
+                      }}
+                    />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">CVC</label>
-                    <input type="password" placeholder="***" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" readOnly defaultValue="123" />
+                    <input 
+                      type="password" 
+                      placeholder="123" 
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" 
+                      value={cardDetails.cvc}
+                      onChange={(e) => {
+                        let val = e.target.value.replace(/[^0-9]/gi, '');
+                        if (val.length <= 3) setCardDetails({...cardDetails, cvc: val});
+                      }}
+                    />
                   </div>
                 </div>
               </div>
