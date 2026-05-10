@@ -455,7 +455,7 @@ const EventDetails = () => {
                   <div className="relative">
                     <input 
                       type="text" 
-                      placeholder="4242 4242 4242 4242" 
+                      placeholder="Card Number" 
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" 
                       value={cardDetails.number}
                       onChange={(e) => {
@@ -471,7 +471,7 @@ const EventDetails = () => {
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cardholder Name</label>
                   <input 
                     type="text" 
-                    placeholder="John Doe" 
+                    placeholder="Cardholder Name" 
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50" 
                     value={cardDetails.name}
                     onChange={(e) => setCardDetails({...cardDetails, name: e.target.value})}
