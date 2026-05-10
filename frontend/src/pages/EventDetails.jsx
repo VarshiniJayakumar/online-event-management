@@ -25,7 +25,7 @@ const EventDetails = () => {
     number: '',
     expiry: '',
     cvc: '',
-    name: user?.name || ''
+    name: ''
   });
 
   useEffect(() => {
@@ -510,6 +510,10 @@ const EventDetails = () => {
 
               <button 
                 onClick={async () => {
+                  if (!cardDetails.number || !cardDetails.name || !cardDetails.expiry || !cardDetails.cvc) {
+                    alert('Please fill in all payment details');
+                    return;
+                  }
                   setProcessingPayment(true);
                   try {
                     const regResponse = await fetch(getApiUrl('/registrations'), {
@@ -533,8 +537,8 @@ const EventDetails = () => {
                     setProcessingPayment(false);
                   }
                 }}
-                disabled={processingPayment}
-                className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-2xl hover:opacity-90 transition-opacity flex items-center justify-center shadow-glow-primary disabled:opacity-50"
+                disabled={processingPayment || !cardDetails.number || !cardDetails.name || !cardDetails.expiry || cardDetails.cvc.length < 3}
+                className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-2xl hover:opacity-90 transition-opacity flex items-center justify-center shadow-glow-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {processingPayment ? (
                   <>
