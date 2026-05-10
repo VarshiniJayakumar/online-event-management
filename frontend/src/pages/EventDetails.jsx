@@ -531,20 +531,20 @@ const EventDetails = () => {
                 <div className="space-y-8 py-4">
                   <div className="flex justify-around items-center gap-4">
                     <div className="flex flex-col items-center group cursor-pointer">
-                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/Google_Pay_Logo.svg" alt="GPay" className="w-10" />
+                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all p-3">
+                        <img src="https://cdn.worldvectorlogo.com/logos/google-pay-2.svg" alt="GPay" className="w-full h-full object-contain" />
                       </div>
                       <span className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">GPay</span>
                     </div>
                     <div className="flex flex-col items-center group cursor-pointer">
-                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg" alt="Paytm" className="w-10" />
+                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all p-3">
+                        <img src="https://cdn.worldvectorlogo.com/logos/paytm-1.svg" alt="Paytm" className="w-full h-full object-contain" />
                       </div>
                       <span className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Paytm</span>
                     </div>
                     <div className="flex flex-col items-center group cursor-pointer">
-                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/PhonePe_Logo.svg" alt="PhonePe" className="w-10" />
+                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all p-2">
+                        <img src="https://cdn.worldvectorlogo.com/logos/phonepe-1.svg" alt="PhonePe" className="w-full h-full object-contain" />
                       </div>
                       <span className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">PhonePe</span>
                     </div>
