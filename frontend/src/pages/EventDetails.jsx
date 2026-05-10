@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
-import { CalendarDays, MapPin, Clock, Share2, Heart, ArrowLeft, Ticket, Loader2, CheckCircle2, ArrowRight, CreditCard } from 'lucide-react';
+import { CalendarDays, MapPin, Clock, Share2, Heart, ArrowLeft, Ticket, Loader2, CheckCircle2, ArrowRight, CreditCard, Shield, X } from 'lucide-react';
 import getApiUrl from '../utils/api';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_TYooMQauvdEDq54NiTphI7jx');
@@ -405,37 +405,61 @@ const EventDetails = () => {
 
       {/* Fake Payment Modal for Demo Mode */}
       {paymentModalData && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="glass-card w-full max-w-md p-8 shadow-[0_0_50px_rgba(0,0,0,0.5)] border-white/10 relative">
-            <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
-              <CreditCard className="mr-3 h-6 w-6 text-primary" /> Secure Checkout
-            </h3>
-            
-            <div className="space-y-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Card Number</label>
-                <input type="text" placeholder="0000 0000 0000 0000" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" defaultValue="4242 4242 4242 4242" />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="glass-card w-full max-w-md p-0 overflow-hidden shadow-[0_0_50px_rgba(124,58,237,0.3)] border-white/10 relative">
+            {/* Header */}
+            <div className="bg-white/5 p-6 border-b border-white/10 flex justify-between items-center">
+              <div className="flex items-center">
+                <CreditCard className="mr-3 h-5 w-5 text-primary" />
+                <h3 className="text-xl font-bold text-white">Payment Method</h3>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Expiry Date</label>
-                  <input type="text" placeholder="MM/YY" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" defaultValue="12/28" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">CVC</label>
-                  <input type="text" placeholder="123" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" defaultValue="123" />
-                </div>
+              <div className="flex space-x-2">
+                <div className="w-8 h-5 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold text-white/50 border border-white/10">VISA</div>
+                <div className="w-8 h-5 bg-white/10 rounded flex items-center justify-center text-[8px] font-bold text-white/50 border border-white/10">MC</div>
               </div>
             </div>
 
-            <div className="flex justify-end gap-4 mt-8">
-              <button 
-                onClick={() => setPaymentModalData(null)}
-                disabled={processingPayment}
-                className="px-6 py-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50"
-              >
-                Cancel
-              </button>
+            <div className="p-8">
+              {/* Card Visual */}
+              <div className="relative h-44 w-full bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-6 mb-8 shadow-xl overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                <div className="flex justify-between items-start mb-10">
+                  <div className="w-10 h-8 bg-yellow-400/80 rounded-md shadow-inner"></div>
+                  <div className="text-white/30 italic font-bold">Eventure Pay</div>
+                </div>
+                <div className="text-xl text-white font-mono tracking-[0.2em] mb-4">**** **** **** 4242</div>
+                <div className="flex justify-between items-end">
+                  <div>
+                    <p className="text-[8px] text-white/50 uppercase tracking-widest mb-1">Card Holder</p>
+                    <p className="text-sm text-white font-medium uppercase">{user?.name || 'Your Name'}</p>
+                  </div>
+                  <div>
+                    <p className="text-[8px] text-white/50 uppercase tracking-widest mb-1">Expires</p>
+                    <p className="text-sm text-white font-medium">12/28</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4 mb-8">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Card Number</label>
+                  <div className="relative">
+                    <input type="text" placeholder="4242 4242 4242 4242" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" readOnly defaultValue="4242 4242 4242 4242" />
+                    <CheckCircle2 className="absolute right-4 top-3 h-5 w-5 text-green-500" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Expiry Date</label>
+                    <input type="text" placeholder="MM/YY" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" readOnly defaultValue="12/28" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">CVC</label>
+                    <input type="password" placeholder="***" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono" readOnly defaultValue="123" />
+                  </div>
+                </div>
+              </div>
+
               <button 
                 onClick={async () => {
                   setProcessingPayment(true);
@@ -455,19 +479,42 @@ const EventDetails = () => {
                       setRegistrationSuccess(true);
                       setPaymentModalData(null);
                       setProcessingPayment(false);
-                    }, 1500);
+                    }, 2000);
                   } catch(e) {
                     alert('Payment failed');
                     setProcessingPayment(false);
                   }
                 }}
                 disabled={processingPayment}
-                className="px-6 py-2 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center shadow-glow-primary disabled:opacity-50"
+                className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-2xl hover:opacity-90 transition-opacity flex items-center justify-center shadow-glow-primary disabled:opacity-50"
               >
-                {processingPayment ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}
-                {processingPayment ? 'Processing...' : `Pay $${totalPrice}`}
+                {processingPayment ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin mr-3" /> 
+                    Verifying with bank...
+                  </>
+                ) : (
+                  `Confirm & Pay $${totalPrice}`
+                )}
               </button>
+
+              <div className="mt-6 flex items-center justify-center space-x-6 opacity-40">
+                <div className="text-[10px] text-white flex items-center">
+                  <Shield className="h-3 w-3 mr-1" /> Secure SSL
+                </div>
+                <div className="text-[10px] text-white flex items-center">
+                  <CheckCircle2 className="h-3 w-3 mr-1" /> PCI DSS
+                </div>
+              </div>
             </div>
+            
+            <button 
+              onClick={() => setPaymentModalData(null)}
+              disabled={processingPayment}
+              className="absolute top-4 right-4 p-2 text-gray-500 hover:text-white transition-colors disabled:hidden"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
         </div>
       )}
