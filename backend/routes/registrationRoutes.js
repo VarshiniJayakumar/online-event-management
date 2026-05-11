@@ -48,9 +48,13 @@ router.post('/', authMiddleware, async (req, res) => {
       if (ticketTierIndex !== -1) {
         event.tickets[ticketTierIndex].sold += (quantity || 1);
       } else {
+        // Fallback to the first ticket tier if specific type not found
         event.tickets[0].sold += (quantity || 1);
       }
       await event.save();
+    } else if (event.price !== undefined) {
+      // If no tickets array but price exists, we just continue (or we could add a default ticket tier)
+      console.log('Event has no tickets array but has a price. Registration created anyway.');
     }
 
     res.status(201).json(registration);

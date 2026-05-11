@@ -150,7 +150,8 @@ const EventDetails = () => {
     </div>
   );
 
-  const totalPrice = (event.price || 0) * ticketCount;
+  const eventPrice = event.price || (event.tickets && event.tickets.length > 0 ? event.tickets[0].price : 0);
+  const totalPrice = eventPrice * ticketCount;
   const isPastEvent = new Date(event.date) < new Date();
   const availableTickets = event.tickets && event.tickets.length > 0 ? Math.max(0, event.tickets[0].quantity - event.tickets[0].sold) : null;
 
@@ -345,7 +346,7 @@ const EventDetails = () => {
                   <div className="mb-8">
                     <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Price</p>
                     <div className="flex items-baseline">
-                      <span className="text-4xl font-display font-bold text-white">{event.price === 0 ? 'FREE' : `$${event.price}`}</span>
+                      <span className="text-4xl font-display font-bold text-white">{eventPrice === 0 ? 'FREE' : `$${eventPrice}`}</span>
                     </div>
                   </div>
 
@@ -389,12 +390,12 @@ const EventDetails = () => {
                     ) : (
                       <>
                         <Ticket className="mr-3 h-6 w-6" /> 
-                        {isPastEvent ? 'Event Completed' : (availableTickets === 0 ? 'Sold Out' : (event.price === 0 ? 'Register Now' : 'Get Tickets'))}
+                        {isPastEvent ? 'Event Completed' : (availableTickets === 0 ? 'Sold Out' : (eventPrice === 0 ? 'Register Now' : 'Get Tickets'))}
                       </>
                     )}
                   </button>
                   <p className="text-center text-xs text-gray-500 mt-6 font-medium">
-                    {event.price === 0 ? 'Instant confirmation via email' : 'Secure checkout powered by Stripe'}
+                    {eventPrice === 0 ? 'Instant confirmation via email' : 'Secure checkout powered by Stripe'}
                   </p>
                 </>
               )}
@@ -421,6 +422,7 @@ const EventDetails = () => {
               <div className="flex items-center">
                 <CreditCard className="mr-3 h-5 w-5 text-primary" />
                 <h3 className="text-xl font-bold text-white">Payment Method</h3>
+                <span className="ml-3 px-2 py-0.5 bg-yellow-500/20 text-yellow-500 text-[10px] font-bold rounded border border-yellow-500/30 tracking-widest uppercase">Demo Mode</span>
               </div>
               <div className="flex items-center space-x-4">
                 <div className="flex space-x-2">

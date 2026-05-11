@@ -29,7 +29,13 @@ const CreateEvent = () => {
   const handleTicketChange = (index, field, value) => {
     const newTickets = [...formData.tickets];
     newTickets[index][field] = field === 'type' ? value : Number(value);
-    setFormData(prev => ({ ...prev, tickets: newTickets }));
+    
+    // Sync top-level price with the first ticket tier's price
+    if (index === 0 && field === 'price') {
+      setFormData(prev => ({ ...prev, tickets: newTickets, price: Number(value) }));
+    } else {
+      setFormData(prev => ({ ...prev, tickets: newTickets }));
+    }
   };
 
   const addTicketType = () => {
