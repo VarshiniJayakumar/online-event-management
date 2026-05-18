@@ -23,6 +23,7 @@ const EventDetails = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [upiId, setUpiId] = useState('');
+  const [selectedUpiApp, setSelectedUpiApp] = useState('');
   const [cardDetails, setCardDetails] = useState({
     number: '',
     expiry: '',
@@ -549,23 +550,43 @@ const EventDetails = () => {
               ) : (
                 <div className="space-y-8 py-4">
                   <div className="flex justify-around items-center gap-4">
-                    <div className="flex flex-col items-center group cursor-pointer">
-                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all p-3">
+                    <div 
+                      onClick={() => {
+                        setSelectedUpiApp('gpay');
+                        setUpiId('success@okgpay');
+                      }}
+                      className="flex flex-col items-center group cursor-pointer"
+                    >
+                      <div className={`w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 transition-all p-3 ${selectedUpiApp === 'gpay' ? 'border-indigo-600 scale-105 shadow-indigo-600/20' : 'border-transparent group-hover:border-indigo-600/50'}`}>
                         <img src="https://cdn.worldvectorlogo.com/logos/google-pay-2.svg" alt="GPay" className="w-full h-full object-contain" />
                       </div>
-                      <span className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">GPay</span>
+                      <span className={`text-[10px] mt-2 font-bold uppercase tracking-widest transition-colors ${selectedUpiApp === 'gpay' ? 'text-indigo-400' : 'text-gray-500 group-hover:text-gray-300'}`}>GPay</span>
                     </div>
-                    <div className="flex flex-col items-center group cursor-pointer">
-                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all p-3">
+
+                    <div 
+                      onClick={() => {
+                        setSelectedUpiApp('paytm');
+                        setUpiId('success@paytm');
+                      }}
+                      className="flex flex-col items-center group cursor-pointer"
+                    >
+                      <div className={`w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 transition-all p-3 ${selectedUpiApp === 'paytm' ? 'border-indigo-600 scale-105 shadow-indigo-600/20' : 'border-transparent group-hover:border-indigo-600/50'}`}>
                         <img src="https://cdn.worldvectorlogo.com/logos/paytm-1.svg" alt="Paytm" className="w-full h-full object-contain" />
                       </div>
-                      <span className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Paytm</span>
+                      <span className={`text-[10px] mt-2 font-bold uppercase tracking-widest transition-colors ${selectedUpiApp === 'paytm' ? 'text-indigo-400' : 'text-gray-500 group-hover:text-gray-300'}`}>Paytm</span>
                     </div>
-                    <div className="flex flex-col items-center group cursor-pointer">
-                      <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 border-transparent group-hover:border-primary transition-all p-2">
+
+                    <div 
+                      onClick={() => {
+                        setSelectedUpiApp('phonepe');
+                        setUpiId('success@ybl');
+                      }}
+                      className="flex flex-col items-center group cursor-pointer"
+                    >
+                      <div className={`w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-lg border-2 transition-all p-2 ${selectedUpiApp === 'phonepe' ? 'border-indigo-600 scale-105 shadow-indigo-600/20' : 'border-transparent group-hover:border-indigo-600/50'}`}>
                         <img src="https://cdn.worldvectorlogo.com/logos/phonepe-1.svg" alt="PhonePe" className="w-full h-full object-contain" />
                       </div>
-                      <span className="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">PhonePe</span>
+                      <span className={`text-[10px] mt-2 font-bold uppercase tracking-widest transition-colors ${selectedUpiApp === 'phonepe' ? 'text-indigo-400' : 'text-gray-500 group-hover:text-gray-300'}`}>PhonePe</span>
                     </div>
                   </div>
 
