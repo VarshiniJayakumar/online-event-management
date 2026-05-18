@@ -29,6 +29,7 @@ const EventDetails = () => {
     cvc: '',
     name: ''
   });
+  const [paymentError, setPaymentError] = useState('');
 
   useEffect(() => {
     // Check if event is saved
@@ -454,6 +455,15 @@ const EventDetails = () => {
               </button>
             </div>
 
+            </div>
+
+            {paymentError && (
+              <div className="mx-8 mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start animate-in slide-in-from-top-2 duration-300">
+                <X className="h-5 w-5 text-red-500 mr-3 shrink-0 mt-0.5" />
+                <p className="text-sm text-red-200 font-medium">{paymentError}</p>
+              </div>
+            )}
+
             <div className="p-8">
               {paymentMethod === 'card' ? (
                 <>
@@ -595,6 +605,37 @@ const EventDetails = () => {
                     return;
                   }
                   setProcessingPayment(true);
+                  setPaymentError('');
+                  
+                  // Simulate card decline based on Stripe test cards
+                  const testCardNumber = cardDetails.number.replace(/\D/g, ''); // Remove all non-digits
+                  console.log('Testing card number:', testCardNumber);
+
+                  const declineMessages = {
+                    '4000000000000002': 'Your card was declined. Please try a different payment method.',
+                    '4000000000009995': 'Your card has insufficient funds.',
+                    '4000000000009987': 'Your card has been reported as lost.',
+                    '4000000000000005': 'Your card has expired.',
+                    '4000000000000022': 'The CVC code is incorrect.'
+                  };
+
+                  let matchedDecline = declineMessages[testCardNumber];
+                  
+                  // Catch all case just in case the string matching had issues
+                  if (!matchedDecline && testCardNumber === '4000000000000002') {
+                     matchedDecline = 'Your card was declined. Please try a different payment method.';
+                  }
+
+                  if (paymentMethod === 'card' && matchedDecline) {
+                    console.log('Simulating decline for:', testCardNumber);
+                    setTimeout(() => {
+                      setPaymentError(matchedDecline);
+                      setProcessingPayment(false);
+                    }, 1500);
+                    return; // Crucial: Stop execution so registration doesn't proceed
+                  }
+
+
                   try {
                     const regResponse = await fetch(getApiUrl('/registrations'), {
                       method: 'POST',
@@ -613,7 +654,7 @@ const EventDetails = () => {
                       setProcessingPayment(false);
                     }, 2000);
                   } catch(e) {
-                    alert('Payment failed');
+                    setPaymentError('Payment failed. Please check your connection and try again.');
                     setProcessingPayment(false);
                   }
                 }}
