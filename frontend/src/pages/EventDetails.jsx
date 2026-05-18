@@ -455,8 +455,6 @@ const EventDetails = () => {
               </button>
             </div>
 
-            </div>
-
             {paymentError && (
               <div className="mx-8 mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start animate-in slide-in-from-top-2 duration-300">
                 <X className="h-5 w-5 text-red-500 mr-3 shrink-0 mt-0.5" />
@@ -608,7 +606,7 @@ const EventDetails = () => {
                   setPaymentError('');
                   
                   // Simulate card decline based on Stripe test cards
-                  const testCardNumber = cardDetails.number.replace(/\D/g, ''); // Remove all non-digits
+                  const testCardNumber = cardDetails.number.split(' ').join('');
                   console.log('Testing card number:', testCardNumber);
 
                   const declineMessages = {
@@ -623,7 +621,7 @@ const EventDetails = () => {
                   
                   // Catch all case just in case the string matching had issues
                   if (!matchedDecline && testCardNumber === '4000000000000002') {
-                     matchedDecline = 'Your card was declined. Please try a different payment method.';
+                     matchedDecline = "Your card was declined. Please try a different payment method.";
                   }
 
                   if (paymentMethod === 'card' && matchedDecline) {
@@ -632,7 +630,7 @@ const EventDetails = () => {
                       setPaymentError(matchedDecline);
                       setProcessingPayment(false);
                     }, 1500);
-                    return; // Crucial: Stop execution so registration doesn't proceed
+                    return;
                   }
 
 
