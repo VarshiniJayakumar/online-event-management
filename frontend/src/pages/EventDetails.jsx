@@ -674,6 +674,14 @@ const EventDetails = () => {
 
                     if (!regResponse.ok) {
                       const errorData = await regResponse.json();
+                      if (regResponse.status === 401) {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        setTimeout(() => {
+                          navigate('/login', { state: { from: location.pathname } });
+                        }, 2000);
+                        throw new Error('Your session has expired. Redirecting to login...');
+                      }
                       throw new Error(errorData.message || 'Registration failed');
                     }
                     
