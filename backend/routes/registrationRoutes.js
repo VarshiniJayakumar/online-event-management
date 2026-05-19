@@ -30,6 +30,48 @@ router.post('/', authMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
+    // For paid events using simulated checkout (demo mode)
+    const eventPrice = event.price || (event.tickets && event.tickets.length > 0 ? event.tickets[0].price : 0);
+    if (eventPrice > 0 && (!stripeSessionId || stripeSessionId.startsWith('demo_session_'))) {
+      const { paymentMethod, cardDetails, upiId } = req.body;
+
+      if (paymentMethod === 'card') {
+        if (!cardDetails || !cardDetails.number || !cardDetails.name || !cardDetails.expiry || !cardDetails.cvc) {
+          return res.status(400).json({ message: 'Please fill in all payment details properly' });
+        }
+
+        const cleanCardNumber = cardDetails.number.replace(/\s+/g, '');
+        const declineMessages = {
+          '4000000000000002': 'Your card was declined. Please try a different payment method.',
+          '4000000000009995': 'Your card has insufficient funds.',
+          '4000000000009987': 'Your card has been reported as lost.',
+          '4000000000009979': 'Your card has been reported as stolen.',
+          '4000000000000119': 'Your card has expired.',
+          '4000000000000127': 'The CVC code is incorrect.',
+          '4000000000000101': 'An error occurred while processing your card.'
+        };
+
+        const matchedDecline = declineMessages[cleanCardNumber];
+        if (matchedDecline) {
+          return res.status(400).json({ message: matchedDecline });
+        }
+
+        if (cleanCardNumber.length < 16) {
+          return res.status(400).json({ message: 'Invalid card number length' });
+        }
+
+        if (cardDetails.cvc.length < 3) {
+          return res.status(400).json({ message: 'Invalid CVC' });
+        }
+      } else if (paymentMethod === 'upi') {
+        if (!upiId || upiId.length < 3) {
+          return res.status(400).json({ message: 'Please enter a valid UPI ID' });
+        }
+      } else {
+        return res.status(400).json({ message: 'Please select a valid payment method' });
+      }
+    }
+
     const registration = new Registration({
       user: req.user.id,
       event: eventId,

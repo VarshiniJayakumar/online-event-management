@@ -634,8 +634,10 @@ const EventDetails = () => {
                     '4000000000000002': 'Your card was declined. Please try a different payment method.',
                     '4000000000009995': 'Your card has insufficient funds.',
                     '4000000000009987': 'Your card has been reported as lost.',
-                    '4000000000000005': 'Your card has expired.',
-                    '4000000000000022': 'The CVC code is incorrect.'
+                    '4000000000009979': 'Your card has been reported as stolen.',
+                    '4000000000000119': 'Your card has expired.',
+                    '4000000000000127': 'The CVC code is incorrect.',
+                    '4000000000000101': 'An error occurred while processing your card.'
                   };
 
                   let matchedDecline = declineMessages[testCardNumber];
@@ -662,10 +664,18 @@ const EventDetails = () => {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${paymentModalData.token}`
                       },
-                      body: JSON.stringify(paymentModalData.registrationData),
+                      body: JSON.stringify({
+                        ...paymentModalData.registrationData,
+                        paymentMethod,
+                        cardDetails,
+                        upiId
+                      }),
                     });
 
-                    if (!regResponse.ok) throw new Error('Registration failed');
+                    if (!regResponse.ok) {
+                      const errorData = await regResponse.json();
+                      throw new Error(errorData.message || 'Registration failed');
+                    }
                     
                     setTimeout(() => {
                       setRegistrationSuccess(true);
@@ -673,7 +683,7 @@ const EventDetails = () => {
                       setProcessingPayment(false);
                     }, 2000);
                   } catch(e) {
-                    setPaymentError('Payment failed. Please check your connection and try again.');
+                    setPaymentError(e.message || 'Payment failed. Please check your connection and try again.');
                     setProcessingPayment(false);
                   }
                 }}
