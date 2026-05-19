@@ -631,6 +631,7 @@ const EventDetails = () => {
                   console.log('Testing card number:', testCardNumber);
 
                   const declineMessages = {
+                    // Standard decline scenarios
                     '4000000000000002': 'Your card was declined. Please try a different payment method.',
                     '4000000000009995': 'Your card has insufficient funds.',
                     '4000000000009987': 'Your card has been reported as lost.',
@@ -639,7 +640,15 @@ const EventDetails = () => {
                     '4000000000000127': 'The CVC code is incorrect.',
                     '4000000000000119': 'An error occurred while processing your card.',
                     '4242424242424241': 'The card number is incorrect.',
-                    '4000000000006975': 'This card has exceeded its velocity limit.'
+                    '4000000000006975': 'This card has exceeded its velocity limit.',
+                    
+                    // Fraud scenarios (Radar block)
+                    '4100000000000019': 'The payment was blocked by our fraud prevention system (Radar).',
+                    '4000000000004954': 'The payment was blocked by our fraud prevention system (Radar).',
+                    '4000000000009235': 'The payment was blocked by our fraud prevention system (Radar).',
+                    
+                    // 3DS Failure
+                    '4000000000003222': '3D Secure authentication failed. Please try again.'
                   };
 
                   let matchedDecline = declineMessages[testCardNumber];
