@@ -46,9 +46,11 @@ router.post('/', authMiddleware, async (req, res) => {
           '4000000000009995': 'Your card has insufficient funds.',
           '4000000000009987': 'Your card has been reported as lost.',
           '4000000000009979': 'Your card has been reported as stolen.',
-          '4000000000000119': 'Your card has expired.',
+          '4000000000000069': 'Your card has expired.',
           '4000000000000127': 'The CVC code is incorrect.',
-          '4000000000000101': 'An error occurred while processing your card.'
+          '4000000000000119': 'An error occurred while processing your card.',
+          '4242424242424241': 'The card number is incorrect.',
+          '4000000000006975': 'This card has exceeded its velocity limit.'
         };
 
         const matchedDecline = declineMessages[cleanCardNumber];
