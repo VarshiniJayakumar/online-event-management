@@ -619,12 +619,41 @@ const EventDetails = () => {
                     alert('Please fill in all payment details');
                     return;
                   }
-                  if (paymentMethod === 'upi' && !upiId) {
-                    alert('Please enter your UPI ID');
-                    return;
+                  if (paymentMethod === 'upi') {
+                    if (!upiId) {
+                      alert('Please enter your UPI ID');
+                      return;
+                    }
+                    if (!upiId.includes('@') || upiId.startsWith('@') || upiId.endsWith('@')) {
+                      alert('Please enter a valid UPI ID (e.g., username@bank)');
+                      return;
+                    }
                   }
+
                   setProcessingPayment(true);
                   setPaymentError('');
+
+                  if (paymentMethod === 'upi') {
+                    const cleanUpi = upiId.toLowerCase().trim();
+                    const upiDeclines = {
+                      'fail@upi': 'UPI transaction declined by user.',
+                      'decline@upi': 'UPI transaction declined by user.',
+                      'reject@upi': 'UPI transaction declined by user.',
+                      'insufficient@upi': 'UPI transaction failed: Insufficient funds in bank account.',
+                      'lowbalance@upi': 'UPI transaction failed: Insufficient funds in bank account.',
+                      'timeout@upi': 'UPI payment session expired. Please retry.',
+                      'expired@upi': 'UPI payment session expired. Please retry.'
+                    };
+
+                    if (upiDeclines[cleanUpi]) {
+                      console.log('Simulating UPI decline for:', cleanUpi);
+                      setTimeout(() => {
+                        setPaymentError(upiDeclines[cleanUpi]);
+                        setProcessingPayment(false);
+                      }, 1500);
+                      return;
+                    }
+                  }
                   
                   // Simulate card decline based on Stripe test cards
                   const testCardNumber = cardDetails.number.split(' ').join('');

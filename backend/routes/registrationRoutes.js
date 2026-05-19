@@ -75,8 +75,23 @@ router.post('/', authMiddleware, async (req, res) => {
           return res.status(400).json({ message: 'Invalid CVC' });
         }
       } else if (paymentMethod === 'upi') {
-        if (!upiId || upiId.length < 3) {
-          return res.status(400).json({ message: 'Please enter a valid UPI ID' });
+        if (!upiId || !upiId.includes('@') || upiId.startsWith('@') || upiId.endsWith('@')) {
+          return res.status(400).json({ message: 'Please enter a valid UPI ID (e.g., username@bank)' });
+        }
+
+        const cleanUpi = upiId.toLowerCase().trim();
+        const upiDeclines = {
+          'fail@upi': 'UPI transaction declined by user.',
+          'decline@upi': 'UPI transaction declined by user.',
+          'reject@upi': 'UPI transaction declined by user.',
+          'insufficient@upi': 'UPI transaction failed: Insufficient funds in bank account.',
+          'lowbalance@upi': 'UPI transaction failed: Insufficient funds in bank account.',
+          'timeout@upi': 'UPI payment session expired. Please retry.',
+          'expired@upi': 'UPI payment session expired. Please retry.'
+        };
+
+        if (upiDeclines[cleanUpi]) {
+          return res.status(400).json({ message: upiDeclines[cleanUpi] });
         }
       } else {
         return res.status(400).json({ message: 'Please select a valid payment method' });
