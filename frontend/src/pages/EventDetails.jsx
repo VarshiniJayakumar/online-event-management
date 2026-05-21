@@ -633,68 +633,7 @@ const EventDetails = () => {
                   setProcessingPayment(true);
                   setPaymentError('');
 
-                  if (paymentMethod === 'upi') {
-                    const cleanUpi = upiId.toLowerCase().trim();
-                    const upiDeclines = {
-                      'fail@upi': 'UPI transaction declined by user.',
-                      'decline@upi': 'UPI transaction declined by user.',
-                      'reject@upi': 'UPI transaction declined by user.',
-                      'insufficient@upi': 'UPI transaction failed: Insufficient funds in bank account.',
-                      'lowbalance@upi': 'UPI transaction failed: Insufficient funds in bank account.',
-                      'timeout@upi': 'UPI payment session expired. Please retry.',
-                      'expired@upi': 'UPI payment session expired. Please retry.'
-                    };
 
-                    if (upiDeclines[cleanUpi]) {
-                      console.log('Simulating UPI decline for:', cleanUpi);
-                      setTimeout(() => {
-                        setPaymentError(upiDeclines[cleanUpi]);
-                        setProcessingPayment(false);
-                      }, 1500);
-                      return;
-                    }
-                  }
-                  
-                  // Simulate card decline based on Stripe test cards
-                  const testCardNumber = cardDetails.number.split(' ').join('');
-                  console.log('Testing card number:', testCardNumber);
-
-                  const declineMessages = {
-                    // Standard decline scenarios
-                    '4000000000000002': 'Your card was declined. Please try a different payment method.',
-                    '4000000000009995': 'Your card has insufficient funds.',
-                    '4000000000009987': 'Your card has been reported as lost.',
-                    '4000000000009979': 'Your card has been reported as stolen.',
-                    '4000000000000069': 'Your card has expired.',
-                    '4000000000000127': 'The CVC code is incorrect.',
-                    '4000000000000119': 'An error occurred while processing your card.',
-                    '4242424242424241': 'The card number is incorrect.',
-                    '4000000000006975': 'This card has exceeded its velocity limit.',
-                    
-                    // Fraud scenarios (Radar block)
-                    '4100000000000019': 'The payment was blocked by our fraud prevention system (Radar).',
-                    '4000000000004954': 'The payment was blocked by our fraud prevention system (Radar).',
-                    '4000000000009235': 'The payment was blocked by our fraud prevention system (Radar).',
-                    
-                    // 3DS Failure
-                    '4000000000003222': '3D Secure authentication failed. Please try again.'
-                  };
-
-                  let matchedDecline = declineMessages[testCardNumber];
-                  
-                  // Catch all case just in case the string matching had issues
-                  if (!matchedDecline && testCardNumber === '4000000000000002') {
-                     matchedDecline = "Your card was declined. Please try a different payment method.";
-                  }
-
-                  if (paymentMethod === 'card' && matchedDecline) {
-                    console.log('Simulating decline for:', testCardNumber);
-                    setTimeout(() => {
-                      setPaymentError(matchedDecline);
-                      setProcessingPayment(false);
-                    }, 1500);
-                    return;
-                  }
 
 
                   try {
