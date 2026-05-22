@@ -1,54 +1,54 @@
+const nodemailer = require('nodemailer');
+
 const sendEmail = async ({ to, subject, htmlContent }) => {
-  const BREVO_API_KEY = process.env.BREVO_API_KEY;
-  const SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL;
+  const SMTP_HOST = process.env.SMTP_HOST;
+  const SMTP_PORT = process.env.SMTP_PORT || 587;
+  const SMTP_USER = process.env.SMTP_USER;
+  const SMTP_PASS = process.env.SMTP_PASS;
+  const SMTP_SENDER = process.env.SMTP_SENDER || 'noreply@eventure.com';
 
   console.log('--- Email System Status Check ---');
-  console.log(`🔑 BREVO_API_KEY: ${BREVO_API_KEY ? '✅ DETECTED' : '❌ MISSING'}`);
-  console.log(`📧 SENDER_EMAIL: ${SENDER_EMAIL ? '✅ DETECTED' : '❌ MISSING'}`);
+  console.log(`🔑 SMTP_HOST: ${SMTP_HOST ? '✅ DETECTED' : '❌ MISSING'}`);
+  console.log(`📧 SMTP_USER: ${SMTP_USER ? '✅ DETECTED' : '❌ MISSING'}`);
   console.log('---------------------------------');
 
-  if (!BREVO_API_KEY) {
+  // Fallback to simulation if SMTP is not configured
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
     console.log('\n📢 EMAIL NOTICE: Running in SIMULATION MODE.');
-    console.log(`Link: ${htmlContent.match(/href="([^"]+)"/)?.[1] || 'No link found'}\n`);
+    console.log(`To: ${to}`);
+    console.log(`Subject: ${subject}`);
+    console.log(`Link: ${htmlContent.match(/href="([^"]+)"/)?.[1] || 'No link found'}`);
+    console.log(`HTML Preview Snippet: ${htmlContent.slice(0, 300)}...\n`);
     return { success: true, message: 'Email simulated', simulated: true };
   }
 
   try {
-    console.log(`\n📧 Attempting to send email to: ${to} via Brevo...`);
+    console.log(`\n📧 Attempting to send email to: ${to} via SMTP...`);
     
-    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'api-key': BREVO_API_KEY,
-        'content-type': 'application/json'
+    const transporter = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: Number(SMTP_PORT),
+      secure: Number(SMTP_PORT) === 465, // true for 465, false for other ports
+      auth: {
+        user: SMTP_USER,
+        pass: SMTP_PASS,
       },
-      body: JSON.stringify({
-        sender: { name: "Eventure Team", email: SENDER_EMAIL },
-        to: [{ email: to }],
-        subject: subject,
-        htmlContent: htmlContent
-      })
     });
 
-    const data = await response.json();
-    
-    if (response.ok) {
-      console.log('✅ Brevo API Success:', JSON.stringify(data));
-      return { success: true, data };
-    } else {
-      console.error('❌ Brevo API Error:', JSON.stringify(data));
-      return { 
-        success: false, 
-        error: data.message || 'Brevo API error', 
-        code: response.status,
-        details: data
-      };
-    }
+    const info = await transporter.sendMail({
+      from: `"Eventure Team" <${SMTP_SENDER}>`,
+      to,
+      subject,
+      html: htmlContent,
+    });
+
+    console.log('✅ SMTP Email Sent successfully:', info.messageId);
+    return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('💥 Fatal Email Error:', error.message);
+    console.error('💥 Fatal SMTP Email Error:', error.message);
     return { success: false, error: error.message };
   }
 };
 
 module.exports = { sendEmail };
+

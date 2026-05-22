@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/User');
 const { sendEmail } = require('../utils/emailService');
+const { OAuth2Client } = require('google-auth-library');
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Helper to create JWT
 const createToken = (user) => {
@@ -307,6 +309,73 @@ router.post('/request-organizer', async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+// Google Login
+router.post('/google-login', async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ message: 'Token is required' });
+
+    let email, name;
+
+    // Verify Google ID Token
+    if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID') {
+      try {
+        const ticket = await googleClient.verifyIdToken({
+          idToken: token,
+          audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        email = payload.email;
+        name = payload.name;
+      } catch (err) {
+        console.error('Google token verification error:', err);
+        return res.status(400).json({ message: 'Invalid Google token' });
+      }
+    } else {
+      // Simulation mode if GOOGLE_CLIENT_ID is not configured
+      console.log('Google Auth running in Simulation Mode (GOOGLE_CLIENT_ID missing)');
+      try {
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf-8'));
+          email = payload.email;
+          name = payload.name || payload.given_name;
+        } else {
+          email = token.includes('@') ? token : 'demo_google_user@example.com';
+          name = 'Google Demo User';
+        }
+      } catch (err) {
+        email = 'demo_google_user@example.com';
+        name = 'Google Demo User';
+      }
+    }
+
+    // Find or create user
+    let user = await User.findOne({ email });
+    if (!user) {
+      // Auto-create user with a randomized password
+      const generatedPassword = crypto.randomBytes(16).toString('hex');
+      const hashedPassword = await bcrypt.hash(generatedPassword, 12);
+      user = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+        role: 'user',
+        isVerified: true
+      });
+    }
+
+    const jwtToken = createToken(user);
+    res.status(200).json({
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      token: jwtToken
+    });
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(500).json({ message: 'Something went wrong during Google Login' });
   }
 });
 

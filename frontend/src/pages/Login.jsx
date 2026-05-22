@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
+import { motion } from 'framer-motion';
 import getApiUrl from '../utils/api';
 
 const Login = () => {
@@ -11,6 +12,56 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || '/dashboard';
+
+  const handleGoogleLoginResponse = async (response) => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch(getApiUrl('/auth/google-login'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: response.credential }),
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Google Login failed');
+      
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      navigate(from);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const initGoogle = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || '1081512411986-e2a229q6a603952f.apps.googleusercontent.com',
+          callback: handleGoogleLoginResponse
+        });
+        window.google.accounts.id.renderButton(
+          document.getElementById("google-signin-btn"),
+          { theme: "dark", size: "large", type: "standard", shape: "rectangular", text: "signin_with", logo_alignment: "left", width: 380 }
+        );
+      }
+    };
+    
+    if (window.google) {
+      initGoogle();
+    } else {
+      const interval = setInterval(() => {
+        if (window.google) {
+          initGoogle();
+          clearInterval(interval);
+        }
+      }, 500);
+      return () => clearInterval(interval);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +101,13 @@ const Login = () => {
       {/* Background orbs */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-primary/20 via-transparent to-transparent blur-[60px] pointer-events-none z-0"></div>
       
-      <div className="glass-card max-w-md w-full p-8 md:p-10 border-white/10 shadow-2xl relative z-10">
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -30 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="glass-card max-w-md w-full p-8 md:p-10 border-white/10 shadow-2xl relative z-10"
+      >
         <div className="mb-10 text-center">
           <h2 className="text-3xl font-display font-bold text-white mb-2">Welcome Back</h2>
           <p className="text-gray-400">
@@ -148,7 +205,20 @@ const Login = () => {
             {loading ? 'Signing in...' : 'Sign in to Eventure'}
           </button>
         </form>
-      </div>
+
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-white/10"></div>
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-[#12121a] px-3 text-gray-500 font-bold tracking-widest">Or continue with</span>
+          </div>
+        </div>
+
+        <div className="flex justify-center w-full">
+          <div id="google-signin-btn" className="w-full overflow-hidden rounded-xl flex justify-center"></div>
+        </div>
+      </motion.div>
     </div>
   );
 };

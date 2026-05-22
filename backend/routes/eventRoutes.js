@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/Event');
 const jwt = require('jsonwebtoken');
+const Registration = require('../models/Registration');
+const User = require('../models/User');
+const { sendEmail } = require('../utils/emailService');
 
 // Middleware to check auth (simple version for now)
 const authMiddleware = (req, res, next) => {
@@ -105,6 +108,76 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 
     await Event.findByIdAndDelete(req.params.id);
     res.json({ message: 'Event deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+// Send Reminder to all attendees
+router.post('/:id/remind', authMiddleware, async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: 'Event not found' });
+
+    // Auth check: Only event organizer or admin can trigger reminders
+    if (event.organizer.toString() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Unauthorized: Only the organizer can send reminders' });
+    }
+
+    // Find all active registrations for this event
+    const registrations = await Registration.find({ event: event._id, status: 'active' }).populate('user', 'name email');
+    if (registrations.length === 0) {
+      return res.status(400).json({ message: 'No registered attendees found for this event.' });
+    }
+
+    // Deduplicate users
+    const usersMap = new Map();
+    registrations.forEach(reg => {
+      if (reg.user && reg.user.email) {
+        usersMap.set(reg.user.email, reg.user.name || 'Attendee');
+      }
+    });
+
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    const eventUrl = `${clientUrl}/events/${event._id}`;
+    let successCount = 0;
+
+    for (const [email, name] of usersMap.entries()) {
+      try {
+        await sendEmail({
+          to: email,
+          subject: `Reminder: ${event.title} is coming up! ⏰`,
+          htmlContent: `
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #0a0a0f; color: #f8fafc;">
+              <h2 style="color: #ec4899; text-align: center; font-size: 24px; margin-bottom: 20px;">Event Reminder ⏰</h2>
+              <p style="font-size: 16px; color: #cbd5e1;">Hi ${name},</p>
+              <p style="font-size: 16px; color: #cbd5e1; line-height: 1.6;">This is a friendly reminder that the event <strong>${event.title}</strong> is starting soon!</p>
+              
+              <div style="background-color: #12121a; padding: 20px; border-radius: 12px; margin: 25px 0; border: 1px solid #1e1b4b;">
+                <h3 style="margin-top: 0; color: #7c3aed; font-size: 18px;">Event details</h3>
+                <p style="margin: 6px 0; color: #cbd5e1;"><strong style="color: #94a3b8;">Event:</strong> ${event.title}</p>
+                <p style="margin: 6px 0; color: #cbd5e1;"><strong style="color: #94a3b8;">Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+                <p style="margin: 6px 0; color: #cbd5e1;"><strong style="color: #94a3b8;">Time:</strong> ${event.time || 'TBA'}</p>
+                <p style="margin: 6px 0; color: #cbd5e1;"><strong style="color: #94a3b8;">Location:</strong> ${event.location}</p>
+              </div>
+
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${eventUrl}" style="background-color: #ec4899; color: #ffffff; padding: 14px 30px; text-decoration: none; border-radius: 10px; font-weight: bold; display: inline-block; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);">View Event Page</a>
+              </div>
+
+              <hr style="border: none; border-top: 1px solid #1e293b; margin: 25px 0;">
+              <p style="font-size: 12px; color: #64748b; text-align: center;">You received this because you registered for this event on Eventure.</p>
+            </div>
+          `
+        });
+        successCount++;
+      } catch (err) {
+        console.error(`Failed to send reminder email to ${email}:`, err);
+      }
+    }
+
+    res.json({ message: `Successfully sent reminders to ${successCount} attendees.` });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

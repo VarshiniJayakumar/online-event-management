@@ -4,6 +4,8 @@ const Registration = require('../models/Registration');
 const Event = require('../models/Event');
 const jwt = require('jsonwebtoken');
 const stripe = process.env.STRIPE_SECRET_KEY ? require('stripe')(process.env.STRIPE_SECRET_KEY) : null;
+const User = require('../models/User');
+const { sendEmail } = require('../utils/emailService');
 
 // Middleware to check auth
 const authMiddleware = (req, res, next) => {
@@ -177,6 +179,66 @@ router.post('/', authMiddleware, async (req, res) => {
     });
 
     await registration.save();
+
+    // Send Booking Confirmation Email
+    try {
+      const userData = await User.findById(req.user.id);
+      if (userData) {
+        const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+        const ticketLink = `${clientUrl}/dashboard`;
+        
+        await sendEmail({
+          to: userData.email,
+          subject: `Ticket Confirmed: ${event.title}`,
+          htmlContent: `
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #0a0a0f; color: #f8fafc;">
+              <h2 style="color: #8b5cf6; text-align: center; font-size: 24px; margin-bottom: 20px;">Your Ticket is Confirmed! 🎉</h2>
+              <p style="font-size: 16px; color: #cbd5e1;">Hi ${userData.name},</p>
+              <p style="font-size: 16px; color: #cbd5e1; line-height: 1.6;">You're all set! Your registration for <strong>${event.title}</strong> has been successfully processed.</p>
+              
+              <div style="background-color: #12121a; padding: 20px; border-radius: 12px; margin: 25px 0; border: 1px solid #1e1b4b;">
+                <h3 style="margin-top: 0; color: #ec4899; font-size: 18px;">Ticket Details</h3>
+                <table style="width: 100%; border-collapse: collapse; color: #cbd5e1;">
+                  <tr>
+                    <td style="padding: 6px 0; font-weight: bold; color: #94a3b8; width: 120px;">Event:</td>
+                    <td style="padding: 6px 0;">${event.title}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; font-weight: bold; color: #94a3b8;">Date:</td>
+                    <td style="padding: 6px 0;">${new Date(event.date).toLocaleDateString()}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; font-weight: bold; color: #94a3b8;">Time:</td>
+                    <td style="padding: 6px 0;">${event.time || 'TBA'}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; font-weight: bold; color: #94a3b8;">Location:</td>
+                    <td style="padding: 6px 0;">${event.location}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; font-weight: bold; color: #94a3b8;">Ticket Type:</td>
+                    <td style="padding: 6px 0;">${ticketType || 'General Admission'}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; font-weight: bold; color: #94a3b8;">Quantity:</td>
+                    <td style="padding: 6px 0;">${quantity || 1}</td>
+                  </tr>
+                </table>
+              </div>
+
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${ticketLink}" style="background-color: #7c3aed; color: #ffffff; padding: 14px 30px; text-decoration: none; border-radius: 10px; font-weight: bold; display: inline-block; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">View & Download Ticket QR</a>
+              </div>
+
+              <hr style="border: none; border-top: 1px solid #1e293b; margin: 25px 0;">
+              <p style="font-size: 12px; color: #64748b; text-align: center;">Need help? Contact the organizer or reply to this email.</p>
+            </div>
+          `
+        });
+      }
+    } catch (emailErr) {
+      console.error('Failed to send registration confirmation email:', emailErr);
+    }
 
     // Update the event's sold ticket count
     if (event.tickets && event.tickets.length > 0) {
