@@ -9,6 +9,8 @@ const registrationSchema = new mongoose.Schema({
   paymentStatus: { type: String, enum: ['pending', 'completed', 'failed'], default: 'pending' },
   status: { type: String, enum: ['active', 'cancelled'], default: 'active' },
   stripeSessionId: { type: String },
+  razorpayOrderId: { type: String },
+  razorpayPaymentId: { type: String },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Registration', registrationSchema);

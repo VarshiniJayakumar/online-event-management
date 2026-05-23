@@ -1,10 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
-import { loadStripe } from '@stripe/stripe-js';
 import { CalendarDays, MapPin, Clock, Share2, Heart, ArrowLeft, Ticket, Loader2, CheckCircle2, ArrowRight, CreditCard, Shield, X } from 'lucide-react';
 import getApiUrl from '../utils/api';
-const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
-const stripePromise = stripePublicKey ? loadStripe(stripePublicKey) : null;
+
+const loadScript = (src) => {
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -92,7 +99,7 @@ const EventDetails = () => {
       }
 
       // Handle Paid Events
-      const response = await fetch(getApiUrl('/payment/create-checkout-session'), {
+      const response = await fetch(getApiUrl('/payment/create-order'), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -114,27 +121,69 @@ const EventDetails = () => {
           token,
           registrationData: {
             ...registrationData,
-            stripeSessionId: data.id
+            razorpayOrderId: data.id,
+            isDemo: true
           }
         });
         setCheckoutLoading(false);
         return;
       }
 
-      if (!stripePromise) {
-        throw new Error("Stripe public key is missing in environment variables.");
+      const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+      if (!res) {
+        throw new Error('Razorpay SDK failed to load. Are you online?');
       }
 
-      const stripe = await stripePromise;
-      if (!stripe) {
-        throw new Error("Stripe failed to initialize.");
+      const razorpayPublicKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
+      if (!razorpayPublicKey) {
+        throw new Error("Razorpay public key is missing in environment variables.");
       }
 
-      const { error } = await stripe.redirectToCheckout({
-        sessionId: data.id,
-      });
+      const options = {
+        key: razorpayPublicKey,
+        amount: data.amount,
+        currency: data.currency,
+        name: 'Eventure',
+        description: `Ticket for ${event.title}`,
+        image: event.imageUrl || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
+        order_id: data.id,
+        handler: async function (response) {
+          try {
+            setCheckoutLoading(true);
+            const verifyRes = await fetch(getApiUrl('/payment/verify-payment'), {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                eventId: id,
+                ticketQuantity: ticketCount
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyRes.ok) throw new Error(verifyData.message || 'Payment verification failed');
+            setRegistrationSuccess(true);
+          } catch (err) {
+            alert(`Error: ${err.message}`);
+          } finally {
+            setCheckoutLoading(false);
+          }
+        },
+        prefill: {
+          name: user?.name || '',
+          email: user?.email || '',
+        },
+        theme: {
+          color: '#7c3aed',
+        },
+      };
 
-      if (error) throw error;
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
     } catch (err) {
       alert(`Error: ${err.message}`);
     } finally {
@@ -405,7 +454,7 @@ const EventDetails = () => {
                     )}
                   </button>
                   <p className="text-center text-xs text-gray-500 mt-6 font-medium">
-                    {eventPrice === 0 ? 'Instant confirmation via email' : 'Secure checkout powered by Stripe'}
+                    {eventPrice === 0 ? 'Instant confirmation via email' : 'Secure checkout powered by Razorpay'}
                   </p>
                 </>
               )}
