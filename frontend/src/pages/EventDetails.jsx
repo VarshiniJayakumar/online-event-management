@@ -3,8 +3,8 @@ import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { CalendarDays, MapPin, Clock, Share2, Heart, ArrowLeft, Ticket, Loader2, CheckCircle2, ArrowRight, CreditCard, Shield, X } from 'lucide-react';
 import getApiUrl from '../utils/api';
-
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || 'pk_test_TYooMQauvdEDq54NiTphI7jx');
+const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+const stripePromise = stripePublicKey ? loadStripe(stripePublicKey) : null;
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -121,7 +121,15 @@ const EventDetails = () => {
         return;
       }
 
+      if (!stripePromise) {
+        throw new Error("Stripe public key is missing in environment variables.");
+      }
+
       const stripe = await stripePromise;
+      if (!stripe) {
+        throw new Error("Stripe failed to initialize.");
+      }
+
       const { error } = await stripe.redirectToCheckout({
         sessionId: data.id,
       });
