@@ -38,8 +38,8 @@ router.post('/create-order', async (req, res) => {
 
     const options = {
       amount,
-      currency: "USD", // Adjust to INR or other as necessary
-      receipt: `receipt_${Date.now()}_${eventId}`,
+      currency: "INR", // Most Razorpay test accounts are defaulted to INR
+      receipt: `rcpt_${Date.now().toString().slice(-6)}_${eventId.toString().slice(-6)}`,
       notes: {
         eventId,
         ticketQuantity: ticketQuantity.toString()
