@@ -114,8 +114,11 @@ const EventDetails = () => {
         throw new Error(data.message || 'Payment failed');
       }
 
+      console.log('[Razorpay] create-order response:', data);
+
       // Handle Demo Mode — show simulated Razorpay-style modal
       if (data.isDemo) {
+        console.warn('[Razorpay] Demo mode active. Reason:', data.message);
         setPaymentModalData({
           token,
           orderId: data.id,
@@ -134,6 +137,7 @@ const EventDetails = () => {
       }
 
       const razorpayPublicKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
+      console.log('[Razorpay] Public key present:', !!razorpayPublicKey, '| prefix:', razorpayPublicKey?.substring(0, 8));
       if (!razorpayPublicKey) {
         throw new Error("Razorpay public key is missing in environment variables.");
       }
