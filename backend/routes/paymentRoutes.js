@@ -24,12 +24,28 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-const razorpay = (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET)
-  ? new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
-    })
-  : null;
+// Lazily create Razorpay instance so env vars are read at request time,
+// not at module load time (important for Render cold starts / env var injection)
+const getRazorpay = () => {
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) return null;
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+};
+
+// GET /api/payment/status — debug endpoint to verify keys are loaded
+router.get('/status', (req, res) => {
+  const keyId = process.env.RAZORPAY_KEY_ID;
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  res.json({
+    razorpay_configured: !!(keyId && keySecret),
+    key_id_present: !!keyId,
+    key_id_prefix: keyId ? keyId.substring(0, 8) + '...' : null,
+    key_secret_present: !!keySecret,
+    mode: keyId && keyId.startsWith('rzp_live') ? 'live' : keyId ? 'test' : 'not configured'
+  });
+});
 
 // Helper: send booking confirmation email
 const sendBookingEmail = async ({ userId, event, quantity, ticketType, totalAmount }) => {
@@ -113,6 +129,8 @@ router.post('/create-order', authMiddleware, async (req, res) => {
   const eventPrice = event.price || (event.tickets && event.tickets.length > 0 ? event.tickets[0].price : 0);
   // Amount in paise (INR smallest unit)
   const amount = Math.round(eventPrice * ticketQuantity * 100);
+
+  const razorpay = getRazorpay();
 
   if (!razorpay) {
     // Demo mode — no real Razorpay keys configured
@@ -204,6 +222,7 @@ router.post('/verify-payment', authMiddleware, async (req, res) => {
     }
 
     // ── Real Razorpay signature verification ──────────────────────────────────
+    const razorpay = getRazorpay();
     if (!razorpay) {
       return res.status(400).json({ message: 'Razorpay is not configured on the server.' });
     }
