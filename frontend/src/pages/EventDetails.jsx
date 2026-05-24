@@ -114,16 +114,15 @@ const EventDetails = () => {
         throw new Error(data.message || 'Payment failed');
       }
 
-      // Handle Demo Mode
+      // Handle Demo Mode — show simulated Razorpay-style modal
       if (data.isDemo) {
-        // Show simulated payment gateway modal
         setPaymentModalData({
           token,
-          registrationData: {
-            ...registrationData,
-            razorpayOrderId: data.id,
-            isDemo: true
-          }
+          orderId: data.id,
+          amount: data.amount,
+          eventId: id,
+          ticketQuantity: ticketCount,
+          isDemo: true
         });
         setCheckoutLoading(false);
         return;
@@ -405,7 +404,7 @@ const EventDetails = () => {
                   <div className="mb-8">
                     <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Price</p>
                     <div className="flex items-baseline">
-                      <span className="text-4xl font-display font-bold text-white">{eventPrice === 0 ? 'FREE' : `$${eventPrice}`}</span>
+                      <span className="text-4xl font-display font-bold text-white">{eventPrice === 0 ? 'FREE' : `₹${eventPrice}`}</span>
                     </div>
                   </div>
 
@@ -434,7 +433,7 @@ const EventDetails = () => {
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-gray-400 font-medium">Total</span>
                       <span className="text-2xl font-bold text-white">
-                        {event.price === 0 ? 'FREE' : `$${totalPrice}`}
+                        {event.price === 0 ? 'FREE' : `₹${totalPrice}`}
                       </span>
                     </div>
                   </div>
@@ -690,27 +689,26 @@ const EventDetails = () => {
                   setProcessingPayment(true);
                   setPaymentError('');
 
-
-
-
                   try {
-                    const regResponse = await fetch(getApiUrl('/registrations'), {
+                    const verifyRes = await fetch(getApiUrl('/payment/verify-payment'), {
                       method: 'POST',
-                      headers: { 
+                      headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${paymentModalData.token}`
                       },
                       body: JSON.stringify({
-                        ...paymentModalData.registrationData,
-                        paymentMethod,
-                        cardDetails,
-                        upiId
+                        razorpay_order_id: paymentModalData.orderId,
+                        razorpay_payment_id: 'demo_pay_' + Date.now(),
+                        razorpay_signature: 'demo_sig',
+                        eventId: paymentModalData.eventId,
+                        ticketQuantity: paymentModalData.ticketQuantity,
+                        isDemo: true
                       }),
                     });
 
-                    if (!regResponse.ok) {
-                      const errorData = await regResponse.json();
-                      if (regResponse.status === 401) {
+                    if (!verifyRes.ok) {
+                      const errorData = await verifyRes.json();
+                      if (verifyRes.status === 401) {
                         localStorage.removeItem('token');
                         localStorage.removeItem('user');
                         setTimeout(() => {
@@ -718,14 +716,14 @@ const EventDetails = () => {
                         }, 2000);
                         throw new Error('Your session has expired. Redirecting to login...');
                       }
-                      throw new Error(errorData.message || 'Registration failed');
+                      throw new Error(errorData.message || 'Payment verification failed');
                     }
-                    
+
                     setTimeout(() => {
                       setRegistrationSuccess(true);
                       setPaymentModalData(null);
                       setProcessingPayment(false);
-                    }, 2000);
+                    }, 1500);
                   } catch(e) {
                     setPaymentError(e.message || 'Payment failed. Please check your connection and try again.');
                     setProcessingPayment(false);
@@ -740,7 +738,7 @@ const EventDetails = () => {
                     {paymentMethod === 'card' ? 'Verifying with bank...' : 'Requesting from app...'}
                   </>
                 ) : (
-                  `Confirm & Pay $${totalPrice}`
+                  `Confirm & Pay ₹${totalPrice}`
                 )}
               </button>
 
