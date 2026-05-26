@@ -41,8 +41,9 @@ router.get('/status', (req, res) => {
   res.json({
     razorpay_configured: !!(keyId && keySecret),
     key_id_present: !!keyId,
-    key_id_prefix: keyId ? keyId.substring(0, 8) + '...' : null,
-    key_secret_present: !!keySecret,
+    key_id_full: keyId || null,
+    key_secret_length: keySecret ? keySecret.length : 0,
+    key_secret_prefix: keySecret ? keySecret.substring(0, 4) + '...' : null,
     mode: keyId && keyId.startsWith('rzp_live') ? 'live' : keyId ? 'test' : 'not configured'
   });
 });
