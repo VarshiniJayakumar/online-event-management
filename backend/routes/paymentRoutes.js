@@ -131,6 +131,7 @@ router.post('/create-order', authMiddleware, async (req, res) => {
   const amount = Math.round(eventPrice * ticketQuantity * 100);
 
   const razorpay = getRazorpay();
+  console.log('[Razorpay] Instance created:', !!razorpay, '| KEY_ID:', process.env.RAZORPAY_KEY_ID ? process.env.RAZORPAY_KEY_ID.substring(0, 12) + '...' : 'MISSING');
 
   if (!razorpay) {
     // Demo mode — no real Razorpay keys configured
@@ -156,16 +157,14 @@ router.post('/create-order', authMiddleware, async (req, res) => {
     };
 
     const order = await razorpay.orders.create(options);
+    console.log('[Razorpay] Order created successfully:', order.id);
     res.json({ id: order.id, amount: order.amount, currency: order.currency, isDemo: false });
   } catch (error) {
-    console.error('Razorpay order creation error:', error);
-    // Fallback to demo mode on API error
-    res.json({
-      id: 'demo_order_' + Date.now(),
-      isDemo: true,
-      amount,
-      currency: 'INR',
-      message: 'Demo Mode (Fallback): Razorpay API unavailable.'
+    console.error('[Razorpay] Order creation FAILED:', error.error || error.message || error);
+    // Return the actual error instead of silently falling back to demo
+    return res.status(500).json({
+      message: 'Razorpay order creation failed: ' + (error.error?.description || error.message || 'Unknown error'),
+      isDemo: false
     });
   }
 });
