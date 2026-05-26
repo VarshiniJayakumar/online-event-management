@@ -27,11 +27,10 @@ const authMiddleware = (req, res, next) => {
 // Lazily create Razorpay instance so env vars are read at request time,
 // not at module load time (important for Render cold starts / env var injection)
 const getRazorpay = () => {
-  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) return null;
-  return new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-  });
+  const keyId = (process.env.RAZORPAY_KEY_ID || '').trim();
+  const keySecret = (process.env.RAZORPAY_KEY_SECRET || '').trim();
+  if (!keyId || !keySecret) return null;
+  return new Razorpay({ key_id: keyId, key_secret: keySecret });
 };
 
 // GET /api/payment/status — debug endpoint to verify keys are loaded
@@ -232,7 +231,7 @@ router.post('/verify-payment', authMiddleware, async (req, res) => {
 
     const body = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .createHmac('sha256', (process.env.RAZORPAY_KEY_SECRET || '').trim())
       .update(body)
       .digest('hex');
 
