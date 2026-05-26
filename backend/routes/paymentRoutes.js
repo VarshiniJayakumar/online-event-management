@@ -113,8 +113,8 @@ const sendBookingEmail = async ({ userId, event, quantity, ticketType, totalAmou
   }
 };
 
-// POST /api/payment/create-order
-router.post('/create-order', authMiddleware, async (req, res) => {
+// POST /api/payment/create-order — no auth required, just creates a Razorpay order
+router.post('/create-order', async (req, res) => {
   const { eventId, ticketQuantity } = req.body;
 
   if (!eventId || !ticketQuantity || ticketQuantity < 1) {
@@ -151,8 +151,7 @@ router.post('/create-order', authMiddleware, async (req, res) => {
       receipt: `rcpt_${Date.now().toString().slice(-6)}_${eventId.toString().slice(-6)}`,
       notes: {
         eventId: eventId.toString(),
-        ticketQuantity: ticketQuantity.toString(),
-        userId: req.user.id
+        ticketQuantity: ticketQuantity.toString()
       }
     };
 
