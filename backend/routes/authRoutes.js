@@ -303,8 +303,12 @@ router.post('/request-organizer', async (req, res) => {
     user.organizerDetails = { businessName, phone, eventType };
     await user.save();
 
+    // Return a fresh token so the frontend session stays valid
+    const freshToken = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
+
     res.status(200).json({ 
       message: 'Organizer request submitted successfully. Please wait for admin approval.',
+      token: freshToken,
       user: { id: user._id, name: user.name, email: user.email, role: user.role, organizerStatus: user.organizerStatus }
     });
   } catch (error) {

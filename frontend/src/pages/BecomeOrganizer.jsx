@@ -44,19 +44,20 @@ const BecomeOrganizer = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to upgrade role');
+        const errData = await response.json();
+        throw new Error(errData.message || 'Failed to submit request');
       }
 
       const data = await response.json();
       
-      // Update local storage with new token and user object
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      // Update local storage only if a fresh token is returned
+      if (data.token) localStorage.setItem('token', data.token);
+      if (data.user) localStorage.setItem('user', JSON.stringify(data.user));
 
       setIsSubmitted(true);
     } catch (err) {
       console.error(err);
-      alert('There was an error processing your request.');
+      alert(err.message || 'There was an error processing your request.');
     } finally {
       setLoading(false);
     }
