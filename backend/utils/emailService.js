@@ -1,19 +1,21 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async ({ to, subject, htmlContent }) => {
-  const SMTP_HOST = process.env.SMTP_HOST;
+  // Support both explicit SMTP vars and Brevo-specific vars
+  const SMTP_HOST = process.env.SMTP_HOST || 'smtp-relay.brevo.com';
   const SMTP_PORT = process.env.SMTP_PORT || 587;
-  const SMTP_USER = process.env.SMTP_USER;
-  const SMTP_PASS = process.env.SMTP_PASS;
-  const SMTP_SENDER = process.env.SMTP_SENDER || 'noreply@eventure.com';
+  const SMTP_USER = process.env.SMTP_USER || process.env.BREVO_SENDER_EMAIL;
+  const SMTP_PASS = process.env.SMTP_PASS || process.env.BREVO_API_KEY;
+  const SMTP_SENDER = process.env.SMTP_SENDER || process.env.BREVO_SENDER_EMAIL || 'noreply@eventure.com';
 
   console.log('--- Email System Status Check ---');
-  console.log(`🔑 SMTP_HOST: ${SMTP_HOST ? '✅ DETECTED' : '❌ MISSING'}`);
+  console.log(`🔑 SMTP_HOST: ${SMTP_HOST}`);
   console.log(`📧 SMTP_USER: ${SMTP_USER ? '✅ DETECTED' : '❌ MISSING'}`);
+  console.log(`🔐 SMTP_PASS: ${SMTP_PASS ? '✅ DETECTED' : '❌ MISSING'}`);
   console.log('---------------------------------');
 
-  // Fallback to simulation if SMTP is not configured
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
+  // Fallback to simulation if credentials are missing
+  if (!SMTP_USER || !SMTP_PASS) {
     console.log('\n📢 EMAIL NOTICE: Running in SIMULATION MODE.');
     console.log(`To: ${to}`);
     console.log(`Subject: ${subject}`);
@@ -23,12 +25,12 @@ const sendEmail = async ({ to, subject, htmlContent }) => {
   }
 
   try {
-    console.log(`\n📧 Attempting to send email to: ${to} via SMTP...`);
-    
+    console.log(`\n📧 Attempting to send email to: ${to} via ${SMTP_HOST}...`);
+
     const transporter = nodemailer.createTransport({
       host: SMTP_HOST,
       port: Number(SMTP_PORT),
-      secure: Number(SMTP_PORT) === 465, // true for 465, false for other ports
+      secure: Number(SMTP_PORT) === 465,
       auth: {
         user: SMTP_USER,
         pass: SMTP_PASS,
@@ -51,4 +53,3 @@ const sendEmail = async ({ to, subject, htmlContent }) => {
 };
 
 module.exports = { sendEmail };
-
