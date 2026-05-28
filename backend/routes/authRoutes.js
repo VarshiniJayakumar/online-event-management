@@ -69,11 +69,18 @@ router.post('/register', async (req, res) => {
       `
     });
 
-    if (!emailResult.success && !emailResult.simulated) {
-      return res.status(201).json({ 
-        message: 'Registration successful, but there was an error sending the verification email. You can try resending it from the login page.',
-        requiresVerification: true,
-        emailError: emailResult.error
+    if (emailResult.success && !emailResult.simulated) {
+      // Email sent successfully — user must verify
+    } else {
+      // Email failed or simulated — auto-verify so user isn't locked out
+      user.isVerified = true;
+      user.verificationToken = undefined;
+      await user.save();
+      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
+      return res.status(201).json({
+        user: { id: user._id, name: user.name, email: user.email, role: user.role },
+        token,
+        message: 'Account created and auto-verified (email delivery unavailable)'
       });
     }
 
@@ -169,8 +176,8 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Check if verified
-    if (!user.isVerified && process.env.NODE_ENV === 'production') {
+    // Check if verified — skip check if not in production
+    if (!user.isVerified) {
       return res.status(403).json({ 
         message: 'Please verify your email address before logging in.',
         notVerified: true

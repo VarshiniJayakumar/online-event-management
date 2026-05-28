@@ -33,6 +33,13 @@ const Register = () => {
       return;
     }
 
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    if (!specialCharRegex.test(password)) {
+      setError('Password must contain at least one special character (e.g. @, #, !)');
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(getApiUrl('/auth/register'), {
         method: 'POST',
@@ -179,7 +186,7 @@ const Register = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-[#1a1a24] border border-white/10 rounded-xl pl-12 pr-12 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 transition-all"
-                  placeholder="••••••••"
+                  placeholder="Min 6 chars with special character"
                 />
                 <button
                   type="button"
