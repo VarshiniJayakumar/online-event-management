@@ -20,37 +20,25 @@ router.post('/register', async (req, res) => {
     if (existingUser) return res.status(400).json({ message: 'User already exists' });
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    
-    // Auto-verify if Brevo is not configured (for easier testing/demo)
-    const isVerified = !process.env.BREVO_API_KEY;
-    
-    // Create verification token
-    const verificationToken = isVerified ? undefined : crypto.randomBytes(32).toString('hex');
-    
+
+    // Always require email verification
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
     const user = await User.create({ 
       name, 
       email, 
       password: hashedPassword, 
       role: role || 'user',
-      isVerified,
+      isVerified: false,
       verificationToken
     });
-
-    if (isVerified) {
-      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
-      return res.status(201).json({ 
-        user: { id: user._id, name: user.name, email: user.email, role: user.role }, 
-        token,
-        message: 'Account created and auto-verified (Brevo not configured)'
-      });
-    }
 
     // Send Verification Email
     const baseUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
     const verificationLink = `${baseUrl}/verify-email/${verificationToken}`;
-    
+
     console.log(`\nVerification attempt for: ${email}`);
-    console.log(`Token: ${verificationToken}\n`);
+    console.log(`Verification link: ${verificationLink}\n`);
 
     const emailResult = await sendEmail({
       to: email,
@@ -69,18 +57,11 @@ router.post('/register', async (req, res) => {
       `
     });
 
-    if (emailResult.success && !emailResult.simulated) {
-      // Email sent successfully — user must verify
-    } else {
-      // Email failed or simulated — auto-verify so user isn't locked out
-      user.isVerified = true;
-      user.verificationToken = undefined;
-      await user.save();
-      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
-      return res.status(201).json({
-        user: { id: user._id, name: user.name, email: user.email, role: user.role },
-        token,
-        message: 'Account created and auto-verified (email delivery unavailable)'
+    if (!emailResult.success && !emailResult.simulated) {
+      // Email sending failed — delete the user and return error
+      await User.findByIdAndDelete(user._id);
+      return res.status(500).json({ 
+        message: 'Registration failed: Unable to send verification email. Please try again later.',
       });
     }
 
