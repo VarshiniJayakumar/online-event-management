@@ -81,6 +81,38 @@ router.post('/approve-organizer/:id', adminAuth, async (req, res) => {
     user.organizerStatus = 'approved';
     await user.save();
 
+    // Send approval email
+    const { sendEmail } = require('../utils/emailService');
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    await sendEmail({
+      to: user.email,
+      subject: '🎉 You are now an Organizer on Eventure!',
+      htmlContent: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #0a0a0f; color: #f8fafc;">
+          <h2 style="color: #8b5cf6; text-align: center; font-size: 24px; margin-bottom: 20px;">Congratulations! 🎉</h2>
+          <p style="font-size: 16px; color: #cbd5e1;">Hi ${user.name},</p>
+          <p style="font-size: 16px; color: #cbd5e1; line-height: 1.6;">
+            Great news! Your organizer application has been <strong style="color: #22c55e;">approved</strong> by the Eventure admin team.
+            You can now create and manage events on our platform.
+          </p>
+          <div style="background-color: #12121a; padding: 20px; border-radius: 12px; margin: 25px 0; border: 1px solid #1e1b4b;">
+            <h3 style="margin-top: 0; color: #ec4899; font-size: 18px;">What you can do now:</h3>
+            <ul style="color: #cbd5e1; line-height: 2;">
+              <li>✅ Create and publish events</li>
+              <li>✅ Manage ticket sales</li>
+              <li>✅ View attendee registrations</li>
+              <li>✅ Track event analytics</li>
+            </ul>
+          </div>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${clientUrl}/create-event" style="background-color: #7c3aed; color: #ffffff; padding: 14px 30px; text-decoration: none; border-radius: 10px; font-weight: bold; display: inline-block; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);">Create Your First Event</a>
+          </div>
+          <hr style="border: none; border-top: 1px solid #1e293b; margin: 25px 0;">
+          <p style="font-size: 12px; color: #64748b; text-align: center;">Welcome to the Eventure organizer community!</p>
+        </div>
+      `
+    });
+
     res.json({ message: 'Organizer approved successfully', user });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -95,6 +127,32 @@ router.post('/reject-organizer/:id', adminAuth, async (req, res) => {
 
     user.organizerStatus = 'rejected';
     await user.save();
+
+    // Send rejection email
+    const { sendEmail } = require('../utils/emailService');
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    await sendEmail({
+      to: user.email,
+      subject: 'Update on your Eventure Organizer Application',
+      htmlContent: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #0a0a0f; color: #f8fafc;">
+          <h2 style="color: #8b5cf6; text-align: center; font-size: 24px; margin-bottom: 20px;">Application Update</h2>
+          <p style="font-size: 16px; color: #cbd5e1;">Hi ${user.name},</p>
+          <p style="font-size: 16px; color: #cbd5e1; line-height: 1.6;">
+            Thank you for your interest in becoming an organizer on Eventure. After reviewing your application, 
+            we are unable to approve it at this time.
+          </p>
+          <p style="font-size: 16px; color: #cbd5e1; line-height: 1.6;">
+            You are welcome to reapply in the future. If you have any questions, please contact our support team.
+          </p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${clientUrl}" style="background-color: #7c3aed; color: #ffffff; padding: 14px 30px; text-decoration: none; border-radius: 10px; font-weight: bold; display: inline-block;">Back to Eventure</a>
+          </div>
+          <hr style="border: none; border-top: 1px solid #1e293b; margin: 25px 0;">
+          <p style="font-size: 12px; color: #64748b; text-align: center;">Thank you for being part of the Eventure community.</p>
+        </div>
+      `
+    });
 
     res.json({ message: 'Organizer rejected successfully', user });
   } catch (error) {
