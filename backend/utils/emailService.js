@@ -1,55 +1,65 @@
-const nodemailer = require('nodemailer');
+const https = require('https');
 
 const sendEmail = async ({ to, subject, htmlContent }) => {
-  // Support both explicit SMTP vars and Brevo-specific vars
-  const SMTP_HOST = process.env.SMTP_HOST || 'smtp-relay.brevo.com';
-  const SMTP_PORT = process.env.SMTP_PORT || 587;
-  const SMTP_USER = process.env.SMTP_USER || process.env.BREVO_SENDER_EMAIL;
-  const SMTP_PASS = process.env.SMTP_PASS || process.env.BREVO_API_KEY;
-  const SMTP_SENDER = process.env.SMTP_SENDER || process.env.BREVO_SENDER_EMAIL || 'noreply@eventure.com';
+  const BREVO_API_KEY = (process.env.BREVO_API_KEY || '').trim();
+  const BREVO_SENDER_EMAIL = (process.env.BREVO_SENDER_EMAIL || 'noreply@eventure.com').trim();
+  const BREVO_SENDER_NAME = 'Eventure Team';
 
   console.log('--- Email System Status Check ---');
-  console.log(`🔑 SMTP_HOST: ${SMTP_HOST}`);
-  console.log(`📧 SMTP_USER: ${SMTP_USER ? '✅ DETECTED' : '❌ MISSING'}`);
-  console.log(`🔐 SMTP_PASS: ${SMTP_PASS ? '✅ DETECTED' : '❌ MISSING'}`);
+  console.log(`🔑 BREVO_API_KEY: ${BREVO_API_KEY ? '✅ DETECTED' : '❌ MISSING'}`);
+  console.log(`📧 BREVO_SENDER_EMAIL: ${BREVO_SENDER_EMAIL}`);
   console.log('---------------------------------');
 
-  // Fallback to simulation if credentials are missing
-  if (!SMTP_USER || !SMTP_PASS) {
-    console.log('\n📢 EMAIL NOTICE: Running in SIMULATION MODE.');
+  if (!BREVO_API_KEY) {
+    console.log('\n📢 EMAIL NOTICE: Running in SIMULATION MODE (no API key).');
     console.log(`To: ${to}`);
     console.log(`Subject: ${subject}`);
     console.log(`Link: ${htmlContent.match(/href="([^"]+)"/)?.[1] || 'No link found'}`);
-    console.log(`HTML Preview Snippet: ${htmlContent.slice(0, 300)}...\n`);
     return { success: true, message: 'Email simulated', simulated: true };
   }
 
-  try {
-    console.log(`\n📧 Attempting to send email to: ${to} via ${SMTP_HOST}...`);
+  const payload = JSON.stringify({
+    sender: { name: BREVO_SENDER_NAME, email: BREVO_SENDER_EMAIL },
+    to: [{ email: to }],
+    subject,
+    htmlContent
+  });
 
-    const transporter = nodemailer.createTransport({
-      host: SMTP_HOST,
-      port: Number(SMTP_PORT),
-      secure: Number(SMTP_PORT) === 465,
-      auth: {
-        user: SMTP_USER,
-        pass: SMTP_PASS,
-      },
+  return new Promise((resolve) => {
+    const options = {
+      hostname: 'api.brevo.com',
+      path: '/v3/smtp/email',
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': BREVO_API_KEY,
+        'content-type': 'application/json',
+        'content-length': Buffer.byteLength(payload)
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          console.log('✅ Brevo email sent successfully to:', to);
+          resolve({ success: true, messageId: JSON.parse(data).messageId });
+        } else {
+          console.error('💥 Brevo API Error:', res.statusCode, data);
+          resolve({ success: false, error: `Brevo API error ${res.statusCode}: ${data}` });
+        }
+      });
     });
 
-    const info = await transporter.sendMail({
-      from: `"Eventure Team" <${SMTP_SENDER}>`,
-      to,
-      subject,
-      html: htmlContent,
+    req.on('error', (error) => {
+      console.error('💥 Brevo request error:', error.message);
+      resolve({ success: false, error: error.message });
     });
 
-    console.log('✅ SMTP Email Sent successfully:', info.messageId);
-    return { success: true, messageId: info.messageId };
-  } catch (error) {
-    console.error('💥 Fatal SMTP Email Error:', error.message);
-    return { success: false, error: error.message };
-  }
+    req.write(payload);
+    req.end();
+  });
 };
 
 module.exports = { sendEmail };
