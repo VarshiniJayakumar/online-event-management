@@ -44,7 +44,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
-            <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center space-x-2 group">
+            <Link to={userRole === 'admin' ? '/admin' : '/'} onClick={() => setIsMenuOpen(false)} className="flex items-center space-x-2 group">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-glow-primary group-hover:scale-105 transition-transform">
                 <CalendarDays className="h-5 w-5 text-white" />
               </div>
@@ -54,12 +54,21 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              to="/" 
-              className={`font-medium transition-colors text-sm ${isActive('/') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
-            >
-              Home
-            </Link>
+            {userRole === 'admin' ? (
+              <Link 
+                to="/admin" 
+                className={`font-medium transition-colors text-sm ${isActive('/admin') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link 
+                to="/" 
+                className={`font-medium transition-colors text-sm ${isActive('/') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
+              >
+                Home
+              </Link>
+            )}
             <Link 
               to="/events" 
               className={`font-medium transition-colors text-sm ${isActive('/events') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
@@ -76,19 +85,22 @@ const Navbar = () => {
             )}
             {isAuthenticated ? (
               <>
-                <Link 
-                  to="/dashboard" 
-                  className={`font-medium transition-colors text-sm flex items-center space-x-1 ${isActive('/dashboard') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
-                >
-                  <User className="h-4 w-4" />
-                  <span>{userName || 'Dashboard'}</span>
-                </Link>
+                {userRole !== 'admin' && (
+                  <Link 
+                    to="/dashboard" 
+                    className={`font-medium transition-colors text-sm flex items-center space-x-1 ${isActive('/dashboard') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
+                  >
+                    <User className="h-4 w-4" />
+                    <span>{userName || 'Dashboard'}</span>
+                  </Link>
+                )}
                 {userRole === 'admin' && (
                   <Link 
                     to="/admin" 
-                    className={`font-medium transition-colors text-sm px-3 py-1 rounded-full bg-red-500/20 text-red-500 hover:bg-red-500/30`}
+                    className={`font-medium transition-colors text-sm flex items-center space-x-1 ${isActive('/admin') ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
                   >
-                    Admin
+                    <User className="h-4 w-4" />
+                    <span>{userName || 'Admin'}</span>
                   </Link>
                 )}
                 <button onClick={handleLogout} className="text-gray-300 hover:text-red-400 font-medium transition-colors text-sm flex items-center space-x-1">
@@ -123,11 +135,11 @@ const Navbar = () => {
         <div className="md:hidden glass border-t border-white/5 animate-in slide-in-from-top duration-300">
           <div className="px-4 pt-2 pb-6 space-y-3">
             <Link 
-              to="/" 
+              to={userRole === 'admin' ? '/admin' : '/'}
               onClick={() => setIsMenuOpen(false)}
-              className={`block px-4 py-3 rounded-xl font-medium ${isActive('/') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-white/5'}`}
+              className={`block px-4 py-3 rounded-xl font-medium ${isActive(userRole === 'admin' ? '/admin' : '/') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-white/5'}`}
             >
-              Home
+              {userRole === 'admin' ? 'Admin Dashboard' : 'Home'}
             </Link>
             <Link 
               to="/events" 
@@ -147,18 +159,20 @@ const Navbar = () => {
             )}
             {isAuthenticated ? (
               <>
-                <Link 
-                  to="/dashboard" 
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`block px-4 py-3 rounded-xl font-medium ${isActive('/dashboard') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-white/5'}`}
-                >
-                  My Dashboard
-                </Link>
+                {userRole !== 'admin' && (
+                  <Link 
+                    to="/dashboard" 
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block px-4 py-3 rounded-xl font-medium ${isActive('/dashboard') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-white/5'}`}
+                  >
+                    My Dashboard
+                  </Link>
+                )}
                 {userRole === 'admin' && (
                   <Link 
                     to="/admin" 
                     onClick={() => setIsMenuOpen(false)}
-                    className={`block px-4 py-3 rounded-xl font-medium ${isActive('/admin') ? 'bg-red-500/20 text-red-500' : 'text-red-400 hover:bg-red-500/10'}`}
+                    className={`block px-4 py-3 rounded-xl font-medium ${isActive('/admin') ? 'bg-primary/20 text-primary' : 'text-gray-300 hover:bg-white/5'}`}
                   >
                     Admin Panel
                   </Link>
